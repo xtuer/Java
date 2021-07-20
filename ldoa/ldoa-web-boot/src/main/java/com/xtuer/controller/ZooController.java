@@ -1,5 +1,6 @@
 package com.xtuer.controller;
 
+import com.github.wujun234.uid.impl.CachedUidGenerator;
 import com.xtuer.bean.Page;
 import com.xtuer.bean.Result;
 import com.xtuer.bean.order.Order;
@@ -184,5 +185,15 @@ public class ZooController extends BaseController {
     @GetMapping("/api/demo/application-exception")
     public Result<String> applicationException() {
         throw new ApplicationException("应用程序异常", 505);
+    }
+
+    /**
+     * 类加载器判断
+     *
+     * 网址: http://localhost:8080/api/demo/class-loader
+     */
+    @GetMapping("/api/demo/class-loader")
+    public Result<String> testClassLoader() {
+        return Result.ok(CachedUidGenerator.class.getClassLoader().getClass().getName());
     }
 }

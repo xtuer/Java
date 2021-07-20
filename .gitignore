@@ -4,6 +4,7 @@
 dump.rdb
 consul
 ~*
+.history/
 
 ### iView ###
 !template-vue-app/build/

@@ -24,13 +24,30 @@
 */
 
 /**
+ * 判断当前用户是否有权限
+ *
+ * @param {Array} permissions 权限数组
+ */
+const hasPermission = function(permissions) {
+    const roles = this.$store.getters.roles;
+
+    // 只要用户的任意一个角色在 permissions 数组中，则有权限，返回 true
+    for (let role of roles) {
+        if (permissions.includes(role)) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
+/**
  * 是否有维保订单的权限
  *
  * @return 有权限返回 true，否则返回 false
  */
 const hasPermissionForMaintenance = function() {
-    const roles = this.$store.getters.roles;
-    return roles.indexOf('ROLE_PRODUCE_MAINTENANCE') > -1 || roles.indexOf('ROLE_PRODUCE_SCHEDULE') > -1;
+    return this.hasPermission(PERMISSIONS.maintenance);
 };
 
 /**
@@ -39,8 +56,7 @@ const hasPermissionForMaintenance = function() {
  * @return 有权限返回 true，否则返回 false
  */
 const hasPermissionOfSuperAdmin = function() {
-    const roles = this.$store.getters.roles;
-    return roles.indexOf('ROLE_ADMIN_SYSTEM') > -1;
+    return this.hasPermission(PERMISSIONS.superAdmin);
 };
 
 /**
@@ -49,27 +65,25 @@ const hasPermissionOfSuperAdmin = function() {
  * @return 有权限返回 true，否则返回 false
  */
 const hasPermissionForStockIn = function() {
-    const roles = this.$store.getters.roles;
-    return roles.indexOf('ROLE_PRODUCE_QUALITY') > -1 || roles.indexOf('ROLE_PRODUCE_SCHEDULE') > -1;
+    return this.hasPermission(PERMISSIONS.stockIn);
 };
 
 /**
  * 是否有操作销售订单的权限
  */
 const hasPermissionForSalesOrder = function() {
-    const roles = this.$store.getters.roles;
-    return roles.indexOf('ROLE_SALE_SALESPERSON') > -1;
+    return this.hasPermission(PERMISSIONS.salesOrder);
 };
 
 /**
  * 是否有财务的权限
  */
 const hasPermissionForFinance = function() {
-    const roles = this.$store.getters.roles;
-    return roles.indexOf('ROLE_FINANCE') > -1;
+    return this.hasPermission(PERMISSIONS.finance);
 };
 
 export default {
+    hasPermission,
     hasPermissionForMaintenance,
     hasPermissionOfSuperAdmin,
     hasPermissionForStockIn,

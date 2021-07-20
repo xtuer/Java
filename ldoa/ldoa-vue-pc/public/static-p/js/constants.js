@@ -49,6 +49,24 @@ window.ROLES = [
     { value: 'ROLE_TECHNIQUE_SOFTWARE', name: '技术部软件技术' },
 ];
 
+// 权限控制
+window.PERMISSIONS = {
+    // 超级管理员的权限
+    superAdmin: ['ROLE_ADMIN_SYSTEM'],
+
+    // 维保订单的权限
+    maintenance: ['ROLE_PRODUCE_MAINTENANCE', 'ROLE_PRODUCE_SCHEDULE'],
+
+    // 物料入库的权限
+    stockIn: ['ROLE_PRODUCE_QUALITY', 'ROLE_PRODUCE_SCHEDULE'],
+
+    // 销售订单的权限
+    salesOrder: ['ROLE_SALE_SALESPERSON', 'ROLE_ADMIN_SYSTEM'], // TODO: delete admin
+
+    // 财务的权限
+    finance: ['ROLE_FINANCE', 'ROLE_ADMIN_SYSTEM'], // TODO: delete admin
+};
+
 // 审批类型
 window.AUDIT_TYPES = [
     { value: 'ORDER', name: '生产订单' },
