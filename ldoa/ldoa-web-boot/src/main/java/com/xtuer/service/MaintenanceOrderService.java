@@ -3,9 +3,11 @@ package com.xtuer.service;
 import com.xtuer.bean.Page;
 import com.xtuer.bean.Result;
 import com.xtuer.bean.User;
+import com.xtuer.bean.impex.ImpexMaintenanceOrder;
 import com.xtuer.bean.order.MaintenanceOrder;
 import com.xtuer.bean.order.MaintenanceOrderFilter;
 import com.xtuer.bean.order.MaintenanceOrderItem;
+import com.xtuer.mapper.ImpexMapper;
 import com.xtuer.mapper.MaintenanceOrderMapper;
 import com.xtuer.util.Utils;
 import org.apache.commons.lang.StringUtils;
@@ -24,6 +26,9 @@ import java.util.stream.Collectors;
 public class MaintenanceOrderService extends BaseService {
     @Autowired
     private MaintenanceOrderMapper orderMapper;
+
+    @Autowired
+    private ImpexMapper impexMapper;
 
     @Autowired
     private AuditServiceHelper auditServiceHelper;
@@ -166,7 +171,7 @@ public class MaintenanceOrderService extends BaseService {
      */
     public String exportMaintenanceOrders(MaintenanceOrderFilter filter) throws IOException {
         Page page = Page.of(1, Integer.MAX_VALUE);
-        List<MaintenanceOrder> items = orderMapper.findMaintenanceOrders(filter, page);
-        return super.exportExcel("维保订单", MaintenanceOrder.class, items);
+        List<ImpexMaintenanceOrder> items = impexMapper.findMaintenanceOrders(filter, page);
+        return super.exportExcel("维保订单", ImpexMaintenanceOrder.class, items);
     }
 }

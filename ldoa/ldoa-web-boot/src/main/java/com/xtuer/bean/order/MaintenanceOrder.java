@@ -1,6 +1,5 @@
 package com.xtuer.bean.order;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.xtuer.util.Utils;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,7 +33,6 @@ public class MaintenanceOrder {
     /**
      * 维保订单 SN
      */
-    @Excel(name = "维保单号", width = 24, orderNum = "1")
     private String maintenanceOrderSn;
 
     /**
@@ -45,13 +43,11 @@ public class MaintenanceOrder {
     /**
      * 售后服务人员名字
      */
-    @Excel(name = "售后服务人员", width = 20, orderNum = "10")
     private String servicePersonName;
 
     /**
      * 客户名字
      */
-    @Excel(name = "客户", width = 40, orderNum = "2")
     private String customerName;
 
     /**
@@ -67,13 +63,11 @@ public class MaintenanceOrder {
     /**
      * 销售人员名字
      */
-    @Excel(name = "销售人员", width = 20, orderNum = "11")
     private String salespersonName;
 
     /**
      * 收货日期
      */
-    @Excel(name = "收货日期", width = 20, orderNum = "12", exportFormat = "yyyy-MM-dd")
     private Date receivedDate;
 
     /**
@@ -84,25 +78,21 @@ public class MaintenanceOrder {
     /**
      * 产品编码
      */
-    @Excel(name = "产品编码", width = 20, orderNum = "4")
     private String productCode;
 
     /**
      * 产品名称
      */
-    @Excel(name = "产品名称", width = 20, orderNum = "3")
     private String productName;
 
     /**
      * 规格/型号
      */
-    @Excel(name = "规格/型号", width = 20, orderNum = "5")
     private String productModel;
 
     /**
      * 产品数量
      */
-    @Excel(name = "产品数量", width = 20, orderNum = "6")
     private int productCount;
 
     /**
@@ -113,7 +103,6 @@ public class MaintenanceOrder {
     /**
      * 批次
      */
-    @Excel(name = "", width = 20)
     private String productItemBatch;
 
     /**
@@ -134,13 +123,11 @@ public class MaintenanceOrder {
     /**
      * 客户反馈的问题
      */
-    @Excel(name = "反馈的问题", width = 40, orderNum = "8")
     private String problem;
 
     /**
      * 进度
      */
-    @Excel(name = "处理进度", width = 20, orderNum = "9")
     private String progress;
 
     /**
@@ -151,7 +138,6 @@ public class MaintenanceOrder {
     /**
      * 状态: 0 (初始化), 1 (待审批), 2 (审批拒绝), 3 (审批完成), 4 (完成)
      */
-    @Excel(name = "状态", width = 20, orderNum = "7", replace = { "初始化_0", "待审批_1", "审批拒绝_2", "审批完成_3", "完成_4" })
     private int state;
 
     /**
