@@ -41,7 +41,7 @@ public class SalesOrder {
      * 主题
      */
     @NotNull(message = "主题不能为空")
-    @Excel(name = "客户", width = 20, orderNum = "3")
+    @Excel(name = "主题", width = 20, orderNum = "3")
     private String topic;
 
     /**
