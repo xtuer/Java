@@ -10,7 +10,7 @@
             <!-- 搜索条件 -->
             <div class="filter">
                 <!-- 指定条件的搜索 -->
-                <Input v-model="filter.name" placeholder="请输入查询条件">
+                <Input v-model="filter.name" placeholder="请输入查询条件" @on-enter="searchCustomers">
                     <span slot="prepend">客户名称</span>
                 </Input>
 
@@ -19,6 +19,7 @@
                     <Select v-model="filterKey" slot="prepend">
                         <Option value="customerSn">编号</Option>
                         <Option value="business">行业</Option>
+                        <Option value="region">区域</Option>
                     </Select>
                 </Input>
             </div>
@@ -215,9 +216,10 @@ export default {
         },
         // 新建搜索条件
         newFilter() {
-            return { // 搜索条件
+            return {
                 // customerSn : '',
                 // business: '',
+                // regin: '',
                 name      : '',
                 pageSize  : 50,
                 pageNumber: 1,

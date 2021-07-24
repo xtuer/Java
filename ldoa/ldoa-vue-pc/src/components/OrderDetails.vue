@@ -77,8 +77,13 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
                         {{ order.calibrated ? '是' : '否' }}
                     </div>
                     <div class="margin-top-20">
-                        <span class="text-color-gray">校准信息:</span>
-                        {{ order.calibrationInfo || '无' }}
+                        <template v-if="order.calibrationInfo">
+                            <span class="text-color-gray">校准信息:</span>
+                            <pre style="margin: 0 20px">{{ order.calibrationInfo }}</pre>
+                        </template>
+                        <template v-else>
+                            <span class="text-color-gray">校准信息:</span> 无
+                        </template>
                     </div>
                 </td>
             </tr>

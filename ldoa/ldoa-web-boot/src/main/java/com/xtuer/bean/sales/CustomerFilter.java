@@ -23,4 +23,9 @@ public class CustomerFilter {
      * 行业
      */
     private String business;
+
+    /**
+     * 区域
+     */
+    private String region;
 }

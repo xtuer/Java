@@ -29,6 +29,9 @@
             <if test="filter.business!=null and filter.business!='' ">
                 AND business LIKE CONCAT('%', #{filter.business},'%')
             </if>
+            <if test="filter.region!=null and filter.region!='' ">
+                AND region LIKE CONCAT('%', #{filter.region},'%')
+            </if>
         </where>
         ORDER BY created_at DESC
         LIMIT ${page.offset}, ${page.count}

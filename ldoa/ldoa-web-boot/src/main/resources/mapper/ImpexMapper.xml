@@ -65,7 +65,7 @@
     </select>
 
     <!-- 维保订单 -->
-    <resultMap id="ImpexMaintenanceOrderResultMap" type="ImpexMaintenanceOrder">
+    <resultMap id="ImpexMaintenanceOrderResultMap" autoMapping="true" type="ImpexMaintenanceOrder">
         <id property="maintenanceOrderId" column="maintenance_order_id"/>
         <result property="maintenanceOrderSn" column="maintenance_order_sn"/>
         <result property="servicePersonName" column="service_person_name"/>
@@ -80,7 +80,7 @@
     </resultMap>
 
     <!-- 维保订单项 -->
-    <resultMap id="ImpexMaintenanceOrderItemResultMap" type="ImpexMaintenanceOrderItem">
+    <resultMap id="ImpexMaintenanceOrderItemResultMap" autoMapping="true" type="ImpexMaintenanceOrderItem">
         <id property="maintenanceOrderItemId" column="maintenance_order_item_id"/>
         <result property="productName" column="product_name"/>
         <result property="productCode" column="product_code"/>
