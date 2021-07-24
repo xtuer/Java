@@ -67,8 +67,11 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
                 <Table :data="salesOrder.produceOrder.items" :columns="produceOrderItemColumns" border>
                     <!-- 产品名称 -->
                     <template slot-scope="{ index }" slot="name">
-                        <div style="display: flex">
-                            <span style="flex: 1">{{ salesOrder.produceOrder.items[index].product.name }}</span>
+                        <div style="display: flex; align-items: center">
+                            <span v-if="salesOrder.produceOrder.items[index].product.name" style="flex: 1">
+                                {{ salesOrder.produceOrder.items[index].product.name }}
+                            </span>
+                            <span v-else class="text-color-gray-l" style="flex: 1">请选择产品</span>
                             <Icon type="ios-search" class="clickable margin-left-10" size="18" @click="openProductSelect(salesOrder.produceOrder.items[index])"/>
                         </div>
                     </template>
