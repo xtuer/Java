@@ -31,8 +31,8 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
                         <Input v-model="salesOrder.customerName" readonly search placeholder="请选择客户" @on-search="customerSelect = true"/>
                     </FormItem>
                     <FormItem label="联系人:" prop="customerContact">
-                        <Select v-model="salesOrder.customerContact" placeholder="请选择联系人">
-                            <Option v-for="contact in customerContacts" :value="contact.name" :key="contact.name">{{ contact.name }}</Option>
+                        <Select v-model="salesOrder.customerContact" placeholder="请选择联系人" filterable allow-create @on-create="createTempCustomerContact">
+                            <Option v-for="contact in customerContacts" :value="contact" :key="contact">{{ contact }}</Option>
                         </Select>
                     </FormItem>
                     <FormItem label="行业:" prop="business">
@@ -155,7 +155,7 @@ export default {
             userSelect      : false, // 用户选择弹窗是否可见
             customerSelect  : false, // 客户选择弹窗是否可见
             productSelect   : false, // 产品选择弹窗是否可见
-            customerContacts: [],    // 客户的联系人
+            customerContacts: [],    // 客户的联系人名字
             produceOrderItemSelected: {}, // 当前选择的生产订单项
             produceOrderItemColumns: [ // 订单项的列
                 { type: 'index', width: 50, align: 'center', className: 'table-index' },
@@ -217,8 +217,13 @@ export default {
 
                     // [2] 查询客户的联系人
                     CustomerDao.findCustomerById(salesOrder.customerId).then(customer => {
-                        this.customerContacts = customer.contacts;
+                        this.customerContacts = customer.contacts.map(contact => contact.name);
                         this.loading = false;
+
+                        // 如果订单中的客户联系人不在客户的联系人列表，则加入 (订单的联系人是手动输入的)
+                        if (!this.customerContacts.includes(salesOrder.customerContact)) {
+                            this.createTempCustomerContact(salesOrder.customerContact);
+                        }
                     });
                 });
             }
@@ -234,7 +239,7 @@ export default {
             this.salesOrder.customerId      = customer.customerId;
             this.salesOrder.business        = customer.business;
             this.salesOrder.customerContact = '';
-            this.customerContacts           = customer.contacts;
+            this.customerContacts           = customer.contacts.map(contact => contact.name);
         },
         // 弹出产品选择弹出
         openProductSelect(produceOrderItem) {
@@ -369,6 +374,10 @@ export default {
                 product        : {},
                 neu            : true, // 是否新创建的
             };
+        },
+        // 临时创建客户联系人
+        createTempCustomerContact(contact) {
+            this.customerContacts.push(contact);
         },
     },
     computed: {
