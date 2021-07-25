@@ -197,6 +197,11 @@
     padding: 2px;
 }
 
+.ivu-table-header-resizable:hover {
+    background: #dcdee2;
+    transition: background 0.3s;
+}
+
 /* 使用 Table 作为 body 的 Card，去掉 padding 效果好一些: <Card class="card-with-table-body" dis-hover> */
 .card-with-table-body .ivu-card-body {
     padding: 0;

@@ -94,6 +94,7 @@ export default {
             loading  : false, // 加载中
             reloading: false,
             exporting: false, // 导出中
+            tableName: 'customers-table',
             columns  : [
                 // 设置 width, minWidth，当大小不够时 Table 会出现水平滚动条
                 { key : 'customerSn', title: '客户编号', width: 150, resizable: true },
@@ -101,9 +102,9 @@ export default {
                 { key : 'business',   title: '行业', width: 150, resizable: true },
                 { key : 'region',     title: '区域', width: 150, resizable: true },
                 { key : 'phone',      title: '电话', width: 150, resizable: true },
-                { key : 'address',    title: '地址', width: 150, resizable: true },
-                { key : 'owner',      title: '负责人', width: 150, resizable: true },
-                { key : 'remark',     title: '备注', width: 150, resizable: true },
+                // { key : 'address',    title: '地址', width: 150, resizable: true },
+                // { key : 'owner',      title: '负责人', width: 150, resizable: true },
+                // { key : 'remark',     title: '备注', width: 150, resizable: true },
                 { slot: 'contacts',   title: '联系人', width: 80, resizable: false },
                 { slot: 'action',     title: '操作', width: 110, align: 'center', className: 'table-action' },
             ],
