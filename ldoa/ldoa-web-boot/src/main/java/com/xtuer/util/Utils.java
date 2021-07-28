@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 public final class Utils {
     private static final PasswordEncoder B_CRYPT_PASSWORD_ENCODER = new BCryptPasswordEncoder();
     private static final DateFormat DATE_FORMATTER_WITH_WEEKDAY = new SimpleDateFormat("M 月 d 日 E", Locale.SIMPLIFIED_CHINESE);
+    private static final DateFormat DATE_FORMATTER_STANDARD = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
      * BindingResult 中的错误信息很多，对用户不够友好，使用 getBindingMessage()
@@ -395,6 +396,20 @@ public final class Utils {
     public static String formatDateWithWeekDay(Date date) {
         if (date != null) {
             return DATE_FORMATTER_WITH_WEEKDAY.format(date);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 格式化日期为标准格式: yyyy-MM-dd HH:mm:ss
+     *
+     * @param date 日期
+     * @return 返回格式化后的日期字符串
+     */
+    public static String formatDate(Date date) {
+        if (date != null) {
+            return DATE_FORMATTER_STANDARD.format(date);
         } else {
             return null;
         }

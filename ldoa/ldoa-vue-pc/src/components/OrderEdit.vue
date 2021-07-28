@@ -16,7 +16,7 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
 <template>
     <Modal :value="visible" :title="title" :mask-closable="false" :width="900"
             class="order-edit-modal"
-            :styles="{ top: '40px', marginBottom: '40px' }"
+            :styles="{ top: '40px', marginBottom: '80px' }"
             @on-visible-change="showEvent">
         <Form ref="orderForm" :model="orderClone" :rules="orderRules" :key="orderClone.orderId" :label-width="130">
             <div style="display: flex">
@@ -38,16 +38,22 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
                     </Select>
                 </FormItem>
             </div>
-            <div class="three-column" style="grid-template-columns: 1fr 1fr max-content">
+            <div class="three-column" style="grid-template-columns: 1fr 1fr 1fr">
                 <FormItem label="订单日期:" prop="orderDate">
                     <DatePicker v-model="orderClone.orderDate" type="date" placeholder="请选择订单日期"></DatePicker>
                 </FormItem>
-                <FormItem label="要求交货日期:" prop="deliveryDate">
-                    <DatePicker v-model="orderClone.deliveryDate" type="date" placeholder="请选择要求交货日期"></DatePicker>
+                <FormItem label="交货日期:" prop="deliveryDate">
+                    <DatePicker v-model="orderClone.deliveryDate" type="date" placeholder="请选择交货日期"></DatePicker>
                 </FormItem>
-                <Button type="dashed" icon="md-add" style="justify-self: end; margin-top: 2px; margin-left: 15px" @click="productSelectVisible = true">添加产品</Button>
+                <FormItem v-if="orderClone.type === 1" label="归还日期:" prop="returnDate">
+                    <DatePicker v-model="orderClone.returnDate" type="date" placeholder="请选择规划日期"></DatePicker>
+                </FormItem>
             </div>
-            <FormItem label="订购产品:">
+            <FormItem>
+                <div slot="label">
+                    <div class="margin-bottom-5">订购产品:</div>
+                    <Button type="primary" ghost size="small" @click="productSelectVisible = true">添加产品</Button>
+                </div>
                 <!-- 产品列表 -->
                 <Table :data="orderClone.items" :columns="orderItemColumns" size="small" border>
                     <!-- 产品名称 -->
@@ -79,8 +85,12 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
                     </template>
                 </Table>
             </FormItem>
-            <FormItem label="其他要求:">
-                <Input v-model="orderClone.requirement" type="textarea" :autosize="{ minRows: 3, maxRows: 5 }" placeholder="请输入其他要求"/>
+            <FormItem>
+                <div slot="label">
+                    <div class="margin-bottom-5">订货附件&nbsp;</div>
+                    <div>及其他要求:</div>
+                </div>
+                <Input v-model="orderClone.requirement" type="textarea" :autosize="{ minRows: 3, maxRows: 5 }" placeholder="请输入订货附件及其他要求"/>
             </FormItem>
             <FormItem label="是否校准:">
                 <i-switch v-model="orderClone.calibrated" size="large">
@@ -89,7 +99,7 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
                 </i-switch>
             </FormItem>
             <FormItem v-if="orderClone.calibrated" label="校准信息:">
-                <Input v-model="orderClone.calibrationInfo" type="textarea" :autosize="{ minRows: 3, maxRows: 5 }" placeholder="请输入校准信息"/>
+                <Input v-model="orderClone.calibrationInfo" type="textarea" :autosize="{ minRows: 3, maxRows: 7 }" placeholder="请输入校准信息"/>
             </FormItem>
             <FormItem label="订单附件:">
                 <a v-if="orderClone.attachment.id" style="margin-right: 10px">{{ orderClone.attachment.filename }}</a>
@@ -245,6 +255,7 @@ export default {
                 customerAddress: '',    // 客户收件地址
                 orderDate      : '',    // 订单日期
                 deliveryDate   : '',    // 交货日期
+                returnDate     : '',    // 规划日期
                 salespersonId  : '0',   // 销售员
                 calibrated     : false, // 是否校准
                 calibrationInfo: '证书单位：\n证书地址：\n制造商：\n设备名称：\n校准内容：\n其他校准信息：', // 校准信息

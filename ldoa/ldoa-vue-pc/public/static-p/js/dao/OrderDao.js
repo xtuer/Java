@@ -16,6 +16,7 @@ export default class {
             if (success) {
                 order.orderDate = Utils.stringToDate(order.orderDate);
                 order.deliveryDate = Utils.stringToDate(order.deliveryDate);
+                order.returnDate = Utils.stringToDate(order.returnDate);
                 return Promise.resolve(order);
             } else {
                 Message.error(message);

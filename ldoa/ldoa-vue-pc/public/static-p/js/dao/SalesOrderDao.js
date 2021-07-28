@@ -6,6 +6,7 @@ export default class SalesOrderDao {
     static handleDate(salesOrder) {
         salesOrder.agreementDate = dayjs(salesOrder.agreementDate).toDate();
         salesOrder.deliveryDate = dayjs(salesOrder.deliveryDate).toDate();
+        salesOrder.returnDate = dayjs(salesOrder.returnDate).toDate();
     }
 
     /**
@@ -111,14 +112,16 @@ export default class SalesOrderDao {
      *
      * @param {Long} salesOrderId 销售订单 ID
      * @param {Double} paidAmount 收款金额
-     * @return {Promise} 返回 Promise 对象，resolve 的参数为无，reject 的参数为错误信息
+     * @param {Int}    paidType   收款类型
+     * @param {Date}   paidAt     收款时间
+     * @return {Promise} 返回 Promise 对象，resolve 的参数为订单状态，reject 的参数为错误信息
      */
-    static pay(salesOrderId, paidAmount) {
+    static pay(salesOrderId, paidAmount, paidType, paidAt) {
         return Rest.update(
             Urls.API_SALES_ORDERS_PAYMENTS,
-            { params: { salesOrderId }, data: { paidAmount } }
-        ).then(({ success, message }) => {
-            return Utils.response(null, success, message);
+            { params: { salesOrderId }, data: { paidAmount, paidType, paidAt } }
+        ).then(({ data: state, success, message }) => {
+            return Utils.response(state, success, message);
         });
     }
 

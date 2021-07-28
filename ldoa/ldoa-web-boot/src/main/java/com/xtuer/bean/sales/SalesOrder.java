@@ -20,6 +20,9 @@ public class SalesOrder {
     public static final int STATE_WAIT_PAY = 1;
     public static final int STATE_PAID     = 2;
     public static final int STATE_COMPLETE = 3;
+    public static final int NONE_PAY = 0; // 未付
+    public static final int PREV_PAY = 1; // 预付
+    public static final int FULL_PAY = 2; // 全款
 
     /**
      * 状态值与对应的 Label: 数组的下标为状态值，对应的数组元素值为状态的 Label
@@ -140,6 +143,11 @@ public class SalesOrder {
      * 收款时间
      */
     private Date paidAt;
+
+    /**
+     * 收款类型: 0 (预付)、1 (全款)
+     */
+    private int paidType;
 
     /**
      * 生产订单 ID

@@ -52,6 +52,11 @@
                 {{ salesOrder.agreementDate | formatDateSimple }}
             </template>
 
+            <!-- 收款类型 -->
+            <template slot-scope="{ row: salesOrder }" slot="paidType">
+                {{ salesOrder.paidType | labelForValue(window.SALES_PAID_TYPES) }}
+            </template>
+
             <!-- 收款日期 -->
             <template slot-scope="{ row: salesOrder }" slot="paidAt">
                 {{ salesOrder.paidAt | formatDateSimple }}
@@ -75,13 +80,22 @@
                 <div class="text-color-gray">总成交金额:</div> {{ salesOrderToPay.dealAmount }}
                 <div class="text-color-gray">应收金额:</div> {{ salesOrderToPay.shouldPayAmount }}
                 <div class="text-color-gray">收款金额:</div> <InputNumber v-model="salesOrderToPay.paidAmount" :min="0"/>
+
+                <div class="text-color-gray">收款类型:</div>
+                <Select v-model="salesOrderToPay.paidType">
+                    <Option :value="1">预付</Option>
+                    <Option :value="2">全款</Option>
+                </Select>
+
+                <div class="text-color-gray">收款日期:</div>
+                <DatePicker v-model="salesOrderToPay.paidAt" type="date" placeholder="请选择收款日期"></DatePicker>
             </div>
             <div slot="footer">
                 <Button type="text" size="small" @click="payModal = false">取消</Button>
                 <Button type="primary" size="small" :loading="paying" @click="pay(salesOrderToPay)">收款</Button>
-                <Poptip v-if="canComplete(salesOrderToPay)" confirm transfer title="确定完成关闭订单?" @on-ok="completeSalesOrder(salesOrderToPay)">
+                <!-- <Poptip v-if="canComplete(salesOrderToPay)" confirm transfer title="确定完成关闭订单?" @on-ok="completeSalesOrder(salesOrderToPay)">
                     <Button type="success" size="small" :loading="completing">完成</Button>
-                </Poptip>
+                </Poptip> -->
             </div>
         </Modal>
     </div>
@@ -118,6 +132,7 @@ export default {
                 { key : 'dealAmount', title: '总成交金额', width: 110, resizable: false },
                 { key : 'shouldPayAmount', title: '应收金额', width: 110, resizable: false },
                 { key : 'paidAmount', title: '已收金额', width: 110, resizable: false },
+                { slot: 'paidType', title: '收款类型', width: 110, align: 'center' },
                 { slot: 'paidAt', title: '收款日期', width: 110, align: 'center' },
                 { slot: 'state', title: '状态', width: 100, resizable: true, align: 'center', fixed: 'right' },
                 { key : 'ownerName', title: '负责人', width: 150, resizable: true },
@@ -170,28 +185,36 @@ export default {
         showPay(salesOrder) {
             this.payModal = true;
             this.salesOrderToPay = Utils.clone(salesOrder);
-            this.salesOrderToPay.paidAmountBefore = this.salesOrderToPay.paidAmount; // 本次支付前的已收金额
+            this.salesOrderToPay.paidAmountBefore = salesOrder.paidAmount; // 本次支付前的已收金额
+            this.salesOrderToPay.paidAmount = Math.max(salesOrder.shouldPayAmount - salesOrder.paidAmount, 0);
         },
         // 订单收款
         pay(salesOrder) {
-            // 1. 支付
-            // 2. 判断是否能够显示完成订单按钮
-            // 3. 更新表格中的已收金额和收款日期
+            // 1. 提交支付
+            // 2. 支付成功后更新表格中的已收金额和收款日期、收款状态、订单状态
 
-            // [1] 支付
+            // 确认收款日期
+            if (!salesOrder.paidAt) {
+                this.$Message.error('请选择收款日期');
+                return;
+            }
+
+            // [1] 提交支付
             this.paying = true;
-            SalesOrderDao.pay(salesOrder.salesOrderId, salesOrder.paidAmount).then(() => {
-                // [2] 判断是否能够显示完成订单按钮
-                salesOrder.paidAmountBefore = salesOrder.paidAmount;
-
-                // [3] 更新表格中的已收金额和收款日期
+            SalesOrderDao.pay(salesOrder.salesOrderId, salesOrder.paidAmount, salesOrder.paidType, salesOrder.paidAt).then((state) => {
+                // [2] 支付成功后更新表格中的已收金额和收款日期、收款状态、订单状态
                 const found = this.salesOrders.find(o => o.salesOrderId === salesOrder.salesOrderId);
                 if (found) {
-                    found.paidAmount = salesOrder.paidAmount;
-                    found.paidAt = new Date();
+                    found.paidAmount = salesOrder.paidAmountBefore + salesOrder.paidAmount; // 以前收款金额加上本次收款金额
+                    found.paidAt = salesOrder.paidAt;
+                    found.state = state;
+                    found.paidType = salesOrder.paidType;
                 }
 
                 this.$Message.success('收款成功');
+                this.paying = false;
+                this.payModal = false;
+            }).catch(() => {
                 this.paying = false;
             });
         },
@@ -240,12 +263,12 @@ export default {
 .sales-order-pay-modal {
     .body-wrapper {
         display: grid;
-        grid-template-columns: max-content 1fr;
+        grid-template-columns: max-content 150px;
         grid-gap: 20px 5px;
         align-items: center;
 
         .ivu-input-number {
-            width: 150px;
+            width: 100%;
         }
     }
 

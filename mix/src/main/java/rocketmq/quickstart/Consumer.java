@@ -13,9 +13,10 @@ public class Consumer {
     public static void main(String[] args) throws Exception {
         // Push 模式，broker 有消息后主动发送给 consumer。还要 Pull 模式。
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("c_g1");
-        consumer.setNamesrvAddr("localhost:9876");
+        // consumer.setNamesrvAddr("localhost:9876");
+        consumer.setNamesrvAddr("192.168.1.73:9876");
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
-        consumer.subscribe("t3", "*");
+        consumer.subscribe("TopicTest", "*");
         consumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {

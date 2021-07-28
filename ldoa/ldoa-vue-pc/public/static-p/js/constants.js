@@ -113,6 +113,17 @@ window.SALES_ORDER_STATE = {
     STATE_PAID    : 2,
     STATE_COMPLETE: 3,
 };
+// 收款类型
+window.SALES_PAID_TYPE = {
+    NONE_PAY: 0,
+    PREV_PAY: 1,
+    FULL_PAY: 2,
+};
+window.SALES_PAID_TYPES = [
+    { value: 0, label: '未付' },
+    { value: 1, label: '预付' },
+    { value: 2, label: '全款' },
+];
 
 // 性别
 window.GENDERS = [

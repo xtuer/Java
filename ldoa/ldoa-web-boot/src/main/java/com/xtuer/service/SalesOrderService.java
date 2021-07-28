@@ -176,6 +176,44 @@ public class SalesOrderService extends BaseService {
     }
 
     /**
+     * 订单收款
+     *
+     * @param salesOrderId 销售订单 ID
+     * @param paidAmount   收款金额
+     * @param paidType     收款类型
+     * @param paidAt       收款时间
+     * @return 返回订单的状态
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public int pay(long salesOrderId, double paidAmount, int paidType, Date paidAt) {
+        // 1. 参数验证
+        // 2. 更新订单的收款金额和收款类型
+        // 3. 当收款类型为全款时，销售订单状态为完成
+
+        // [1] 参数验证
+        if (paidType != SalesOrder.PREV_PAY && paidType != SalesOrder.FULL_PAY) {
+            throw new IllegalArgumentException("付款类型错误，只支持预付或者全款");
+        }
+        if (paidAt == null) {
+            throw new IllegalArgumentException("付款日期不能为空");
+        }
+
+        // [2] 更新订单的收款金额和收款类型
+        log.info("[订单收款] 订单 [{}], 收款金额 [{}], 收款类型 [{}], 收款日期 [{}]", salesOrderId, paidAmount, paidType, Utils.formatDate(paidAt));
+        salesOrderMapper.pay(salesOrderId, paidAmount, paidType, paidAt);
+        int state = SalesOrder.STATE_PAID;
+
+        // 3. 当收款类型为全款时，销售订单状态为完成
+        if (paidType == SalesOrder.FULL_PAY) {
+            log.info("[订单收款] 订单完成 [{}]", salesOrderId);
+            salesOrderMapper.completeSalesOrder(salesOrderId);
+            state = SalesOrder.STATE_COMPLETE;
+        }
+
+        return state;
+    }
+
+    /**
      * 完成订单
      *
      * @param salesOrderId 销售订单 ID

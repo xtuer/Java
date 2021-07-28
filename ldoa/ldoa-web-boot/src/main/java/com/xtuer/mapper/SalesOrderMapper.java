@@ -6,6 +6,7 @@ import com.xtuer.bean.sales.SalesOrder;
 import com.xtuer.bean.sales.SalesOrderFilter;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,8 +41,10 @@ public interface SalesOrderMapper {
      *
      * @param orderId    销售订单 ID
      * @param paidAmount 收款金额
+     * @param paidType   收款类型
+     * @param paidAt     收款时间
      */
-    void pay(long orderId, double paidAmount);
+    void pay(long orderId, double paidAmount, int paidType, Date paidAt);
 
     /**
      * 完成订单

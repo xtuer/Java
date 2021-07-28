@@ -62,6 +62,7 @@ CREATE TABLE sales_order (
     paid_amount       double DEFAULT 0 COMMENT '已收金额',
     paid_at           datetime         COMMENT '收款时间',
     state             int    DEFAULT 0 COMMENT '状态: 0 (初始化), 1 (待支付), 2 (已支付), 3 (完成)',
+    paid_type         int    DEFAULT 0 COMMENT '收款类型: 0 (未付), 1 (预付), 2 (全款)',
 
     created_at datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',

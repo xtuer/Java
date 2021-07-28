@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -124,11 +125,16 @@ public class SalesOrderController extends BaseController {
      *
      * @param salesOrderId 销售订单 ID
      * @param paidAmount   收款金额
+     * @param paidType     收款类型
+     * @param paidAt       收款时间
+     * @return payload 为订单的状态
      */
     @PutMapping(Urls.API_SALES_ORDERS_PAYMENTS)
-    public Result<Boolean> pay(@PathVariable long salesOrderId, @RequestParam double paidAmount) {
-        salesOrderMapper.pay(salesOrderId, paidAmount);
-        return Result.ok();
+    public Result<Integer> pay(@PathVariable long   salesOrderId,
+                               @RequestParam double paidAmount,
+                               @RequestParam int    paidType,
+                               @RequestParam Date   paidAt) {
+        return Result.ok(salesOrderService.pay(salesOrderId, paidAmount, paidType, paidAt));
     }
 
     /**

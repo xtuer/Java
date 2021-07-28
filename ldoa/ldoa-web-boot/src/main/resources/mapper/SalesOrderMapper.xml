@@ -7,7 +7,8 @@
     <sql id="salesOrderColumns">
         so.sales_order_id, so.sales_order_sn, so.topic, so.agreement_date, so.delivery_date,
         so.owner_id, so.customer_id, so.customer_contact, so.business, so.work_unit, so.remark, so.produce_order_id,
-        so.deal_amount, so.cost_deal_amount, so.consultation_fee, so.should_pay_amount, so.paid_amount, so.state, so.paid_at
+        so.deal_amount, so.cost_deal_amount, so.consultation_fee,
+        so.should_pay_amount, so.paid_amount, so.paid_at, so.paid_type, so.state
     </sql>
 
     <!-- 查询指定 ID 的销售订单 -->
@@ -73,7 +74,7 @@
     <!-- 订单收款 -->
     <update id="pay">
         UPDATE sales_order
-        SET paid_amount = #{paidAmount}, paid_at = now(), state = 2
+        SET paid_amount = paid_amount + #{paidAmount}, paid_type = #{paidType}, paid_at = #{paidAt}, state = 2
         WHERE sales_order_id = #{orderId}
     </update>
 
