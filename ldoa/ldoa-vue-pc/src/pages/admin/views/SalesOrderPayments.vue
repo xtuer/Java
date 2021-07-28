@@ -92,10 +92,10 @@
             </div>
             <div slot="footer">
                 <Button type="text" size="small" @click="payModal = false">取消</Button>
-                <Button type="primary" size="small" :loading="paying" @click="pay(salesOrderToPay)">收款</Button>
-                <!-- <Poptip v-if="canComplete(salesOrderToPay)" confirm transfer title="确定完成关闭订单?" @on-ok="completeSalesOrder(salesOrderToPay)">
-                    <Button type="success" size="small" :loading="completing">完成</Button>
-                </Poptip> -->
+
+                <Poptip confirm transfer title="确定收款 ?" @on-ok="pay(salesOrderToPay)">
+                    <Button type="primary" size="small" :loading="paying">收款</Button>
+                </Poptip>
             </div>
         </Modal>
     </div>
