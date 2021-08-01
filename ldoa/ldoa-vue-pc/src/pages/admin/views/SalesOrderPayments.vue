@@ -134,7 +134,7 @@ export default {
                 { key : 'paidAmount', title: '已收金额', width: 110, resizable: false },
                 { slot: 'paidType', title: '收款类型', width: 110, align: 'center' },
                 { slot: 'paidAt', title: '收款日期', width: 110, align: 'center' },
-                { slot: 'state', title: '状态', width: 100, resizable: true, align: 'center', fixed: 'right' },
+                { slot: 'state', title: '状态', width: 100, resizable: true, align: 'center', fixed: 'right', className: 'table-state' },
                 { key : 'ownerName', title: '负责人', width: 150, resizable: true },
             ],
             tableName: 'sales-orders-payment-table',

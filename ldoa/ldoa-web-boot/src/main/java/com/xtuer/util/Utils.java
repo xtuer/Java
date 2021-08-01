@@ -366,6 +366,7 @@ public final class Utils {
         try {
             return objectMapper.readValue(json, clazz);
         } catch (JsonProcessingException e) {
+            log.warn(e.getMessage());
             return null;
         }
     }
@@ -379,6 +380,7 @@ public final class Utils {
      */
     public static <T> T fromJson(String json, TypeReference<T> ref) {
         ObjectMapper objectMapper = new ObjectMapper();
+        JacksonHttpMessageConverter.setupObjectMapper(objectMapper);
 
         try {
             return objectMapper.readValue(json, ref);

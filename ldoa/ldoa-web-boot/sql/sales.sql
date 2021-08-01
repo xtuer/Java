@@ -64,6 +64,8 @@ CREATE TABLE sales_order (
     state             int    DEFAULT 0 COMMENT '状态: 0 (初始化), 1 (待支付), 2 (已支付), 3 (完成)',
     paid_type         int    DEFAULT 0 COMMENT '收款类型: 0 (未付), 1 (预付), 2 (全款)',
 
+    produce_order_temp text            COMMENT '暂存使用的临时生产订单',
+
     created_at datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 

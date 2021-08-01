@@ -9,9 +9,7 @@ import com.xtuer.bean.sales.SalesOrder;
 import com.xtuer.bean.sales.SalesOrderFilter;
 import com.xtuer.mapper.SalesOrderMapper;
 import com.xtuer.service.SalesOrderService;
-import com.xtuer.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -103,18 +101,13 @@ public class SalesOrderController extends BaseController {
      * 请求体: 参数 SalesOrder 的属性
      *
      * @param salesOrder 销售订单
-     * @param bindingResult 校验结果
+     * @param saveType   保存类型: 0 (临时保存)、1 (提交生成生产订单)
      * @return payload 为销售订单
      */
     @PutMapping(Urls.API_SALES_ORDERS_BY_ID)
-    public Result<SalesOrder> upsertSalesOrder(@Valid @RequestBody SalesOrder salesOrder, BindingResult bindingResult) {
-        // 如有参数错误，则返回错误信息给客户端
-        if (bindingResult.hasErrors()) {
-            return Result.fail(Utils.getBindingMessage(bindingResult));
-        }
-
+    public Result<SalesOrder> upsertSalesOrder(@Valid @RequestBody SalesOrder salesOrder, int saveType) {
         User salesperson = super.getCurrentUser();
-        return salesOrderService.upsertSalesOrder(salesOrder, salesperson);
+        return salesOrderService.upsertSalesOrder(salesOrder, saveType, salesperson);
     }
 
     /**

@@ -36,6 +36,9 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
         // Data Format
         objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
+        // 忽略未知的属性
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
         // Null value
         objectMapper.setSerializerFactory(objectMapper.getSerializerFactory().withSerializerModifier(new NullValueSerializerModifier()));
     }

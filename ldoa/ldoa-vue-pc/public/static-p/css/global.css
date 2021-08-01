@@ -34,6 +34,9 @@
 .ivu-modal-footer button {
     min-width: 90px;
 }
+.ivu-modal-footer .ivu-poptip {
+    margin-left: 8px;
+}
 
 .ivu-btn-small {
     font-size: 12px !important;
@@ -149,6 +152,9 @@
 /* 表格里按钮列的按钮之间的间隔 */
 .table-action button:not(:first-child) {
     margin-left: 8px;
+}
+.table-state .ivu-tag {
+    margin: 0;
 }
 .table-action .ivu-table-cell-slot {
     display: flex;

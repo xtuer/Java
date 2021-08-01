@@ -10,6 +10,7 @@ import com.xtuer.bean.sales.CustomerFinance;
 import com.xtuer.bean.sales.SalesOrder;
 import com.xtuer.bean.sales.SalesOrderFilter;
 import com.xtuer.bean.sales.SalesOrderForPayment;
+import com.xtuer.exception.ApplicationException;
 import com.xtuer.mapper.AuditMapper;
 import com.xtuer.mapper.SalesOrderMapper;
 import com.xtuer.util.Utils;
@@ -50,7 +51,9 @@ public class SalesOrderService extends BaseService {
      */
     public SalesOrder findSalesOrder(long salesOrderId) {
         // 1. 查询销售订单
-        // 2. 查询生产订单
+        // 2. 获取生产订单
+        //    2.1 暂存状态: 从销售订单的 produceOrderTemp 获取生产订单
+        //    2.2 其他状态: 查询生产订单
 
         // [1] 查询销售订单
         SalesOrder salesOrder = salesOrderMapper.findSalesOrderById(salesOrderId);
@@ -59,8 +62,18 @@ public class SalesOrderService extends BaseService {
             return null;
         }
 
-        // [2] 查询生产订单
-        Order produceOrder = orderService.findOrder(salesOrder.getProduceOrderId());
+        Order produceOrder;
+
+        // [2] 获取生产订单
+        if (salesOrder.getState() == SalesOrder.STATE_INIT) {
+            // [2.1] 暂存状态: 从销售订单的 produceOrderTemp 获取生产订单
+            produceOrder = Utils.fromJson(salesOrder.getProduceOrderTemp(), Order.class);
+            produceOrder = produceOrder != null ? produceOrder : new Order();
+        } else {
+            // [2.2] 其他状态: 查询生产订单
+            produceOrder = orderService.findOrder(salesOrder.getProduceOrderId());
+        }
+
         salesOrder.setProduceOrder(produceOrder);
 
         return salesOrder;
@@ -106,15 +119,17 @@ public class SalesOrderService extends BaseService {
      * 更新或者插入销售订单
      *
      * @param salesOrder 销售订单
+     * @param saveType   保存类型: 0 (临时保存)、1 (提交生成生产订单)
      */
     @Transactional(rollbackFor = Exception.class)
-    public Result<SalesOrder> upsertSalesOrder(SalesOrder salesOrder, User salesperson) {
+    public Result<SalesOrder> upsertSalesOrder(SalesOrder salesOrder, int saveType, User salesperson) {
         // 1. 数据校验
         // 2. 生成 ID 和编号，如果不存在
         // 3. 生成生产订单
-        // 4. 自动通过生产订单的审批
-        // 5. 计算销售订单的单价、咨询费等
-        // 6. 保存销售订单到数据库
+        // 4. 计算销售订单的单价、咨询费等
+        // 5. 保存销售订单到数据库
+        //    5.1 暂存时的保存: 生产订单只是暂存到销售订单的 produceOrderTemp
+        //    5.2 提交时的保存: 生产订单保存到生产订单表，自动通过生产订单的审批
 
         // [2] 生成 ID 和编号，如果不存在
         if (!Utils.isValidId(salesOrder.getSalesOrderId())) {
@@ -133,19 +148,7 @@ public class SalesOrderService extends BaseService {
         produceOrder.setCurrentAuditorId(Const.DEFAULT_PASS_AUDITOR_ID);  // 审批员的 ID
         produceOrder.setRequirement(salesOrder.getRemark());              // 备注
 
-        Result<Order> ret = orderService.upsertOrder(produceOrder, salesperson);
-        if (!ret.isSuccess()) {
-            return Result.fail(ret.getMessage());
-        }
-
-        // 保存更新后同步生产订单到销售订单
-        salesOrder.setProduceOrder(ret.getData());
-        salesOrder.setProduceOrderId(produceOrder.getOrderId());
-
-        // [4] 自动通过生产订单的审批
-        auditService.autoPassAudit(salesOrder.getProduceOrderId(), "销售订单生成的生产订单，自动审批通过");
-
-        // [5] 计算销售订单的咨询费、应收金额、净销售额
+        // [4] 计算销售订单的咨询费、应收金额、净销售额
         double dealAmount = 0;
         double costDealAmount = 0;
         double orderConsultationFee = 0;
@@ -157,10 +160,36 @@ public class SalesOrderService extends BaseService {
         salesOrder.setDealAmount(dealAmount);
         salesOrder.setCostDealAmount(costDealAmount);
         salesOrder.setConsultationFee(orderConsultationFee);
-        salesOrder.setState(SalesOrder.STATE_WAIT_PAY);
 
-        // [6] 保存销售订单到数据库
+        // [5] 保存到数据库
+        String produceOrderTemp = "";
+        if (SalesOrder.SAVE_TEMP == saveType) {
+            // [5.1] 暂存时的保存: 生产订单只是暂存到销售订单的 produceOrderTemp
+            produceOrderTemp = Utils.toJson(salesOrder.getProduceOrder());
+            salesOrder.setState(SalesOrder.STATE_INIT);
+        } else if (SalesOrder.SAVE_SUBMIT == saveType) {
+            // [5.2] 提交时的保存: 生产订单保存到生产订单表，自动通过生产订单的审批
+            // 保存生产订单
+            Result<Order> ret = orderService.upsertOrder(produceOrder, salesperson);
+            if (!ret.isSuccess()) {
+                return Result.fail(ret.getMessage());
+            }
+
+            // 保存更新后同步生产订单到销售订单
+            salesOrder.setProduceOrder(ret.getData());
+            salesOrder.setProduceOrderId(produceOrder.getOrderId());
+            salesOrder.setState(SalesOrder.STATE_WAIT_PAY);
+
+            // 自动通过生产订单的审批
+            auditService.autoPassAudit(salesOrder.getProduceOrderId(), "销售订单生成的生产订单，自动审批通过");
+        } else {
+            throw new ApplicationException("无效的保存类型");
+        }
+
+        // 保存销售订单
         salesOrderMapper.upsertSalesOrder(salesOrder);
+        salesOrderMapper.updateSalesOrderState(salesOrder.getSalesOrderId(), salesOrder.getState());
+        salesOrderMapper.updateProduceOrderTemp(salesOrder.getSalesOrderId(), produceOrderTemp);
 
         return Result.ok(salesOrder);
     }

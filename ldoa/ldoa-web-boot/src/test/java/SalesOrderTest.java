@@ -33,7 +33,7 @@ public class SalesOrderTest {
         order.setWorkUnit("测试执行单位");
         order.setRemark("测试备注");
 
-        orderService.upsertSalesOrder(order, new User());
+        orderService.upsertSalesOrder(order, 0, new User());
     }
 
     @Test

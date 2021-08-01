@@ -13,7 +13,7 @@
 
     <!-- 查询指定 ID 的销售订单 -->
     <select id="findSalesOrderById" resultType="SalesOrder">
-        SELECT <include refid="salesOrderColumns"/>,
+        SELECT <include refid="salesOrderColumns"/>, produce_order_temp,
         user.nickname AS owner_name, c.name AS customer_name
         FROM sales_order so
         LEFT JOIN user ON user.user_id = so.owner_id
@@ -70,6 +70,20 @@
             business = #{business}, work_unit = #{workUnit}, remark = #{remark},
             deal_amount = #{dealAmount}, cost_deal_amount = #{costDealAmount}, consultation_fee = #{consultationFee}, should_pay_amount = #{shouldPayAmount}
     </insert>
+
+    <!-- 更新销售订单的状态 -->
+    <update id="updateSalesOrderState">
+        UPDATE sales_order
+        SET state = #{state}
+        WHERE sales_order_id = #{orderId}
+    </update>
+
+    <!-- 更新销售订单的临时生产订单 -->
+    <update id="updateProduceOrderTemp">
+        UPDATE sales_order
+        SET produce_order_temp = #{produceOrderTemp}
+        WHERE sales_order_id = #{orderId}
+    </update>
 
     <!-- 订单收款 -->
     <update id="pay">

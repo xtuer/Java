@@ -46,6 +46,11 @@
                 {{ salesOrder.deliveryDate | formatDateSimple }}
             </template>
 
+            <!-- 订单状态 -->
+            <template slot-scope="{ row: salesOrder }" slot="state">
+                <Tag :color="salesOrder.state | colorForValue(window.SALES_ORDER_STATES)" type="border">{{ salesOrder.state | labelForValue(window.SALES_ORDER_STATES) }}</Tag>
+            </template>
+
             <!-- 操作按钮 -->
             <template slot-scope="{ row: salesOrder }" slot="action">
                 <a :disabled="!hasPermissionForSalesOrder()" @click="editSalesOrder(salesOrder.salesOrderId)">编辑</a>
@@ -90,6 +95,7 @@ export default {
                 { slot: 'salesOrderSn', title: '订单编号', width: 150, resizable: true },
                 { key : 'customerName', title: '客户', width: 150, resizable: true },
                 { key : 'topic', title: '主题', width: 150, resizable: true },
+                { slot: 'state', title: '状态', width: 100, align: 'center', className: 'table-state' },
                 { key : 'ownerName', title: '负责人', width: 150, resizable: true },
                 { key : 'business', title: '行业', width: 150, resizable: true },
                 { key : 'workUnit', title: '执行单位', width: 150, resizable: true },
@@ -101,7 +107,7 @@ export default {
                 { key : 'dealAmount', title: '总成交金额', width: 120 },
                 { key : 'shouldPayAmount', title: '应收金额', width: 120 },
                 { key : 'remark', title: '备注', minWidth: 250 },
-                { slot: 'action', title: '操作', width: 110, align: 'center', className: 'table-action' },
+                { slot: 'action', title: '操作', width: 110, align: 'center', className: 'table-action', fixed: 'right' },
             ],
             salesOrderId  : '0',
             salesOrderEdit: false,

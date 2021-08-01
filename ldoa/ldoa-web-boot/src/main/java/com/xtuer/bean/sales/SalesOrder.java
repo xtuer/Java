@@ -1,12 +1,14 @@
 package com.xtuer.bean.sales;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.xtuer.bean.order.Order;
 import com.xtuer.util.Utils;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -15,6 +17,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
+@JsonIgnoreProperties({"produceOrderTemp"})
 public class SalesOrder {
     public static final int STATE_INIT     = 0;
     public static final int STATE_WAIT_PAY = 1;
@@ -23,6 +26,9 @@ public class SalesOrder {
     public static final int NONE_PAY = 0; // 未付
     public static final int PREV_PAY = 1; // 预付
     public static final int FULL_PAY = 2; // 全款
+
+    public static final int SAVE_TEMP   = 0; // 暂存
+    public static final int SAVE_SUBMIT = 1; // 提交
 
     /**
      * 状态值与对应的 Label: 数组的下标为状态值，对应的数组元素值为状态的 Label
@@ -43,7 +49,7 @@ public class SalesOrder {
     /**
      * 主题
      */
-    @NotNull(message = "主题不能为空")
+    @NotEmpty(message = "主题不能为空")
     @Excel(name = "主题", width = 20, orderNum = "3")
     private String topic;
 
@@ -158,6 +164,11 @@ public class SalesOrder {
      * 生产订单
      */
     private Order produceOrder = new Order();
+
+    /**
+     * 暂存使用的临时生产订单
+     */
+    private String produceOrderTemp;
 
     /**
      * 状态: 0 (初始化), 1 (待支付), 2 (已支付), 3 (完成)

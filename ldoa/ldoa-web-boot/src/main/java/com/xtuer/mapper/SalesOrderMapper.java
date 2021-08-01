@@ -37,6 +37,22 @@ public interface SalesOrderMapper {
     void upsertSalesOrder(SalesOrder order);
 
     /**
+     * 更新销售订单的状态
+     *
+     * @param orderId 销售订单 ID
+     * @param state   状态
+     */
+    void updateSalesOrderState(long orderId, int state);
+
+    /**
+     * 更新销售订单的临时生产订单
+     *
+     * @param orderId 销售订单 ID
+     * @param produceOrderTemp 临时生产订单
+     */
+    void updateProduceOrderTemp(long orderId, String produceOrderTemp);
+
+    /**
      * 订单收款
      *
      * @param orderId    销售订单 ID

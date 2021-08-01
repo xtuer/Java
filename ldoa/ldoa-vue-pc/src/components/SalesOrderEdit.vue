@@ -123,7 +123,12 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
         <!-- 底部工具栏 -->
         <div slot="footer">
             <Button type="text" @click="showEvent(false)">取消</Button>
-            <Button type="primary" :loading="saving" @click="saveSalesOrder">确定</Button>
+            <Button type="success" :loading="saving" @click="saveSalesOrder(0)">保存</Button>
+
+            <Poptip confirm transfer title="确定提交订单 ?" @on-ok="saveSalesOrder(1)">
+                <Button type="primary" :loading="saving">提交</Button>
+            </Poptip>
+
         </div>
 
         <!-- 用户选择弹窗 -->
@@ -263,7 +268,8 @@ export default {
             this.calculatePayment();
         },
         // 保存销售订单
-        saveSalesOrder() {
+        // saveType: 保存类型, 0 (临时保存)、1 (提交生成生产订单)
+        saveSalesOrder(saveType) {
             // 表单验证
             this.$refs.salesOrderForm.validate(valid => {
                 // 1. 使用规则校验
@@ -298,7 +304,7 @@ export default {
 
                 // [5] 提交到服务器，成功则关闭弹窗
                 this.saving = true;
-                SalesOrderDao.upsertSalesOrder(salesOrder).then(modifiedSalesOrder => {
+                SalesOrderDao.upsertSalesOrder(salesOrder, saveType).then(modifiedSalesOrder => {
                     this.$emit('on-ok', modifiedSalesOrder);
                     this.showEvent(false); // 关闭弹窗
                     this.saving = false;

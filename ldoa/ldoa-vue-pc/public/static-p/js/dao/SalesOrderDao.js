@@ -93,11 +93,12 @@ export default class SalesOrderDao {
      * 请求体: 参数 SalesOrder 的属性
      *
      * @param {JSON} salesOrder 销售订单
+     * @param {Int}  saveType   保存类型: 0 (临时保存)、1 (提交生成生产订单)
      * @return {Promise} 返回 Promise 对象，resolve 的参数为销售订单，reject 的参数为错误信息
      */
-    static upsertSalesOrder(salesOrder) {
+    static upsertSalesOrder(salesOrder, saveType) {
         return Rest.update(
-            Urls.API_SALES_ORDERS_BY_ID,
+            Urls.API_SALES_ORDERS_BY_ID + '?saveType=' + saveType,
             { params: { salesOrderId: salesOrder.salesOrderId }, data: salesOrder, json: true }
         ).then(({ data: newOrder, success, message }) => {
             return Utils.response(newOrder, success, message);
