@@ -39,6 +39,7 @@ export default class SalesOrderDao {
      *      paidAtEnd      [可选]: 结束支付时间: 搜索类型为 2 或者 3 时使用
      *      agreementStart [可选]: 开始签约时间: 搜索类型非 2 或者 3 时使用
      *      agreementEnd   [可选]: 结束签约时间: 搜索类型非 2 或者 3 时使用
+     *      salesPersonId  [可选]: 销售员 ID: 不为 0 时只查询此销售员的销售订单，否则查询所有销售订单
      *      pageNumber     [可选]: 页码
      *      pageSize       [可选]: 数量
      *

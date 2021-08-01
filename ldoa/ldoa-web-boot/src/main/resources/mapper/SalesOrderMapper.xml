@@ -50,6 +50,9 @@
             <if test="filter.agreementStart != null and filter.agreementEnd != null">
                 AND (so.agreement_date BETWEEN #{filter.agreementStart} AND #{filter.agreementEnd})
             </if>
+            <if test="filter.salesPersonId > 0">
+                AND so.sales_person_id = #{filter.salesPersonId}
+            </if>
         </where>
         ORDER BY so.sales_order_sn DESC, so.created_at DESC
         LIMIT ${page.offset}, ${page.count}

@@ -141,6 +141,13 @@ export default {
             //     this.filter.endAt   = '';
             // }
 
+            // 如果是销售则只查询他创建的销售订单，管理员和财务查询所有的销售订单
+            if (this.$store.getters.roles.includes('ROLE_SALE_SALESPERSON')) {
+                this.filter.salesPersonId = this.$store.getters.currentUserId;
+            } else {
+                this.filter.salesPersonId = 0;
+            }
+
             this.fetchMoreSalesOrders();
         },
         // 点击更多按钮加载下一页的销售订单

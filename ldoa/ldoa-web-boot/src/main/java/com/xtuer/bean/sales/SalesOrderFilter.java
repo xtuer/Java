@@ -60,4 +60,9 @@ public class SalesOrderFilter {
      * 搜索类型: 0 (所有订单)、1 (应收款订单)、2 (本月已收款订单)、3 (本年已收款订单)
      */
     private int searchType;
+
+    /**
+     * 销售员 ID
+     */
+    private long salesPersonId;
 }

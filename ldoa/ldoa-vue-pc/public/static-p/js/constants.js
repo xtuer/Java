@@ -61,10 +61,10 @@ window.PERMISSIONS = {
     stockIn: ['ROLE_PRODUCE_QUALITY', 'ROLE_PRODUCE_SCHEDULE'],
 
     // 销售订单的权限
-    salesOrder: ['ROLE_SALE_SALESPERSON', 'ROLE_ADMIN_SYSTEM'], // TODO: delete admin
+    salesOrder: ['ROLE_SALE_SALESPERSON'],
 
     // 财务的权限
-    finance: ['ROLE_FINANCE', 'ROLE_ADMIN_SYSTEM'], // TODO: delete admin
+    finance: ['ROLE_FINANCE'],
 };
 
 // 审批类型
