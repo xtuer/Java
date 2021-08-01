@@ -53,6 +53,14 @@ public interface SalesOrderMapper {
     void updateProduceOrderTemp(long orderId, String produceOrderTemp);
 
     /**
+     * 查询销售订单保存的临时生产订单
+     *
+     * @param orderId 销售订单 ID
+     * @return 返回临时生产订单的字符串
+     */
+    String findProduceOrderTempByOrderId(long orderId);
+
+    /**
      * 订单收款
      *
      * @param orderId    销售订单 ID

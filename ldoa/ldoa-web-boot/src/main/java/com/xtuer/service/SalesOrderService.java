@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 销售订单的服务
@@ -52,7 +53,7 @@ public class SalesOrderService extends BaseService {
     public SalesOrder findSalesOrder(long salesOrderId) {
         // 1. 查询销售订单
         // 2. 获取生产订单
-        //    2.1 暂存状态: 从销售订单的 produceOrderTemp 获取生产订单
+        //    2.1 暂存状态: 查询临时的生产订单
         //    2.2 其他状态: 查询生产订单
 
         // [1] 查询销售订单
@@ -66,9 +67,10 @@ public class SalesOrderService extends BaseService {
 
         // [2] 获取生产订单
         if (salesOrder.getState() == SalesOrder.STATE_INIT) {
-            // [2.1] 暂存状态: 从销售订单的 produceOrderTemp 获取生产订单
-            produceOrder = Utils.fromJson(salesOrder.getProduceOrderTemp(), Order.class);
-            produceOrder = produceOrder != null ? produceOrder : new Order();
+            // [2.1] 暂存状态: 查询临时的生产订单
+            String produceOrderTemp = salesOrderMapper.findProduceOrderTempByOrderId(salesOrder.getSalesOrderId());
+            produceOrder = Utils.fromJson(produceOrderTemp, Order.class);
+            produceOrder = Optional.ofNullable(produceOrder).orElse(new Order());
         } else {
             // [2.2] 其他状态: 查询生产订单
             produceOrder = orderService.findOrder(salesOrder.getProduceOrderId());
@@ -160,6 +162,7 @@ public class SalesOrderService extends BaseService {
         salesOrder.setDealAmount(dealAmount);
         salesOrder.setCostDealAmount(costDealAmount);
         salesOrder.setConsultationFee(orderConsultationFee);
+        salesOrder.setSalesPersonId(salesperson.getUserId());
 
         // [5] 保存到数据库
         String produceOrderTemp = "";
@@ -176,7 +179,8 @@ public class SalesOrderService extends BaseService {
             }
 
             // 保存更新后同步生产订单到销售订单
-            salesOrder.setProduceOrder(ret.getData());
+            produceOrder = ret.getData();
+            salesOrder.setProduceOrder(produceOrder);
             salesOrder.setProduceOrderId(produceOrder.getOrderId());
             salesOrder.setState(SalesOrder.STATE_WAIT_PAY);
 

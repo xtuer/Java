@@ -1,7 +1,6 @@
 package com.xtuer.bean.sales;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.xtuer.bean.order.Order;
 import com.xtuer.util.Utils;
 import lombok.Getter;
@@ -17,7 +16,6 @@ import java.util.Date;
  */
 @Getter
 @Setter
-@JsonIgnoreProperties({"produceOrderTemp"})
 public class SalesOrder {
     public static final int STATE_INIT     = 0;
     public static final int STATE_WAIT_PAY = 1;
@@ -78,6 +76,11 @@ public class SalesOrder {
      */
     @Min(value = 1, message = "请选择负责人")
     private long ownerId;
+
+    /**
+     * 销售员 ID
+     */
+    private long salesPersonId;
 
     /**
      * 客户 ID
@@ -164,11 +167,6 @@ public class SalesOrder {
      * 生产订单
      */
     private Order produceOrder = new Order();
-
-    /**
-     * 暂存使用的临时生产订单
-     */
-    private String produceOrderTemp;
 
     /**
      * 状态: 0 (初始化), 1 (待支付), 2 (已支付), 3 (完成)

@@ -53,8 +53,8 @@
 
             <!-- 操作按钮 -->
             <template slot-scope="{ row: salesOrder }" slot="action">
-                <a :disabled="!hasPermissionForSalesOrder()" @click="editSalesOrder(salesOrder.salesOrderId)">编辑</a>
-                <a :disabled="!hasPermissionForSalesOrder()" class="delete">删除</a>
+                <a :disabled="!canEdit(salesOrder)" @click="editSalesOrder(salesOrder.salesOrderId)">编辑</a>
+                <a :disabled="!canDelete(salesOrder)" class="delete">删除</a>
             </template>
         </Table>
 
@@ -192,6 +192,34 @@ export default {
                 pageSize    : 50,
                 pageNumber  : 1,
             };
+        },
+        // 判断销售订单是否可编辑
+        canEdit(salesOrder) {
+            // 可编辑的逻辑:
+            // 1. 有销售权限
+            // 2. 新建或者暂存状态
+            // 3. 是自己创建的订单
+
+            // [1] 有销售权限
+            if (!this.hasPermissionForSalesOrder()) {
+                return false;
+            }
+
+            // [2] 新建或者暂存状态
+            if (salesOrder.state !== 0) {
+                return false;
+            }
+
+            // [3] 是自己创建的订单
+            if (salesOrder.salesPersonId !== this.$store.getters.currentUserId) {
+                return false;
+            }
+
+            return true;
+        },
+        // 判断销售订单是否可删除
+        canDelete(salesOrder) {
+            return this.canEdit(salesOrder);
         },
     }
 };
