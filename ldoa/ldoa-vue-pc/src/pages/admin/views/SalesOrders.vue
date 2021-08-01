@@ -54,7 +54,7 @@
             <!-- 操作按钮 -->
             <template slot-scope="{ row: salesOrder }" slot="action">
                 <a :disabled="!canEdit(salesOrder)" @click="editSalesOrder(salesOrder.salesOrderId)">编辑</a>
-                <a :disabled="!canDelete(salesOrder)" class="delete">删除</a>
+                <a :disabled="!canDelete(salesOrder)" class="delete" @click="deleteSalesOrder(salesOrder)">删除</a>
             </template>
         </Table>
 
@@ -170,6 +170,25 @@ export default {
             } else {
                 this.salesOrders.insert(0, salesOrder);
             }
+        },
+        // 删除销售订单
+        deleteSalesOrder(salesOrder) {
+            // 1. 删除提示
+            // 2. 从服务器删除成功后才从本地删除
+            // 3. 提示删除成功
+
+            this.$Modal.confirm({
+                title: `确定删除销售订单 <font color="red">${salesOrder.salesOrderSn}</font> 吗?`,
+                loading: true,
+                onOk: () => {
+                    SalesOrderDao.deleteSalesOrder(salesOrder.salesOrderId).then(() => {
+                        const index = this.salesOrders.findIndex(o => o.salesOrderId === salesOrder.salesOrderId);
+                        this.salesOrders.splice(index, 1); // [2] 从服务器删除成功后才从本地删除
+                        this.$Modal.remove();
+                        this.$Message.success('删除成功');
+                    });
+                }
+            });
         },
         // 显示销售订单详情
         showSalesOrderDetails(salesOrder) {

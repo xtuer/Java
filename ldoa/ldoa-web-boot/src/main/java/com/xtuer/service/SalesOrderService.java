@@ -274,6 +274,34 @@ public class SalesOrderService extends BaseService {
     }
 
     /**
+     * 删除销售订单
+     *
+     * @param orderId 销售订单 ID
+     */
+    public void deleteSalesOrder(long orderId) {
+        // 1. 查询销售订单
+        // 2. 检查销售订单的状态，如果为非初始化状态则不允许删除 (即创建了生产订单，进入支付状态了)
+        // 3. 删除订单
+
+        // [1] 查询销售订单
+        SalesOrder order = salesOrderMapper.findSalesOrderById(orderId);
+
+        if (order == null) {
+            throw new ApplicationException("订单不存在");
+        }
+
+        // [2] 检查销售订单的状态，如果为非初始化状态则不允许删除 (即创建了生产订单，进入支付状态了)
+        if (order.getState() != SalesOrder.STATE_INIT) {
+            String msg = String.format("订单 %s 的状态为 %s，不允许删除", order.getSalesOrderSn(), order.getStateLabel());
+            throw new ApplicationException(msg);
+        }
+
+        // [3] 删除订单
+        log.info("[删除订单] 订单 [{}] 被删除", order.getSalesOrderSn());
+        salesOrderMapper.deleteSalesOrderById(orderId);
+    }
+
+    /**
      * 查询客户的财务信息: 累计订单金额、累计应收款、累计已收款
      *
      * @param customerId 客户 ID

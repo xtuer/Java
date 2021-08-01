@@ -51,7 +51,7 @@
                 AND (so.agreement_date BETWEEN #{filter.agreementStart} AND #{filter.agreementEnd})
             </if>
         </where>
-        ORDER BY so.agreement_date DESC, so.created_at DESC
+        ORDER BY so.sales_order_sn DESC, so.created_at DESC
         LIMIT ${page.offset}, ${page.count}
     </select>
 
@@ -91,6 +91,11 @@
         FROM sales_order
         WHERE sales_order_id = #{orderId}
     </select>
+
+    <!-- 删除销售订单 -->
+    <delete id="deleteSalesOrderById">
+        DELETE FROM sales_order WHERE sales_order_id = #{orderId}
+    </delete>
 
     <!-- 订单收款 -->
     <update id="pay">

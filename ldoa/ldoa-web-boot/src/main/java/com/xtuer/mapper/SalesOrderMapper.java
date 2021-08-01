@@ -61,6 +61,13 @@ public interface SalesOrderMapper {
     String findProduceOrderTempByOrderId(long orderId);
 
     /**
+     * 删除销售订单
+     *
+     * @param orderId 销售订单 ID
+     */
+    void deleteSalesOrderById(long orderId);
+
+    /**
      * 订单收款
      *
      * @param orderId    销售订单 ID

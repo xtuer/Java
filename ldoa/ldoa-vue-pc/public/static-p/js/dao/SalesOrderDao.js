@@ -106,6 +106,20 @@ export default class SalesOrderDao {
     }
 
     /**
+     * 删除销售订单
+     *
+     * 网址: http://localhost:8080/api/sales/salesOrders/{salesOrderId}
+     * 参数: 无
+     *
+     * @param {Long} salesOrderId 销售订单 ID
+     */
+    static deleteSalesOrder(salesOrderId) {
+        return Rest.del(Urls.API_SALES_ORDERS_BY_ID, { params: { salesOrderId } }).then(({ success, message }) => {
+            return Utils.response(null, success, message);
+        });
+    }
+
+    /**
      * 订单收款
      *
      * 网址: http://localhost:8080/api/sales/salesOrders/{salesOrderId}/payments

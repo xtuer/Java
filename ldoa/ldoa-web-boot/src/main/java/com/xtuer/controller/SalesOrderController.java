@@ -156,4 +156,18 @@ public class SalesOrderController extends BaseController {
     public Result<CustomerFinance> findCustomerFinance(@PathVariable long customerId) {
         return Result.ok(salesOrderService.findCustomerFinance(customerId));
     }
+
+    /**
+     * 删除销售订单
+     *
+     * 网址: http://localhost:8080/api/sales/salesOrders/{salesOrderId}
+     * 参数: 无
+     *
+     * @param salesOrderId 销售订单 ID
+     */
+    @DeleteMapping(Urls.API_SALES_ORDERS_BY_ID)
+    public Result<Boolean> deleteSalesOrder(@PathVariable long salesOrderId) {
+        salesOrderService.deleteSalesOrder(salesOrderId);
+        return Result.ok();
+    }
 }
