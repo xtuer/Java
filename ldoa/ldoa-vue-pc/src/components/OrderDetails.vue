@@ -44,8 +44,9 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
             <tr>
                 <td colspan="5">
                     <div style="display: grid; grid-template-columns: max-content max-content 1fr; grid-gap: 60px">
-                        <div>订单日期: {{ order.orderDate | formatDate }}</div>
-                        <div>交货日期: {{ order.deliveryDate | formatDate }}</div>
+                        <div>订单日期: {{ order.orderDate | formatDateSimple }}</div>
+                        <div>交货日期: {{ order.deliveryDate | formatDateSimple }}</div>
+                        <div v-if="order.type === 1">归还日期: {{ order.returnDate | formatDateSimple }}</div>
                     </div>
                 </td>
             </tr>
@@ -69,15 +70,23 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
                 <td colspan="5" class="text-color-gray text-align-center">无</td>
             </tr>
 
-            <!-- 校准 -->
+            <!-- 其他要求 -->
             <tr>
                 <td colspan="5">
                     <div>
-                        <span class="text-color-gray">是否校准:</span>
-                        {{ order.calibrated ? '是' : '否' }}
+                        <span class="text-color-gray margin-right-5">订货附件及其他要求:</span>
+                        {{ order.requirement || '无' }}
                     </div>
-                    <div class="margin-top-20">
-                        <template v-if="order.calibrationInfo">
+
+                    <div class="margin-top-10">
+                        <span class="text-color-gray margin-right-5">订单附件:</span>
+                        <a v-if="attachment.id !== '0'" :href="attachment.url">{{ attachment.filename }}</a>
+                        <span v-else>无</span>
+                    </div>
+
+                    <!-- 校准 -->
+                    <div class="margin-top-10">
+                        <template v-if="order.calibrated">
                             <span class="text-color-gray">校准信息:</span>
                             <pre style="margin: 0 20px">{{ order.calibrationInfo }}</pre>
                         </template>
@@ -85,25 +94,9 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
                             <span class="text-color-gray">校准信息:</span> 无
                         </template>
                     </div>
-                </td>
-            </tr>
 
-            <!-- 其他要求 -->
-            <tr>
-                <td colspan="5">
-                    <div>
-                        <span class="text-color-gray">其他要求:</span>
-                        {{ order.requirement || '无' }}
-                    </div>
-
-                    <div class="margin-top-20">
-                        <span class="text-color-gray">订单附件:</span>
-                        <a v-if="attachment.id !== '0'" :href="attachment.url">{{ attachment.filename }}</a>
-                        <span v-else>无</span>
-                    </div>
-
-                    <div class="margin-top-20">
-                        <span class="text-color-gray">销售人员:</span>
+                    <div class="margin-top-10">
+                        <span class="text-color-gray margin-right-5">销售人员:</span>
                         {{ salesperson }} / {{ order.createdAt | formatDate }}
                     </div>
                 </td>

@@ -83,6 +83,11 @@ public class Order {
     private Date deliveryDate;
 
     /**
+     * 归还日期
+     */
+    private Date returnDate;
+
+    /**
      * 销售员 ID
      */
     private long salespersonId;

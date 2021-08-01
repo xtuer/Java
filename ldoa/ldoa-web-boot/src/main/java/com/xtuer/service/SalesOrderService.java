@@ -143,8 +143,6 @@ public class SalesOrderService extends BaseService {
         Order produceOrder = salesOrder.getProduceOrder();
         produceOrder.setCustomerCompany(salesOrder.getWorkUnit());        // 客户单位
         produceOrder.setCustomerContact(salesOrder.getCustomerContact()); // 客户联系人
-        produceOrder.setCustomerAddress("---");                           // 客户收件地址
-        produceOrder.setType(0);                                          // 订单类型: 生产订单
         produceOrder.setOrderDate(salesOrder.getAgreementDate());         // 订单日期
         produceOrder.setDeliveryDate(salesOrder.getDeliveryDate());       // 要求交货日期
         produceOrder.setCurrentAuditorId(Const.DEFAULT_PASS_AUDITOR_ID);  // 审批员的 ID

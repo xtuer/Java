@@ -6,7 +6,7 @@
     <!-- 订单全部的列 -->
     <sql id="orderFullColumns">
         o.order_id, o.order_sn, o.type, o.customer_company, o.customer_contact, o.customer_address,
-        o.order_date, o.delivery_date, o.salesperson_id, o.calibrated, o.calibration_info,
+        o.order_date, o.delivery_date, o.return_date, o.salesperson_id, o.calibrated, o.calibration_info,
         o.requirement, o.state, o.attachment_id, o.product_codes, o.product_names, o.created_at,
 
         oi.order_item_id, oi.count, oi.comment, oi.price, oi.cost_price, oi.consultation_fee,
@@ -62,17 +62,17 @@
     <!-- 插入或者更新订单 -->
     <update id="upsertOrder">
         INSERT INTO `order` (order_id, order_sn, type, customer_company, customer_contact, customer_address,
-            order_date, delivery_date, salesperson_id, calibrated, calibration_info,
+            order_date, delivery_date, return_date, salesperson_id, calibrated, calibration_info,
             requirement, attachment_id, product_codes, product_names, state)
         VALUES (#{orderId}, #{orderSn}, #{type}, #{customerCompany}, #{customerContact}, #{customerAddress},
-            #{orderDate}, #{deliveryDate}, #{salespersonId}, #{calibrated}, #{calibrationInfo},
+            #{orderDate}, #{deliveryDate}, #{returnDate}, #{salespersonId}, #{calibrated}, #{calibrationInfo},
             #{requirement}, #{attachmentId}, #{productCodes}, #{productNames}, #{state})
 
         ON DUPLICATE KEY
-        UPDATE customer_company = #{customerCompany}, customer_contact = #{customerContact}, customer_address = #{customerAddress},
-            order_date = #{orderDate}, delivery_date = #{deliveryDate}, calibrated = #{calibrated},
+        UPDATE type = #{type}, customer_company = #{customerCompany}, customer_contact = #{customerContact}, customer_address = #{customerAddress},
+            order_date = #{orderDate}, delivery_date = #{deliveryDate}, return_date = #{returnDate}, calibrated = #{calibrated},
             calibration_info = #{calibrationInfo}, requirement = #{requirement},
-            attachment_id = #{attachmentId}, product_codes = #{productCodes}, product_names = #{productNames}, type = #{type}
+            attachment_id = #{attachmentId}, product_codes = #{productCodes}, product_names = #{productNames}
     </update>
 
     <!-- 插入订单项 -->
@@ -107,6 +107,7 @@
         <result property="customerAddress" column="customer_address"/>
         <result property="orderDate"       column="order_date"/>
         <result property="deliveryDate"    column="delivery_date"/>
+        <result property="returnDate"      column="return_date"/>
         <result property="salespersonId"   column="salesperson_id"/>
         <result property="calibrated"      column="calibrated"/>
         <result property="calibrationInfo" column="calibration_info"/>

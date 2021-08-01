@@ -13,38 +13,76 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
 -->
 
 <template>
-    <Modal :value="visible" :title="title" width="666" class="sales-order-details-modal relative" @on-visible-change="showEvent">
+    <Modal :value="visible" :title="title" width="900" class="sales-order-details-modal relative"
+        :styles="{ top: '20px', marginBottom: '40px' }" @on-visible-change="showEvent">
         <Spin v-if="loading" fix size="large"></Spin>
 
         <div class="box">
             <div class="title">基本信息</div>
-            <div class="content base-info padding-10">
-                <div class="text-align-right text-color-gray">客户:</div>
-                <div>{{ salesOrder.customerName }}</div>
+            <div class="content base-info">
+                <table class="sales-order-table">
+                    <tr>
+                        <td class="text-color-gray">客户:</td>
+                        <td>{{ salesOrder.customerName }}</td>
+                        <td class="text-color-gray">主题:</td>
+                        <td>{{ salesOrder.topic }}</td>
+                        <td class="text-color-gray">联系人:</td>
+                        <td>{{ salesOrder.customerContact }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-color-gray">行业:</td>
+                        <td>{{ salesOrder.business }}</td>
+                        <td class="text-color-gray">执行单位:</td>
+                        <td>{{ salesOrder.workUnit }}</td>
+                        <td class="text-color-gray">负责人:</td>
+                        <td>{{ salesOrder.ownerName }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-color-gray">收件地址:</td>
+                        <td colspan="3">{{ salesOrder.produceOrder.customerAddress }}</td>
+                        <td class="text-color-gray">订单类型:</td>
+                        <td>{{ salesOrder.produceOrder.type | labelForValue(window.ORDER_TYPES) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-color-gray">签约日期:</td>
+                        <td>{{ salesOrder.produceOrder.orderDate | formatDateSimple }}</td>
+                        <td class="text-color-gray">交货日期:</td>
+                        <td>{{ salesOrder.produceOrder.deliveryDate | formatDateSimple }}</td>
+                        <td class="text-color-gray">
+                            <template v-if="salesOrder.produceOrder.type === 1">归还日期</template>
+                        </td>
+                        <td>
+                            <template v-if="salesOrder.produceOrder.type === 1">{{ salesOrder.produceOrder.returnDate | formatDateSimple }}</template>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="text-align: left">
+                            <div>
+                                <span class="text-color-gray">订货附件及其他要求:</span>
+                                {{ salesOrder.produceOrder.requirement || '无' }}
+                            </div>
 
-                <div class="text-align-right text-color-gray">主题:</div>
-                <div>{{ salesOrder.topic }}</div>
+                            <div class="margin-top-10">
+                                <span class="text-color-gray margin-right-5">订单附件:</span>
+                                <a v-if="salesOrder.produceOrder.attachment && salesOrder.produceOrder.attachment.id !== '0'"
+                                    :href="salesOrder.produceOrder.attachment.url">
+                                    {{ salesOrder.produceOrder.attachment.filename }}
+                                </a>
+                                <span v-else>无</span>
+                            </div>
 
-                <div class="text-align-right text-color-gray">行业:</div>
-                <div>{{ salesOrder.business }}</div>
-
-                <div class="text-align-right text-color-gray">执行单位:</div>
-                <div>{{ salesOrder.workUnit }}</div>
-
-                <div class="text-align-right text-color-gray">联系人:</div>
-                <div>{{ salesOrder.customerContact }}</div>
-
-                <div class="text-align-right text-color-gray">负责人:</div>
-                <div>{{ salesOrder.ownerName }}</div>
-
-                <div class="text-align-right text-color-gray">签约日期:</div>
-                <div>{{ salesOrder.agreementDate | formatDateSimple }}</div>
-
-                <div class="text-align-right text-color-gray">交货日期:</div>
-                <div>{{ salesOrder.deliveryDate | formatDateSimple }}</div>
-
-                <div class="text-align-right text-color-gray">备注:</div>
-                <div style="grid-column: span 3">{{ salesOrder.remark }}</div>
+                            <div class="margin-top-10">
+                                <template v-if="salesOrder.produceOrder.calibrated">
+                                    <span class="text-color-gray margin-right-5">校准信息:</span>
+                                    <pre style="margin: 0 20px">{{ salesOrder.produceOrder.calibrationInfo }}</pre>
+                                </template>
+                                <template v-else>
+                                    <span class="text-color-gray margin-right-5">校准信息:</span> 无
+                                </template>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
 
@@ -176,9 +214,11 @@ export default {
 <style lang="scss">
 .sales-order-details-modal {
     .base-info {
-        display: grid;
+        // display: grid;
         grid-template-columns: max-content 1fr max-content 1fr;
         grid-gap: 10px 5px;
+        width: 100%;
+        padding: 10px 0;
     }
 
     .payment-info {
@@ -189,6 +229,30 @@ export default {
         margin-top: 10px;
         margin-left: 10px;
         margin-bottom: 10px;
+    }
+
+    .sales-order-table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: fixed;
+
+        td:nth-child(1), td:nth-child(3), td:nth-child(5) {
+            width: 100px;
+            text-align: right;
+        }
+
+        td {
+            border: 1px solid $borderColor;
+            padding: 8px 12px;
+
+            &.center {
+                text-align: center;
+            }
+        }
+
+        .audit-item .ivu-input-group {
+            border-collapse: collapse;
+        }
     }
 }
 </style>

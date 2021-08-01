@@ -15,7 +15,7 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
 
 <template>
     <Modal :value="visible" :title="title" :mask-closable="false" class="sales-order-edit-modal relative"
-        :width="900" :styles="{ top: '40px', marginBottom: '80px' }"
+        :width="900" :styles="{ top: '20px', marginBottom: '40px' }"
         @on-visible-change="showEvent">
         <!-- 弹窗 Body -->
         <Spin v-if="loading" fix size="large"></Spin>
@@ -23,7 +23,7 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
         <div class="box">
             <div class="title">基本信息</div>
             <div class="content padding-left-0 padding-bottom-0">
-                <Form ref="salesOrderForm" :model="salesOrder" :rules="salesOrderRules" :key="salesOrder.salesOrderId" :label-width="90" class="column-3">
+                <Form ref="salesOrderForm" :model="salesOrder" :rules="salesOrderRules" :key="salesOrder.salesOrderId" :label-width="100" class="column-3">
                     <FormItem label="主题:" prop="topic">
                         <Input v-model="salesOrder.topic" placeholder="请输入主题"/>
                     </FormItem>
@@ -44,14 +44,46 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
                     <FormItem label="负责人:" prop="ownerName">
                         <Input v-model="salesOrder.ownerName" readonly search placeholder="请选择负责人" @on-search="userSelect = true"/>
                     </FormItem>
+                    <FormItem label="收件地址:" prop="customerAddress" style="grid-column: span 2">
+                        <Input v-model="salesOrder.produceOrder.customerAddress" clearable placeholder="请输入客户收件地址"/>
+                    </FormItem>
+                    <FormItem label="订单类型:" style="width: 300px">
+                        <Select v-model="salesOrder.produceOrder.type">
+                            <Option :value="0">生产订单</Option>
+                            <Option :value="1">样品订单</Option>
+                        </Select>
+                    </FormItem>
+
                     <FormItem label="签约日期:" prop="agreementDate">
                         <DatePicker v-model="salesOrder.agreementDate" type="date" placeholder="请选择签约日期" style="width: 100%"/>
                     </FormItem>
                     <FormItem label="交货日期:" prop="deliveryDate">
                         <DatePicker v-model="salesOrder.deliveryDate" type="date" placeholder="请选择交货日期" style="width: 100%"/>
                     </FormItem>
-                    <FormItem label="备注:" prop="remark" style="grid-column: 1 / span 2">
-                        <Input v-model="salesOrder.remark" type="textarea" placeholder="请输入备注"/>
+                    <FormItem v-if="salesOrder.produceOrder.type === 1" label="归还日期:" prop="returnDate">
+                        <DatePicker v-model="salesOrder.produceOrder.returnDate" type="date" placeholder="请选择规划日期"></DatePicker>
+                    </FormItem>
+                    <FormItem prop="remark" style="grid-column: 1 / span 2">
+                        <div slot="label">
+                            <div class="margin-bottom-5">订货附件&nbsp;</div>
+                            <div>及其他要求:</div>
+                        </div>
+                        <Input v-model="salesOrder.remark" type="textarea" placeholder="请输入订货附件及其他要求"/>
+                    </FormItem>
+                    <FormItem label="订单附件:">
+                        <a v-if="salesOrder.produceOrder.attachment.id" style="margin-right: 10px">{{ salesOrder.produceOrder.attachment.filename }}</a>
+                        <FileUpload @on-success="fileUploaded"/>
+                    </FormItem>
+
+                    <FormItem style="grid-column: span 2">
+                        <div slot="label">
+                            是否校准:
+                            <i-switch v-model="salesOrder.produceOrder.calibrated" size="large" class="margin-top-5">
+                                <span slot="open">是</span>
+                                <span slot="close">否</span>
+                            </i-switch>
+                        </div>
+                        <Input v-if="salesOrder.produceOrder.calibrated" v-model="salesOrder.produceOrder.calibrationInfo" type="textarea" :autosize="{ minRows: 3, maxRows: 7 }" placeholder="请输入校准信息"/>
                     </FormItem>
                 </Form>
             </div>
@@ -148,9 +180,10 @@ import CustomerDao from '@/../public/static-p/js/dao/CustomerDao';
 import UserSelect from '@/components/UserSelect.vue';
 import CustomerSelect from '@/components/CustomerSelect.vue';
 import ProductSelect from '@/components/ProductSelect.vue';
+import FileUpload from '@/components/FileUpload.vue';
 
 export default {
-    components: { CustomerSelect, UserSelect, ProductSelect },
+    components: { CustomerSelect, UserSelect, ProductSelect, FileUpload },
     props: {
         visible     : { type: Boolean, required: true }, // 是否可见
         salesOrderId: { type: String,  required: true }, // 销售订单 ID
@@ -370,6 +403,12 @@ export default {
         newProduceOrder() {
             return {
                 items: [this.newProduceOrderItem()], // 订单项
+                type           : 0,     // 订单类型: 0 (生产订单)、1 (样品订单)
+                customerAddress: '',    // 客户收件地址
+                calibrated     : false, // 是否校准
+                calibrationInfo: '证书单位：\n证书地址：\n制造商：\n设备名称：\n校准内容：\n其他校准信息：', // 校准信息
+                attachmentId   : '0',   // 附件 ID
+                attachment     : {},    // 附件,
             };
         },
         // 创建生产订单项
@@ -387,6 +426,11 @@ export default {
         // 临时创建客户联系人
         createTempCustomerContact(contact) {
             this.customerContacts.push(contact);
+        },
+        // 文件上传完成
+        fileUploaded(file) {
+            this.salesOrder.produceOrder.attachmentId = file.id;
+            this.salesOrder.produceOrder.attachment = file;
         },
     },
     computed: {
