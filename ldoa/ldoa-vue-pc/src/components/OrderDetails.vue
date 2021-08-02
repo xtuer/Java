@@ -18,7 +18,7 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
            :styles="{ top: '40px', marginBottom: '80px' }"
            class="order-details-modal" @on-visible-change="showEvent">
         <!-- 内容显示 -->
-        <table class="order-table relative">
+        <table class="table-order table-common relative">
             <Spin v-if="loading" fix size="large"></Spin>
 
             <!-- 客户信息 -->
@@ -53,17 +53,17 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
 
             <!-- 产品 -->
             <tr>
-                <td>产品名称</td>
-                <td>产品编码</td>
-                <td>规格/型号</td>
-                <td class="center">数量</td>
-                <td>备注</td>
+                <td class="text-color-gray">产品名称</td>
+                <td class="text-color-gray">产品编码</td>
+                <td class="text-color-gray">规格/型号</td>
+                <td class="text-color-gray text-align-center">数量</td>
+                <td class="text-color-gray">备注</td>
             </tr>
             <tr v-for="item in items" :key="item.productId">
                 <td>{{ item.product && item.product.name }}</td>
                 <td>{{ item.product && item.product.code }}</td>
                 <td>{{ item.product && item.product.model }}</td>
-                <td class="center">{{ item.count }}</td>
+                <td class="text-align-center">{{ item.count }}</td>
                 <td>{{ item.comment }}</td>
             </tr>
             <tr v-if="items.length === 0">
@@ -227,29 +227,12 @@ export default {
 
 <style lang="scss">
 .order-details-modal {
-    .order-table {
-        border-collapse: collapse;
-        width: 100%;
-
+    .table-order {
         td:nth-child(1), td:nth-child(2), td:nth-child(3) {
             width: 150px;
         }
         td:nth-child(4) {
             width: 70px;
-        }
-
-        td {
-            border: 1px solid $borderColor;
-            padding: 8px 12px;
-
-            .gap {
-                display: inline-block;
-                width: 100px;
-            }
-
-            &.center {
-                text-align: center;
-            }
         }
 
         .audit-item .ivu-input-group {

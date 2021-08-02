@@ -20,7 +20,7 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
         <div class="box">
             <div class="title">基本信息</div>
             <div class="content base-info">
-                <table class="sales-order-table">
+                <table class="table-sales-order table-common">
                     <tr>
                         <td class="text-color-gray">客户:</td>
                         <td>{{ salesOrder.customerName }}</td>
@@ -214,9 +214,6 @@ export default {
 <style lang="scss">
 .sales-order-details-modal {
     .base-info {
-        // display: grid;
-        grid-template-columns: max-content 1fr max-content 1fr;
-        grid-gap: 10px 5px;
         width: 100%;
         padding: 10px 0;
     }
@@ -231,27 +228,12 @@ export default {
         margin-bottom: 10px;
     }
 
-    .sales-order-table {
-        border-collapse: collapse;
-        width: 100%;
+    .table-sales-order {
         table-layout: fixed;
 
-        td:nth-child(1), td:nth-child(3), td:nth-child(5) {
-            width: 100px;
+        td:nth-child(odd) {
+            width: 90px;
             text-align: right;
-        }
-
-        td {
-            border: 1px solid $borderColor;
-            padding: 8px 12px;
-
-            &.center {
-                text-align: center;
-            }
-        }
-
-        .audit-item .ivu-input-group {
-            border-collapse: collapse;
         }
     }
 }

@@ -208,6 +208,16 @@
     transition: background 0.3s;
 }
 
+/* 普通表格 */
+.table-common {
+    border-collapse: collapse;
+    width: 100%;
+}
+.table-common td {
+    border: 1px solid #dcdee2;
+    padding: 8px 12px;
+}
+
 /* 使用 Table 作为 body 的 Card，去掉 padding 效果好一些: <Card class="card-with-table-body" dis-hover> */
 .card-with-table-body .ivu-card-body {
     padding: 0;
