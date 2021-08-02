@@ -1,4 +1,4 @@
-package util;
+package algorithm;
 
 /**
  * 随机数生成类，相同的种子生成的随机数序列相同。

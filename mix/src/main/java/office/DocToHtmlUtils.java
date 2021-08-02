@@ -1,3 +1,5 @@
+package office;
+
 import net.arnx.wmf2svg.gdi.svg.SvgGdi;
 import net.arnx.wmf2svg.gdi.wmf.WmfParser;
 import org.apache.commons.io.FileUtils;

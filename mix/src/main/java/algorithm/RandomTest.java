@@ -1,4 +1,4 @@
-import util.Random;
+package algorithm;
 
 import java.io.IOException;
 import java.util.HashMap;

@@ -1,3 +1,5 @@
+package algorithm;
+
 /**
  * 循环队列
  */

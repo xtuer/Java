@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Random;
-import util.Sort;
+import algorithm.Sort;
 
 /**
  * 排序测试:

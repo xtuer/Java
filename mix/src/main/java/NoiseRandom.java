@@ -1,7 +1,7 @@
 import com.flowpowered.noise.NoiseQuality;
 import com.flowpowered.noise.module.source.Perlin;
 
-public class Noise {
+public class NoiseRandom {
     public static void main(String[] args) throws Exception {
         Perlin noise = new Perlin();
         noise.setNoiseQuality(NoiseQuality.BEST);
