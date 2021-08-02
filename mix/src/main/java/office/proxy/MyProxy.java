@@ -1,14 +1,12 @@
-package proxy;
+package office.proxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 public class MyProxy implements InvocationHandler {
-    private Class interfaceClass;
-
     public Object bind(String interfaceName) throws ClassNotFoundException {
-        interfaceClass = Class.forName(interfaceName);
+        Class<?> interfaceClass = Class.forName(interfaceName);
         return Proxy.newProxyInstance(MyProxy.class.getClassLoader(), new Class[] {interfaceClass}, this);
     }
 

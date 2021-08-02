@@ -7,7 +7,7 @@ import java.util.List;
 
 public class FilterChain {
     private int pos = 0;
-    private List<Filter> filters = new ArrayList<>();
+    private final List<Filter> filters = new ArrayList<>();
 
     public void doFilter(Request request) {
         if (pos < filters.size()) {

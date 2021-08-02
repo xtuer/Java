@@ -1,4 +1,4 @@
-package poi;
+package office;
 
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.ExcelImportUtil;
@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Test {
+public class ExcelImpexTest {
     public static void main(String[] args) throws Exception {
         exportExcel();
         // importExcel();
