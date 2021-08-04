@@ -56,6 +56,7 @@ dependencies {
     compile "org.java-websocket:Java-WebSocket:1.4.0"
     compile 'commons-cli:commons-cli:1.4'
     compile 'net.sourceforge.javacsv:javacsv:2.0'
+    implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.1'
 
     compile 'org.docx4j:docx4j:3.3.3'
     compile 'com.itextpdf:itextpdf:5.5.11'

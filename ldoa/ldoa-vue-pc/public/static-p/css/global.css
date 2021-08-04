@@ -332,6 +332,10 @@ Box 布局
     flex: 1;
 }
 
+input:read-only {
+    background-color: #e8eaec5d;
+}
+
 /* 文件类型图标样式 */
 .file-type-other {
     background-image: url(/static-p/img/file-type/other.png);

@@ -42,7 +42,8 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
                         <Input v-model="salesOrder.workUnit" placeholder="请输入执行单位"/>
                     </FormItem>
                     <FormItem label="负责人:" prop="ownerName">
-                        <Input v-model="salesOrder.ownerName" readonly search placeholder="请选择负责人" @on-search="userSelect = true"/>
+                        <Input v-model="salesOrder.ownerName" readonly/>
+                        <!-- <Input v-model="salesOrder.ownerName" readonly search placeholder="请选择负责人" @on-search="userSelect = true"/> -->
                     </FormItem>
                     <FormItem label="收件地址:" prop="customerAddress" style="grid-column: span 2">
                         <Input v-model="salesOrder.produceOrder.customerAddress" clearable placeholder="请输入客户收件地址"/>
@@ -211,9 +212,9 @@ export default {
                 topic: [
                     { required: true, whitespace: true, message: '主题不能为空', trigger: 'blur' }
                 ],
-                ownerName: [
-                    { required: true, whitespace: true, message: '负责人不能为空', trigger: 'change' }
-                ],
+                // ownerName: [
+                //     { required: true, whitespace: true, message: '负责人不能为空', trigger: 'change' }
+                // ],
                 customerName: [
                     { required: true, whitespace: true, message: '客户不能为空', trigger: 'change' }
                 ],
