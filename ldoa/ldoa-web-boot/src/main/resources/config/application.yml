@@ -34,7 +34,7 @@ logging.file.path: ${app.dir.base}/logs
 ###############################################################################
 # DataSource
 spring.datasource.username: root
-spring.datasource.password: root
+spring.datasource.password: ENC(JgJYQKNWTCLs7QEJ0jDneX6wfHhM0uccO/DFJ32f8E/Oqa32+eoxR0voKAnS8cmI)
 spring.datasource.url     : jdbc:mysql://${app.mysql}:3306/ldoa?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
 spring.datasource.driver-class-name: com.mysql.jdbc.Driver
 

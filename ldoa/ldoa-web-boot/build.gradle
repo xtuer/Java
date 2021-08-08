@@ -25,6 +25,7 @@ ext.versions = [
         jsoup      : '1.12.1',
         uid        : '1.0.2.RELEASE',
         easypoi    : '4.3.0',
+        jasypt     : '3.0.3',
 ]
 
 dependencies {
@@ -44,7 +45,8 @@ dependencies {
             "redis.clients:jedis:${versions.redis}",
             "org.jsoup:jsoup:${versions.jsoup}",
             "com.github.wujun234:uid-generator-spring-boot-starter:${versions.uid}",
-            "cn.afterturn:easypoi-base:${versions.easypoi}"
+            "cn.afterturn:easypoi-base:${versions.easypoi}",
+            "com.github.ulisesbocchio:jasypt-spring-boot-starter:${versions.jasypt}"
     )
 
     runtimeOnly("mysql:mysql-connector-java:${versions.mysql}")

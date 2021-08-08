@@ -196,4 +196,19 @@ public class ZooController extends BaseController {
     public Result<String> testClassLoader() {
         return Result.ok(CachedUidGenerator.class.getClassLoader().getClass().getName());
     }
+
+    /**
+     * 使用 java -jar -Dloader.path=D:/temp/jar-test/lib x.jar 加载类
+     *
+     * 网址: http://localhost:8080/api/demo/loader-path
+     */
+    @GetMapping("/api/demo/loader-path")
+    @SuppressWarnings("all")
+    public Result<String> loadClassByLoaderPath() throws Exception {
+        Class clazz = Class.forName("com.xtuer.Aloha");
+        Object obj = clazz.newInstance();
+        System.out.println(obj);
+
+        return Result.ok(obj.getClass().getClassLoader().getClass().getName());
+    }
 }

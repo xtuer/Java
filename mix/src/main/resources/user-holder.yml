@@ -3,6 +3,7 @@ john:        # field name
   id: 13     # bean's field
   name: &john John # bean's field
   nickName: Bobi # 不能写为 nick-name，这是因为 Spring Boot 作了特殊处理
+  fox: go
 
 # private List<User> users
 # 对象数组使用下面 2 种格式都可以

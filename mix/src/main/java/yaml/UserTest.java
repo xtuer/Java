@@ -31,6 +31,11 @@ public class UserTest {
     }
 
     public static void unmarshalUserHolderTest() {
+        // 忽略不识别的属性
+        // Representer representer = new Representer();
+        // representer.getPropertyUtils().setSkipMissingProperties(true);
+        // Yaml yaml = new Yaml(new Constructor(UserHolder.class), representer);
+
         Yaml yaml = new Yaml(new Constructor(UserHolder.class));
         InputStream in = ClassLoader.getSystemResourceAsStream("user-holder.yml");
         UserHolder user = yaml.load(in);
