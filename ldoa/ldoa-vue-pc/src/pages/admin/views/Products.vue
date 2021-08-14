@@ -10,8 +10,11 @@
                 <Input v-model="filter.name" placeholder="请输入产品名称" @on-enter="searchProducts">
                     <span slot="prepend">产品名称</span>
                 </Input>
-                <Input v-model="filter.code" placeholder="请输入产品编码" search enter-button @on-search="searchProducts">
+                <Input v-model="filter.code" placeholder="请输入产品编码" @on-enter="searchProducts">
                     <span slot="prepend">产品编码</span>
+                </Input>
+                <Input v-model="filter.model" placeholder="请输入产品规格/型号" search enter-button @on-search="searchProducts">
+                    <span slot="prepend">规格/型号</span>
                 </Input>
             </div>
 
@@ -95,6 +98,8 @@ export default {
             productClone: this.newProduct(),
             filter: { // 搜索条件
                 name      : '',
+                code      : '',
+                model     : '',
                 pageSize  : 50,
                 pageNumber: 1,
             },

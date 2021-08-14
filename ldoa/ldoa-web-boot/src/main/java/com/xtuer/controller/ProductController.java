@@ -35,6 +35,7 @@ public class ProductController extends BaseController {
      * 参数:
      *      name       [可选]: 名字
      *      code       [可选]: 编码
+     *      model      [可选]: 规格/型号
      *      productIds [可选]: 产品 ID
      *      pageNumber [可选]: 页码
      *      pageSize   [可选]: 数量

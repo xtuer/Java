@@ -1,7 +1,7 @@
 /* 滚动条样式，只支持 Webkit 内核浏览器，如 Chrome, Safari */
 ::-webkit-scrollbar {
-    width:  10px;
-    height: 10px;
+    width:  13px;
+    height: 13px;
 }
 ::-webkit-scrollbar-track {
     background: #ddd;
@@ -276,6 +276,7 @@ Box 布局
 .text-align-center  { text-align: center; }
 
 /* Margin and Padding */
+.margin-0         {  margin: 0px; }
 .margin-top-5     {  margin-top: 5px; }
 .margin-top-10    {  margin-top: 10px; }
 .margin-top-20    { margin-top: 20px; }
@@ -334,6 +335,10 @@ Box 布局
 
 input:read-only {
     background-color: #e8eaec5d;
+}
+
+.pre-wrap {
+    white-space: pre-wrap;
 }
 
 /* 文件类型图标样式 */

@@ -47,10 +47,8 @@ dependencies {
     compile 'org.springframework:spring-context:5.0.2.RELEASE'
     compile 'org.springframework:spring-webmvc:5.0.2.RELEASE'
     compile 'org.yaml:snakeyaml:1.27'
-    compile 'com.squareup.okhttp3:okhttp:3.5.0'
     compile 'org.springframework.session:spring-session-data-redis:1.3.1.RELEASE'
     compile 'com.flowpowered:flow-noise:1.0.0'
-    compile 'com.mzlion:easy-okhttp:1.1.2'
     compile group: 'eu.medsea.mimeutil', name: 'mime-util', version: '2.1.3'
     compile group: 'org.apache.curator', name: 'curator-recipes', version: '2.12.0'
     compile "org.java-websocket:Java-WebSocket:1.4.0"

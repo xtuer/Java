@@ -22,6 +22,11 @@ public class ProductFilter {
     private String code;
 
     /**
+     * 产品规格/型号
+     */
+    private String model;
+
+    /**
      * 产品 ID
      */
     private List<Long> productIds;

@@ -49,7 +49,7 @@ window.ROLES = [
     { value: 'ROLE_TECHNIQUE_SOFTWARE', name: '技术部软件技术' },
 ];
 
-// 权限控制
+// 权限控制: 白名单
 window.PERMISSIONS = {
     // 超级管理员的权限
     superAdmin: ['ROLE_ADMIN_SYSTEM'],
@@ -65,6 +65,12 @@ window.PERMISSIONS = {
 
     // 财务的权限
     finance: ['ROLE_FINANCE'],
+};
+
+// 权限控制: 黑名单
+window.PERMISSIONS_DENY = {
+    // 生产订单得权限
+    order: ['ROLE_SALE_SALESPERSON'],
 };
 
 // 审批类型

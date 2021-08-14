@@ -45,6 +45,9 @@
                     <if test="filter.code!=null and filter.code!='' ">
                         AND code LIKE CONCAT('%', #{filter.code},'%')
                     </if>
+                    <if test="filter.model!=null and filter.model!='' ">
+                        AND model LIKE CONCAT('%', #{filter.model},'%')
+                    </if>
                     <if test="filter.productIds != null and filter.productIds.size() > 0">
                         AND product_id IN
                         <foreach collection="filter.productIds" item="id" open="(" close=")" separator=",">

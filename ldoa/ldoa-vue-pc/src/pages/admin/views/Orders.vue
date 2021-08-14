@@ -15,7 +15,7 @@
                 </Input>
             </div>
             <div>
-                <Button type="primary" icon="md-add" class="margin-right-10" @click="editOrder()">新建订单</Button>
+                <Button type="primary" :disabled="!hasPermissionForOrder()" icon="md-add" class="margin-right-10" @click="editOrder()">新建订单</Button>
                 <Button type="info" icon="md-arrow-down" :loading="exporting" @click="exportOrders()">导出订单</Button>
             </div>
         </div>

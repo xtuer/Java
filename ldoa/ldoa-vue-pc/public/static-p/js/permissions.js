@@ -26,19 +26,39 @@
 /**
  * 判断当前用户是否有权限
  *
- * @param {Array} permissions 权限数组
+ * @param {Array} allowedPermissions 允许的权限数组
+ * @param {Array} deniedPermissions 禁止的权限数组
  */
-const hasPermission = function(permissions) {
+const hasPermission = function(allowedPermissions, deniedPermissions) {
     const roles = this.$store.getters.roles;
 
-    // 只要用户的任意一个角色在 permissions 数组中，则有权限，返回 true
     for (let role of roles) {
-        if (permissions.includes(role)) {
+        // 如果用户的任意一个角色在 allowedPermissions 数组中，则有权限，返回 true
+        if (allowedPermissions && allowedPermissions.includes(role)) {
             return true;
+        }
+
+        // 如果用户的任意一个角色在 deniedPermissions 数组中，则没有权限，返回 false
+        if (deniedPermissions && deniedPermissions.includes(role)) {
+            return false;
         }
     }
 
+    // 如果 allowedPermissions 为空数组，则返回 true，表示有权限
+    if (allowedPermissions && allowedPermissions.length === 0) {
+        return true;
+    }
+
     return false;
+};
+
+/**
+ * 是否有生产订单的权限
+ *
+ * @return 有权限返回 true，否则返回 false
+ */
+const hasPermissionForOrder = function() {
+    return this.hasPermission([], PERMISSIONS_DENY.order);
 };
 
 /**
@@ -84,6 +104,7 @@ const hasPermissionForFinance = function() {
 
 export default {
     hasPermission,
+    hasPermissionForOrder,
     hasPermissionForMaintenance,
     hasPermissionOfSuperAdmin,
     hasPermissionForStockIn,
