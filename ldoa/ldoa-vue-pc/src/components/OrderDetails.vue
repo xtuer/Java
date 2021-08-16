@@ -28,11 +28,17 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
             </tr>
             <tr>
                 <td class="text-color-gray">客户联系人</td>
-                <td colspan="5">{{ order.customerContact }}</td>
+                <td>{{ order.customerContact }}</td>
+                <td class="text-color-gray text-align-right">客户联系方式</td>
+                <td colspan="2">{{ order.customerPhone }}</td>
             </tr>
             <tr>
                 <td class="text-color-gray">客户收件地址</td>
                 <td colspan="4">{{ order.customerAddress }}</td>
+            </tr>
+            <tr>
+                <td class="text-color-gray">执行单位</td>
+                <td colspan="4">{{ order.workUnit }}</td>
             </tr>
             <tr>
                 <td class="text-color-gray">销售负责人</td>

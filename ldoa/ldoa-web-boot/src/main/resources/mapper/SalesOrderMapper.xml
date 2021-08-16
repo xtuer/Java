@@ -6,7 +6,8 @@
     <!-- 销售订单的列 -->
     <sql id="salesOrderColumns">
         so.sales_order_id, so.sales_order_sn, so.topic, so.agreement_date, so.delivery_date,
-        so.owner_id, so.sales_person_id, so.customer_id, so.customer_contact, so.business, so.work_unit, so.remark, so.produce_order_id,
+        so.owner_id, so.sales_person_id, so.customer_id, so.customer_contact, so.customer_phone,
+        so.business, so.work_unit, so.remark, so.produce_order_id,
         so.deal_amount, so.cost_deal_amount, so.consultation_fee,
         so.should_pay_amount, so.paid_amount, so.paid_at, so.paid_type, so.state
     </sql>
@@ -61,15 +62,15 @@
     <!-- 更新或者插入销售订单 -->
     <insert id="upsertSalesOrder">
         INSERT INTO sales_order (sales_order_id, sales_order_sn, topic, agreement_date, delivery_date,
-            owner_id, sales_person_id, customer_id, customer_contact, business, work_unit, remark, produce_order_id,
+            owner_id, sales_person_id, customer_id, customer_contact, customer_phone, business, work_unit, remark, produce_order_id,
             deal_amount, cost_deal_amount, consultation_fee, should_pay_amount, state)
         VALUES(#{salesOrderId}, #{salesOrderSn}, #{topic}, #{agreementDate}, #{deliveryDate},
-            #{ownerId}, #{salesPersonId}, #{customerId}, #{customerContact}, #{business}, #{workUnit}, #{remark}, #{produceOrderId},
+            #{ownerId}, #{salesPersonId}, #{customerId}, #{customerContact}, #{customerPhone}, #{business}, #{workUnit}, #{remark}, #{produceOrderId},
             #{dealAmount}, #{costDealAmount}, #{consultationFee}, #{shouldPayAmount}, #{state})
 
         ON DUPLICATE KEY
         UPDATE topic = #{topic}, agreement_date = #{agreementDate}, delivery_date = #{deliveryDate},
-            owner_id = #{ownerId}, customer_id = #{customerId}, customer_contact = #{customerContact},
+            owner_id = #{ownerId}, customer_id = #{customerId}, customer_contact = #{customerContact}, customer_phone = #{customerPhone},
             business = #{business}, work_unit = #{workUnit}, remark = #{remark}, produce_order_id = #{produceOrderId},
             deal_amount = #{dealAmount}, cost_deal_amount = #{costDealAmount}, consultation_fee = #{consultationFee}, should_pay_amount = #{shouldPayAmount}
     </insert>

@@ -41,9 +41,12 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
                     <FormItem label="执行单位:" prop="workUnit">
                         <Input v-model="salesOrder.workUnit" placeholder="请输入执行单位"/>
                     </FormItem>
-                    <FormItem label="负责人:" prop="ownerName">
-                        <Input v-model="salesOrder.ownerName" readonly/>
+                    <!-- <FormItem label="负责人:" prop="ownerName"> -->
+                        <!-- <Input v-model="salesOrder.ownerName" readonly/> -->
                         <!-- <Input v-model="salesOrder.ownerName" readonly search placeholder="请选择负责人" @on-search="userSelect = true"/> -->
+                    <!-- </FormItem> -->
+                    <FormItem label="联系方式:" prop="customerPhone">
+                        <Input v-model="salesOrder.customerPhone"/>
                     </FormItem>
                     <FormItem label="收件地址:" prop="customerAddress" style="grid-column: span 2">
                         <Input v-model="salesOrder.produceOrder.customerAddress" clearable placeholder="请输入客户收件地址"/>
@@ -389,6 +392,7 @@ export default {
                 customerId     : '0', // 客户 ID
                 customerName   : '', // 客户
                 customerContact: '', // 联系人
+                customerPhone  : '', // 联系方式
                 business       : '', // 行业
                 workUnit       : '', // 执行单位
                 remark         : '', // 备注

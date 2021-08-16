@@ -31,6 +31,14 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
                 <FormItem label="客户收件地址:" prop="customerAddress" style="flex: 1">
                     <Input v-model="orderClone.customerAddress" clearable placeholder="请输入客户收件地址"/>
                 </FormItem>
+                <FormItem label="客户联系方式:" prop="customerPhone" style="width: 300px">
+                    <Input v-model="orderClone.customerPhone" clearable placeholder="请输入客户联系方式"/>
+                </FormItem>
+            </div>
+            <div style="display: flex">
+                <FormItem label="执行单位:" prop="workUnit" style="flex: 1">
+                    <Input v-model="orderClone.workUnit" clearable placeholder="请输入执行单位"/>
+                </FormItem>
                 <FormItem label="订单类型:" style="width: 300px">
                     <Select v-model="orderClone.type">
                         <Option :value="0">生产订单</Option>
@@ -253,6 +261,8 @@ export default {
                 customerCompany: '',    // 客户单位
                 customerContact: '',    // 客户联系人
                 customerAddress: '',    // 客户收件地址
+                customerPhone  : '',    // 客户联系方式
+                workUnit       : '',    // 执行单位
                 orderDate      : '',    // 订单日期
                 deliveryDate   : '',    // 交货日期
                 returnDate     : '',    // 规划日期

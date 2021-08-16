@@ -34,8 +34,10 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
                         <td>{{ salesOrder.business }}</td>
                         <td class="text-color-gray">执行单位:</td>
                         <td>{{ salesOrder.workUnit }}</td>
-                        <td class="text-color-gray">负责人:</td>
-                        <td>{{ salesOrder.ownerName }}</td>
+                        <td class="text-color-gray">联系方式:</td>
+                        <td>{{ salesOrder.customerPhone }}</td>
+                        <!-- <td class="text-color-gray">负责人:</td>
+                        <td>{{ salesOrder.ownerName }}</td> -->
                     </tr>
                     <tr>
                         <td class="text-color-gray">收件地址:</td>

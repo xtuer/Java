@@ -5,7 +5,7 @@
 <mapper namespace="com.xtuer.mapper.OrderMapper">
     <!-- 订单全部的列 -->
     <sql id="orderFullColumns">
-        o.order_id, o.order_sn, o.type, o.customer_company, o.customer_contact, o.customer_address,
+        o.order_id, o.order_sn, o.type, o.customer_company, o.customer_contact, o.customer_address, o.customer_phone, o.work_unit,
         o.order_date, o.delivery_date, o.return_date, o.salesperson_id, o.calibrated, o.calibration_info,
         o.requirement, o.state, o.attachment_id, o.product_codes, o.product_names, o.created_at,
 
@@ -61,15 +61,16 @@
 
     <!-- 插入或者更新订单 -->
     <update id="upsertOrder">
-        INSERT INTO `order` (order_id, order_sn, type, customer_company, customer_contact, customer_address,
+        INSERT INTO `order` (order_id, order_sn, type, customer_company, customer_contact, customer_address, customer_phone, work_unit,
             order_date, delivery_date, return_date, salesperson_id, calibrated, calibration_info,
             requirement, attachment_id, product_codes, product_names, state)
-        VALUES (#{orderId}, #{orderSn}, #{type}, #{customerCompany}, #{customerContact}, #{customerAddress},
+        VALUES (#{orderId}, #{orderSn}, #{type}, #{customerCompany}, #{customerContact}, #{customerAddress}, #{customerPhone}, #{workUnit},
             #{orderDate}, #{deliveryDate}, #{returnDate}, #{salespersonId}, #{calibrated}, #{calibrationInfo},
             #{requirement}, #{attachmentId}, #{productCodes}, #{productNames}, #{state})
 
         ON DUPLICATE KEY
         UPDATE type = #{type}, customer_company = #{customerCompany}, customer_contact = #{customerContact}, customer_address = #{customerAddress},
+            customer_phone = #{customerPhone}, work_unit = #{workUnit},
             order_date = #{orderDate}, delivery_date = #{deliveryDate}, return_date = #{returnDate}, calibrated = #{calibrated},
             calibration_info = #{calibrationInfo}, requirement = #{requirement},
             attachment_id = #{attachmentId}, product_codes = #{productCodes}, product_names = #{productNames}
@@ -105,6 +106,8 @@
         <result property="customerCompany" column="customer_company"/>
         <result property="customerContact" column="customer_contact"/>
         <result property="customerAddress" column="customer_address"/>
+        <result property="customerPhone"   column="customer_phone"/>
+        <result property="workUnit"        column="work_unit"/>
         <result property="orderDate"       column="order_date"/>
         <result property="deliveryDate"    column="delivery_date"/>
         <result property="returnDate"      column="return_date"/>

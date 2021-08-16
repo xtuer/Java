@@ -102,6 +102,12 @@ public class SalesOrder {
     private String customerContact;
 
     /**
+     * 联系方式
+     */
+    @Excel(name = "联系方式", width = 20, orderNum = "7")
+    private String customerPhone;
+
+    /**
      * 行业
      */
     @Excel(name = "行业", width = 20, orderNum = "5")

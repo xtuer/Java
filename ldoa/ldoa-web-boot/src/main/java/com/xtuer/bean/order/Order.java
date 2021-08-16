@@ -69,6 +69,16 @@ public class Order {
     private String customerAddress;
 
     /**
+     * 客户联系方式
+     */
+    private String customerPhone;
+
+    /**
+     * 执行单位
+     */
+    private String workUnit;
+
+    /**
      * 订单日期
      */
     @NotNull(message = "订单日期不能为空")

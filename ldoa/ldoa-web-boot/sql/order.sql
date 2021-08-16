@@ -14,6 +14,8 @@ CREATE TABLE `order` (
     customer_company varchar(256)  DEFAULT '' COMMENT '客户单位',
     customer_contact varchar(64)   DEFAULT '' COMMENT '客户联系人',
     customer_address varchar(512)  DEFAULT '' COMMENT '客户收件地址',
+    customer_phone   varchar(64)   DEFAULT '' COMMENT '客户联系方式',
+    work_unit        varchar(256)  DEFAULT '' COMMENT '执行单位',
     salesperson_id   bigint(20) NOT NULL      COMMENT '销售员',
     calibrated       tinyint(4)    DEFAULT 0  COMMENT '是否校准，0 为否，1 为是',
     calibration_info varchar(1024) DEFAULT '' COMMENT '校准信息',

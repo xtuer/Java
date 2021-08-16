@@ -52,6 +52,7 @@ CREATE TABLE sales_order (
     sales_person_id  bigint(20)  DEFAULT 0 COMMENT '销售员 ID',
     customer_id      bigint(20)   NOT NULL COMMENT '客户 ID',
     customer_contact varchar(256)          COMMENT '客户联系人',
+    customer_phone   varchar(128)          COMMENT '客户联系方式',
     business         varchar(128)          COMMENT '行业',
     work_unit        varchar(128)          COMMENT '执行单位',
     remark           text                  COMMENT '备注',
