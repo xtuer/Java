@@ -1,21 +1,11 @@
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
+import java.util.Arrays;
 
 public class Test {
     public static void main(String[] args) throws Exception {
-        long milli = TimeUnit.SECONDS.toMillis(10);
-        System.out.println(milli);
-    }
-
-    public static Integer gen() {
-        try {
-            TimeUnit.SECONDS.sleep(3);
-            Random rand = new Random();
-            return rand.nextInt(100);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return null;
+        int[] ns = { 1, 2, 3, 4 };
+        int[] bs = ns.clone();
+        bs[0] = 3;
+        System.out.println(Arrays.toString(ns));
+        System.out.println(Arrays.toString(bs));
     }
 }

@@ -141,7 +141,7 @@ public class SalesOrderService extends BaseService {
 
         // [3] 生成生产订单
         Order produceOrder = salesOrder.getProduceOrder();
-        produceOrder.setCustomerCompany(salesOrder.getWorkUnit());        // 客户单位
+        produceOrder.setCustomerCompany(salesOrder.getCustomerName());    // 客户单位
         produceOrder.setCustomerContact(salesOrder.getCustomerContact()); // 客户联系人
         produceOrder.setOrderDate(salesOrder.getAgreementDate());         // 订单日期
         produceOrder.setDeliveryDate(salesOrder.getDeliveryDate());       // 要求交货日期
