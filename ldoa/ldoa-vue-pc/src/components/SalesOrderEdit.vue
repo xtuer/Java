@@ -159,7 +159,7 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
         <!-- 底部工具栏 -->
         <div slot="footer">
             <Button type="text" @click="showEvent(false)">取消</Button>
-            <Button type="success" :loading="saving" @click="saveSalesOrder(0)">保存</Button>
+            <Button v-if="salesOrder.state === 0" type="success" :loading="saving" @click="saveSalesOrder(0)">保存</Button>
 
             <Poptip confirm transfer title="确定提交订单 ?" @on-ok="saveSalesOrder(1)">
                 <Button type="primary" :loading="saving">提交</Button>
@@ -382,6 +382,7 @@ export default {
         // 创建销售订单，每个销售订单带有一个生产订单
         newSalesOrder() {
             return {
+                state          : 0,   // 状态
                 salesOrderId   : '0', // 订单 ID
                 salesOrderSn   : '', // 订单编号
                 topic          : '', // 主题
