@@ -65,4 +65,9 @@ public class SalesOrderFilter {
      * 销售员 ID
      */
     private long salesPersonId;
+
+    /**
+     * 应收金额
+     */
+    private double shouldPayAmount;
 }

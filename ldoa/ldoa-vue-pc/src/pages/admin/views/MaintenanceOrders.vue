@@ -425,23 +425,6 @@ export default {
         grid-template-columns: max-content max-content;
         justify-content: space-between;
         align-items: center;
-
-        .filter {
-            display: flex;
-
-            input {
-                width: 180px;
-            }
-
-            > div {
-                margin-right: 10px;
-            }
-
-            /* 下拉选择过滤条件的输入框 */
-            .ivu-input-group-prepend .ivu-select {
-                width: auto;
-            }
-        }
     }
 
     .list-page-toolbar-bottom {

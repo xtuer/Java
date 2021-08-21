@@ -54,6 +54,9 @@
             <if test="filter.salesPersonId > 0">
                 AND so.sales_person_id = #{filter.salesPersonId}
             </if>
+            <if test="filter.shouldPayAmount > 0">
+                so.should_pay_amount = #{filter.shouldPayAmount}
+            </if>
         </where>
         ORDER BY so.sales_order_sn DESC, so.created_at DESC
         LIMIT ${page.offset}, ${page.count}

@@ -19,12 +19,13 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
         <div class="list-page">
             <!-- 搜索条件 -->
             <div class="list-page-toolbar-top">
-                <Input v-model="filter.name" placeholder="请输入客户名称" @on-enter="searchCustomers">
+                <span></span>
+                <Input v-model="filter.name" placeholder="请输入客户名称" search enter-button @on-search="searchCustomers">
                     <span slot="prepend">客户名称</span>
                 </Input>
-                <Input v-model="filter.customerSn" placeholder="请输入客户编号" search enter-button @on-search="searchCustomers">
+                <!-- <Input v-model="filter.customerSn" placeholder="请输入客户编号" search enter-button @on-search="searchCustomers">
                     <span slot="prepend">客户编号</span>
-                </Input>
+                </Input> -->
             </div>
 
             <!-- 物料列表 -->
@@ -101,7 +102,7 @@ export default {
         },
         // 搜索物料
         searchCustomers() {
-            this.customers     = [];
+            this.customers = [];
             this.more      = false;
             this.reloading = true;
             this.filter    = { ...this.newFilter(), name: this.filter.name, customerSn: this.filter.customerSn };

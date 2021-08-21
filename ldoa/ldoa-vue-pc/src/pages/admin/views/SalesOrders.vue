@@ -231,8 +231,8 @@ export default {
                 return false;
             }
 
-            // [2] 新建或者暂存状态
-            if (salesOrder.state !== 0) {
+            // [2] 新建、暂存状态或者待支付 (支付前都可以修改)
+            if (salesOrder.state >= 2) {
                 return false;
             }
 

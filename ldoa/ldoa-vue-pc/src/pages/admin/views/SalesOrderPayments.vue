@@ -13,6 +13,11 @@
             </RadioGroup>
 
             <div class="filter">
+                <!-- 应付金额 -->
+                <Input v-model="filter.shouldPayAmount" placeholder="应付金额" @on-enter="searchSalesOrders" class="should-pay-amount">
+                    <span slot="prepend">应付金额</span>
+                </Input>
+
                 <!-- 时间范围 -->
                 <DatePicker v-if="filter.searchType === 0 || filter.searchType === 1"
                             v-model="dateRange"
@@ -150,7 +155,7 @@ export default {
             this.salesOrders = [];
             this.more        = false;
             this.reloading   = true;
-            this.filter      = { ...this.newFilter(), searchType: this.filter.searchType };
+            this.filter      = { ...this.newFilter(), searchType: this.filter.searchType, shouldPayAmount: this.filter.shouldPayAmount };
             this.filter[this.filterKey] = this.filterValue;
 
             // 如果不需要时间范围，则删除
@@ -168,7 +173,17 @@ export default {
         fetchMoreSalesOrders() {
             this.loading = true;
 
-            SalesOrderDao.findSalesOrders(this.filter).then(salesOrders => {
+            // 应付金额
+            const amount = parseFloat(this.filter.shouldPayAmount);
+            const filter = Utils.clone(this.filter);
+
+            if (amount) {
+                filter.shouldPayAmount = amount;
+            } else {
+                delete filter.shouldPayAmount;
+            }
+
+            SalesOrderDao.findSalesOrders(filter).then(salesOrders => {
                 this.salesOrders.push(...salesOrders);
 
                 this.more      = salesOrders.length >= this.filter.pageSize;
@@ -247,12 +262,13 @@ export default {
         // 新建搜索条件
         newFilter() {
             return { // 搜索条件
-                searchType  : 0, // 搜索类型
-                topic       : '',
-                customerName: '',
-                business    : '',
-                pageSize    : 50,
-                pageNumber  : 1,
+                searchType     : 0, // 搜索类型
+                topic          : '',
+                customerName   : '',
+                business       : '',
+                shouldPayAmount: '', // 应付金额
+                pageSize       : 50,
+                pageNumber     : 1,
             };
         },
     }
@@ -260,6 +276,16 @@ export default {
 </script>
 
 <style lang="scss">
+.sales-order-payments {
+    .list-page-toolbar-top .filter input {
+        width: 150px;
+    }
+
+    .list-page-toolbar-top .filter .should-pay-amount input {
+        width: 80px;
+    }
+}
+
 .sales-order-pay-modal {
     .body-wrapper {
         display: grid;

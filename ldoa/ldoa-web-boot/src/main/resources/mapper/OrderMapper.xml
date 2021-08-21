@@ -49,6 +49,12 @@
                         <!-- 参考存在一个表而不在另一个表中的数据 https://www.cnblogs.com/softidea/p/9482120.html -->
                         AND (SELECT count(1) AS num FROM stock_request r WHERE `order`.order_id = r.order_id) = 0
                     </if>
+                    <if test="filter.customerCompany!=null and filter.customerCompany!='' ">
+                        AND customer_company LIKE CONCAT('%', #{filter.customerCompany},'%')
+                    </if>
+                    <if test="filter.orderDateStart != null and filter.orderDateEnd != null">
+                        AND (order_date BETWEEN #{filter.orderDateStart} AND #{filter.orderDateEnd})
+                    </if>
                 </where>
                 ORDER BY created_at DESC
                 LIMIT ${page.offset}, ${page.count}

@@ -47,12 +47,15 @@ public class OrderController extends BaseController {
      *
      * 网址: http://localhost:8080/api/orders
      * 参数:
-     *      orderSn      [可选]: 订单编号
-     *      productCodes [可选]: 产品编号
-     *      productNames [可选]: 产品名称
-     *      state        [可选]: 状态
-     *      pageNumber   [可选]: 页码
-     *      pageSize     [可选]: 数量
+     *      orderSn         [可选]: 订单编号
+     *      customerName    [可选]: 产品编号
+     *      productNames    [可选]: 产品名称
+     *      customerCompany [可选]: 客户单位
+     *      state           [可选]: 状态
+     *      orderDateStart  [可选]: 订单开始时间
+     *      orderDateEnd    [可选]: 订单结束时间
+     *      pageNumber      [可选]: 页码
+     *      pageSize        [可选]: 数量
      *      notInStockRequest [可选]: 是否在出库请求中有记录
      *
      * @param filter 过滤器
@@ -61,6 +64,8 @@ public class OrderController extends BaseController {
      */
     @GetMapping(Urls.API_ORDERS)
     public Result<List<Order>> findOrders(OrderFilter filter, Page page) {
+        filter.setOrderDateStart(Utils.monthStart(filter.getOrderDateStart()));
+        filter.setOrderDateEnd(Utils.monthEnd(filter.getOrderDateEnd()));
         return Result.ok(orderMapper.findOrders(filter, page));
     }
 

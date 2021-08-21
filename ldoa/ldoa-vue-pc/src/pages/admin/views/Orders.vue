@@ -6,12 +6,31 @@
     <div class="order-manage list-page">
         <!-- 顶部工具栏 -->
         <div class="list-page-toolbar-top">
-            <div style="display: flex">
-                <Input v-model="filter.orderSn" placeholder="请输入订单号" @on-enter="searchOrders">
-                    <span slot="prepend">订单号</span>
-                </Input>
-                <Input v-model="filter.productNames" placeholder="请输入产品名称" search enter-button @on-search="searchOrders">
-                    <span slot="prepend">产品名称</span>
+            <!-- 搜索条件 -->
+            <div class="filter">
+                <!-- 状态 -->
+                <Select v-model="filter.state" data-prepend-label="状态" class="prepend-label" style="width: 100%; min-width: 150px" @on-change="searchOrders">
+                    <Option :value="-1">全部</Option>
+                    <Option :value="0">初始化</Option>
+                    <Option :value="1">审批中</Option>
+                    <Option :value="2">审批拒绝</Option>
+                    <Option :value="3">审批通过</Option>
+                    <Option :value="4">完成</Option>
+                </Select>
+
+                <!-- 订单日期 -->
+                <div class="monthrange">
+                    <DatePicker v-model="filter.orderDateStart" type="month" placeholder="开始月份" data-prepend-label="订单日期" class="prepend-label"></DatePicker>
+                    <span>至</span>
+                    <DatePicker v-model="filter.orderDateEnd" type="month" placeholder="结束月份"></DatePicker>
+                </div>
+
+                <!-- 选择条件的搜索 -->
+                <Input v-model="filterValue" transfer placeholder="请输入查询条件" search enter-button @on-search="searchOrders">
+                    <Select v-model="filterKey" slot="prepend">
+                        <Option value="productNames">产品名称</Option>
+                        <Option value="customerCompany">客户单位</Option>
+                    </Select>
                 </Input>
             </div>
             <div>
@@ -95,13 +114,10 @@ export default {
     data() {
         return {
             orders : [],
-            filter: { // 搜索条件
-                orderSn     : '',
-                productNames: '',
-                state       : -1,
-                pageSize    : 50,
-                pageNumber  : 1,
-            },
+            filter: this.newFilter(),
+            filterKey  : 'productNames', // 搜索的 Key
+            filterValue: '',       // 搜索的 Value
+            dateRange  : ['', ''], // 搜索的时间范围
             more      : false, // 是否还有更多订单
             loading   : false, // 加载中
             reloading : false, // 重新加载
@@ -132,10 +148,11 @@ export default {
     methods: {
         // 搜索订单
         searchOrders() {
-            this.orders             = [];
-            this.more              = false;
-            this.reloading         = true;
-            this.filter.pageNumber = 1;
+            this.orders    = [];
+            this.more      = false;
+            this.reloading = true;
+            this.filter    = { ...this.newFilter(), state: this.filter.state, orderDateStart: this.filter.orderDateStart, orderDateEnd: this.filter.orderDateEnd };
+            this.filter[this.filterKey] = this.filterValue;
 
             this.fetchMoreOrders();
         },
@@ -206,6 +223,18 @@ export default {
                 this.exporting = false;
             });
         },
+        // 搜索条件
+        newFilter() {
+            return {
+                state: -1,
+                customerCompany: '',
+                productNames: '',
+                orderDateStart: '',
+                orderDateEnd: '',
+                pageSize: 50,
+                pageNumber: 1,
+            };
+        },
     }
 };
 </script>
@@ -213,12 +242,21 @@ export default {
 <style lang="scss">
 .order-manage {
     .list-page-toolbar-top {
-        .ivu-input-wrapper {
-            width: 250px;
-            margin-right: 10px;
+        display: grid;
+        grid-template-columns: max-content max-content;
+        justify-content: space-between;
+        align-items: center;
 
-            &:last-child {
-                width: 300px;
+        .filter .monthrange {
+            display: flex;
+            align-items: center;
+
+            > span {
+                margin: 0 5px;
+            }
+
+            input {
+                width: 110px;
             }
         }
     }
