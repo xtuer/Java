@@ -13,11 +13,6 @@
             </RadioGroup>
 
             <div class="filter">
-                <!-- 应付金额 -->
-                <Input v-model="filter.shouldPayAmount" placeholder="应付金额" @on-enter="searchSalesOrders" class="should-pay-amount">
-                    <span slot="prepend">应付金额</span>
-                </Input>
-
                 <!-- 时间范围 -->
                 <DatePicker v-if="filter.searchType === 0 || filter.searchType === 1"
                             v-model="dateRange"
@@ -36,6 +31,7 @@
                         <Option value="customerName">客户</Option>
                         <Option value="business">行业</Option>
                         <Option value="topic">主题</Option>
+                        <Option value="shouldPayAmount">应收金额</Option>
                     </Select>
                 </Input>
 
@@ -155,7 +151,7 @@ export default {
             this.salesOrders = [];
             this.more        = false;
             this.reloading   = true;
-            this.filter      = { ...this.newFilter(), searchType: this.filter.searchType, shouldPayAmount: this.filter.shouldPayAmount };
+            this.filter      = { ...this.newFilter(), searchType: this.filter.searchType };
             this.filter[this.filterKey] = this.filterValue;
 
             // 如果不需要时间范围，则删除
@@ -173,9 +169,9 @@ export default {
         fetchMoreSalesOrders() {
             this.loading = true;
 
-            // 应付金额
-            const amount = parseFloat(this.filter.shouldPayAmount);
+            // 应收金额: 如果为无效数字，则删除属性 shouldPayAmount，不传此属性到后端
             const filter = Utils.clone(this.filter);
+            const amount = parseFloat(this.filter.shouldPayAmount);
 
             if (amount) {
                 filter.shouldPayAmount = amount;
@@ -276,16 +272,6 @@ export default {
 </script>
 
 <style lang="scss">
-.sales-order-payments {
-    .list-page-toolbar-top .filter input {
-        width: 150px;
-    }
-
-    .list-page-toolbar-top .filter .should-pay-amount input {
-        width: 80px;
-    }
-}
-
 .sales-order-pay-modal {
     .body-wrapper {
         display: grid;
