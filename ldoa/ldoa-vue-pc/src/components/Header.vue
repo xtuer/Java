@@ -4,10 +4,21 @@
         <div class="title"><slot></slot></div>
 
         <!-- 消息 -->
-        <router-link :to="{ name: 'audit-received' }" class="message-count-wrapper margin-right-10">
-            <Icon type="ios-notifications-outline" size="30" style="color: #ddd" class="clickable"/>
-            <div class="message-count">{{ messageCount }}</div>
-        </router-link>
+        <Dropdown>
+            <a class="message-count-wrapper margin-right-10">
+                <Icon type="ios-notifications-outline" size="30" style="color: #ddd" class="clickable"/>
+                <div class="message-count">{{ messageCount + auditCount }}</div>
+            </a>
+            <DropdownMenu slot="list" class="menu-userx">
+                <DropdownItem>
+                    <router-link :to="{ name: 'messages' }">消息 ({{ messageCount }})</router-link>
+                </DropdownItem>
+                <DropdownItem>
+                    <router-link :to="{ name: 'audit-received' }">审批 ({{ auditCount }})</router-link>
+                </DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+
 
         <!-- 用户头像和菜单 -->
         <Dropdown>
@@ -16,7 +27,7 @@
                 <span class="user-name">{{ user.nickname }}</span>
                 <Icon type="ios-arrow-down" style="margin-left: 8px"/>
             </a>
-            <DropdownMenu slot="list" class="menu-user">
+            <DropdownMenu slot="list">
                 <DropdownItem><router-link to="/user-info">个人中心</router-link></DropdownItem>
                 <DropdownItem><a href="/logout">退出账号</a></DropdownItem>
             </DropdownMenu>
@@ -37,7 +48,13 @@ export default {
         },
         messageCount() {
             return this.$store.state.messageCount;
-        }
+        },
+        auditCount() {
+            return this.$store.state.auditCount;
+        },
+        showMessageDropdown() {
+            return this.messageCount > 0 && this.auditCount > 0;
+        },
     }
 };
 </script>
@@ -71,18 +88,17 @@ export default {
         margin-left: 10px;
     }
 
-    .menu-user {
-        .ivu-dropdown-item {
-            padding: 0;
+    .ivu-dropdown-item {
+        padding: 0;
 
-            a {
-                display: block;
-                padding: 7px 16px;
-            }
+        a {
+            display: block;
+            padding: 7px 16px;
         }
     }
 
     .message-count-wrapper {
+        display: inline-block;
         position: relative;
 
         .message-count {

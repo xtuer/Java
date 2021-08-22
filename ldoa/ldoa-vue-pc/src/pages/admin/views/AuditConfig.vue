@@ -47,9 +47,11 @@
                     <!-- 审批员 -->
                     <div class="audit-step-auditors" :id="step.uid" :data-id="step.uid">
                         <div v-for="auditor in step.auditors" :data-id="auditor.userId" :key="auditor.userId" class="auditor">
-                            <span class="name">{{ auditor.nickname }}</span>
-                            <Tag class="role" color="cyan">{{ getUserRole(auditor.userId) }}</Tag>
-                            <Icon type="md-close-circle" class="close-icon clickable" @click="removeAuditorFromStep(step, auditor)"/>
+                            <div class="title">
+                                <span>{{ getUserRole(auditor.userId) }}</span>
+                                <Icon type="md-close" class="close-icon clickable" @click="removeAuditorFromStep(step, auditor)"/>
+                            </div>
+                            <div class="name">{{ auditor.nickname }}</div>
                         </div>
                     </div>
 
@@ -63,11 +65,13 @@
 
         <!-- 未分配用户 -->
         <div class='box'>
-            <div class="title">未分配用户</div>
+            <div class="title">系统用户</div>
             <div class="content rest-auditors" id="rest-auditors">
                 <div v-for="auditor in allAuditors" :data-id="auditor.userId" :key="auditor.userId" class="auditor">
-                    <span class="name">{{ auditor.nickname }}</span>
-                    <Tag class="role" color="cyan">{{ getUserRole(auditor.userId) }}</Tag>
+                    <div class="title">
+                        <span>{{ getUserRole(auditor.userId) }}</span>
+                    </div>
+                    <div class="name">{{ auditor.nickname }}</div>
                 </div>
             </div>
         </div>
@@ -253,63 +257,9 @@ export default {
         }
     }
 
-    .audit-steps, .rest-auditors {
+    .audit-steps {
         min-height: 500px;
 
-        .auditor {
-            border: 1px solid $borderColor;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            padding: 10px;
-            user-select: none;
-            position: relative;
-
-            &:hover {
-                color: $primaryColor;
-                transition: color .8s;
-            }
-
-            .role {
-                position: absolute;
-                right: 1px;
-                top: 2px;
-                font-size: 8px;
-                margin: 0;
-                padding: 0 4px;
-            }
-        }
-
-        .audit-step-auditors {
-            padding: 20px;
-            min-height: 90px;
-            border: 1px solid rgba(0, 0, 0, .2);
-            border-radius: 3px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, .1) inset;
-
-            .auditor {
-                display: inline-block;
-                width: 200px;
-                margin-right: 15px;
-                margin-bottom: 0;
-                position: relative;
-
-                &:hover .close-icon {
-                    display: inline-block;
-                }
-
-                .close-icon {
-                    display: none;
-                    position: absolute;
-                    right: 0px;
-                    top: 0px;
-                    font-size: 18px;
-                    transform: translate(50%, -50%);
-                }
-            }
-        }
-    }
-
-    .audit-steps {
         .toolbar {
             display: flex;
             align-items: center;
@@ -317,6 +267,16 @@ export default {
 
             button {
                 margin-right: 15px;
+            }
+
+            .clickable {
+                display: none;
+            }
+        }
+
+        .audit-step {
+            &:hover .clickable {
+                display: block;
             }
         }
 
@@ -326,6 +286,81 @@ export default {
 
             .ivu-icon {
                 color: #bbb;
+            }
+        }
+
+        .audit-step-auditors {
+            padding: 20px;
+            min-height: 90px;
+            border: 1px solid rgba(0, 0, 0, .05);
+            border-radius: 3px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .1) inset;
+
+            .auditor {
+                display: inline-block;
+                border: none;
+                width: 200px;
+                padding: 0;
+                margin-right: 15px;
+                margin-bottom: 0;
+                box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+                border-radius: 4px;
+                overflow: hidden;
+                cursor: default;
+                background: white;
+
+                .title {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    color: #eee;
+                    background: #808695;
+                    padding: 5px 10px;
+
+                    .close-icon {
+                        display: none;
+                        font-size: 18px;
+                    }
+                }
+
+                .name {
+                    padding: 10px;
+                }
+
+                &:hover .close-icon {
+                    display: inline-block;
+                    transition: color .8s;
+                }
+            }
+        }
+    }
+
+    .rest-auditors {
+        min-height: 500px;
+
+        .auditor {
+            border: 1px solid $separatorColor;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            padding: 10px;
+            position: relative;
+            cursor: default;
+            overflow: hidden;
+            background: white;
+
+            &:hover {
+                background: $backgroundColor;
+            }
+
+            .title {
+                color: #808695;
+                position: absolute;
+                top: 0px;
+                right: 0px;
+                font-size: 12px;
+                background: cyan;
+                padding: 2px 4px;
+                border-bottom-left-radius: 4px;
             }
         }
     }

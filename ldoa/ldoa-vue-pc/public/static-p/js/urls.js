@@ -87,6 +87,11 @@ const Urls = {
 
     // 表格配置
     API_TABLE_CONFIG_BY_TABLE_NAME_AND_USER: '/api/tables/{tableName}/users/{userId}/config',
+
+    // 消息
+    API_MESSAGES_AS_READ                 : '/api/messages/{messageId}/read', // 标记消息为已读
+    API_MESSAGES_OF_RECEIVER             : '/api/messages/receivers/{receiverId}/messages', // 指定接收者的消息
+    API_MESSAGES_UNREAD_COUNT_OF_RECEIVER: '/api/messages/receivers/{receiverId}/messages/unreadCount', // 指定接收者的未读消息
 };
 
 window.Urls = Urls;

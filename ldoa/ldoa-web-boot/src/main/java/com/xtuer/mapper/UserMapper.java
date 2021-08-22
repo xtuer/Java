@@ -124,4 +124,12 @@ public interface UserMapper {
      * @param userId 用户 ID
      */
     void deleteUserRoles(long userId);
+
+    /**
+     * 查询指定角色的用户 ID
+     *
+     * @param roles 用户角色
+     * @return 返回用户 ID 的数组
+     */
+    List<Long> findUserIdsByRoles(List<String> roles);
 }

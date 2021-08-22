@@ -76,6 +76,7 @@ export default {
                 { label: '个人中心', icon: 'ios-contact', menuItems:
                     [
                         { label: '我的信息',   name: 'user-info' },
+                        { label: '我的消息',   name: 'messages' },
                         { label: '收到的审批', name: 'audit-received' },
                         { label: '发起的审批', name: 'audit-request'  },
                     ]
@@ -169,6 +170,7 @@ export default {
         box-shadow: 0 0px 15px #ccc;
         z-index: 1000;
         height: 60px;
+        min-height: 60px;
     }
 
     > .main {

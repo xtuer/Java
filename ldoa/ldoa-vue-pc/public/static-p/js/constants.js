@@ -131,6 +131,17 @@ window.SALES_PAID_TYPES = [
     { value: 2, label: '全款' },
 ];
 
+// 消息类型
+window.MESSAGE_TYPE = {
+    CREATE_ORDER: 'CREATE_ORDER',
+    UPDATE_ORDER: 'UPDATE_ORDER',
+};
+
+window.MESSAGE_TYPES = [
+    { value: 'CREATE_ORDER', label: '创建生产订单' },
+    { value: 'UPDATE_ORDER', label: '更新生产订单' },
+];
+
 // 性别
 window.GENDERS = [
     { value: 0, name: '未选' },

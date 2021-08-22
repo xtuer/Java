@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xtuer.mapper.MessageMapper">
+    <!-- 插入消息 -->
+    <insert id="insertMessage">
+        INSERT INTO message (message_id, sender_id, receiver_id, target_id, type, content)
+        VALUES (#{messageId}, #{senderId}, #{receiverId}, #{targetId}, #{type}, #{content})
+    </insert>
+
+    <!-- 标记消息为已读 -->
+    <update id="markMessageRead">
+        UPDATE message SET `read` = 1 WHERE message_id = #{messageId}
+    </update>
+
+    <!-- 查询指定接收者的消息 -->
+    <select id="findMessagesByReceiverId" resultType="Message">
+        SELECT message_id, sender_id, receiver_id, target_id, type, content, `read`, created_at
+        FROM message
+        WHERE receiver_id = #{receiverId}
+        ORDER BY `read` ASC, created_at DESC
+        LIMIT ${page.offset}, ${page.count}
+    </select>
+
+    <!-- 统计指定接收者的未读消息 -->
+    <select id="countUnreadMessagesByReceiverId" resultType="_int">
+        SELECT count(1)
+        FROM message
+        WHERE receiver_id = #{receiverId} AND `read` = 0
+    </select>
+</mapper>

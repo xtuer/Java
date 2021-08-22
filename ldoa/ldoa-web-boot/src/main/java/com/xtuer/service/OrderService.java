@@ -36,6 +36,9 @@ public class OrderService extends BaseService {
     @Autowired
     private ProductMapper productMapper;
 
+    @Autowired
+    private MessageService messageService;
+
     /**
      * 查询指定 ID 的订单
      *
@@ -89,6 +92,10 @@ public class OrderService extends BaseService {
         // 6. 重新创建订单项
         // 7. 保存附件
         // 8. 保存订单到数据库
+        // 9. 发送订单消息
+
+        // 订单的消息类型，默认为更新订单
+        Message.Type messageType = Message.Type.UPDATE_ORDER;
 
         // [1] 如果订单 ID 无效，则说明是创建，分配订单 ID 和订单号
         if (Utils.isInvalidId(order.getOrderId())) {
@@ -96,6 +103,7 @@ public class OrderService extends BaseService {
             order.setOrderSn(nextOrderSn());
             order.setSalespersonId(salesperson.getUserId());
             order.setSalesperson(salesperson);
+            messageType = Message.Type.CREATE_ORDER;
         }
         order.setState(Order.STATE_AUDITING); // 状态为等待审批
 
@@ -137,6 +145,9 @@ public class OrderService extends BaseService {
         // [8] 保存订单到数据库
         orderMapper.upsertOrder(order);
         orderMapper.updateOrderState(order.getOrderId(), order.getState());
+
+        // [9] 发送订单消息
+        messageService.sendOrderMessage(messageType, order);
 
         return Result.ok(order);
     }

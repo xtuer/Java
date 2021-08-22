@@ -120,6 +120,12 @@ export default new Router({
                     name: 'user-info',
                     component: () => import(/* webpackChunkName: "product" */ './views/UserInfo.vue'),
                 },
+                // 我的消息
+                {
+                    path: '/messages',
+                    name: 'messages',
+                    component: () => import(/* webpackChunkName: "product" */ './views/Messages.vue'),
+                },
                 // 我收到的审批
                 {
                     path: '/audit-received',

@@ -105,6 +105,16 @@
         DELETE FROM user_role WHERE user_id = #{userId}
     </delete>
 
+    <!-- 查询指定角色的用户 ID -->
+    <select id="findUserIdsByRoles" resultType="long">
+        SELECT DISTINCT(user_id)
+        FROM user_role
+        WHERE role IN
+            <foreach collection="list" item="role" open="(" close=")" separator=",">
+                #{role}
+            </foreach>
+    </select>
+
     <!-- 用户，包含角色信息 -->
     <resultMap id="userWithRoles" type="User">
         <id     property="userId"   column="user_id"/>
