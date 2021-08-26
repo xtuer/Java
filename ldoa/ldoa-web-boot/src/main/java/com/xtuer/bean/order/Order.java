@@ -44,9 +44,9 @@ public class Order {
     private String orderSn;
 
     /**
-     * 订单类型: 0 (销售订单)、1 (样品订单)
+     * 订单类型: 0 (生产订单)、1 (样品订单)
      */
-    @Excel(name = "订单类型", width = 20, orderNum = "4", replace = {"销售订单_0", "样品订单_1"})
+    @Excel(name = "订单类型", width = 20, orderNum = "4", replace = {"生产订单_0", "样品订单_1"})
     private int type;
 
     /**

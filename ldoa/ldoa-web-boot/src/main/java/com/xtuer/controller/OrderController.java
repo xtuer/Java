@@ -52,6 +52,7 @@ public class OrderController extends BaseController {
      *      productNames    [可选]: 产品名称
      *      customerCompany [可选]: 客户单位
      *      state           [可选]: 状态
+     *      type            [可选]: 类型
      *      orderDateStart  [可选]: 订单开始时间
      *      orderDateEnd    [可选]: 订单结束时间
      *      pageNumber      [可选]: 页码

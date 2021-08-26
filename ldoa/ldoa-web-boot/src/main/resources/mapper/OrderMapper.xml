@@ -45,6 +45,9 @@
                     <if test="filter.state >= 0">
                         AND state = #{filter.state}
                     </if>
+                    <if test="filter.type >= 0">
+                        AND type = #{filter.type}
+                    </if>
                     <if test="filter.notInStockRequest == true">
                         <!-- 参考存在一个表而不在另一个表中的数据 https://www.cnblogs.com/softidea/p/9482120.html -->
                         AND (SELECT count(1) AS num FROM stock_request r WHERE `order`.order_id = r.order_id) = 0

@@ -55,7 +55,7 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
             </tr> -->
             <tr>
                 <td class="td-label text-color-gray">产品数量:</td>
-                <td class="td-rest">{{ order.productCount }}</td>
+                <td class="td-rest">{{ order.productCount == 0 ? '' : order.productCount }}</td>
                 <td class="td-label text-color-gray">配件:</td>
                 <td class="td-rest" colspan="3">{{ order.accessories }}</td>
             </tr>

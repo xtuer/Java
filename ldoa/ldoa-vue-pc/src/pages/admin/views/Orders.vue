@@ -9,13 +9,19 @@
             <!-- 搜索条件 -->
             <div class="filter">
                 <!-- 状态 -->
-                <Select v-model="filter.state" data-prepend-label="状态" class="prepend-label" style="width: 100%; min-width: 150px" @on-change="searchOrders">
+                <Select v-model="filter.state" data-prepend-label="状态" class="prepend-label" style="width: 150px" @on-change="searchOrders">
                     <Option :value="-1">全部</Option>
                     <Option :value="0">初始化</Option>
                     <Option :value="1">审批中</Option>
                     <Option :value="2">审批拒绝</Option>
                     <Option :value="3">审批通过</Option>
                     <Option :value="4">完成</Option>
+                </Select>
+
+                <Select v-model="filter.type" data-prepend-label="类型" class="prepend-label" style="width:150px" @on-change="searchOrders">
+                    <Option :value="-1">全部</Option>
+                    <Option :value="0">生产订单</Option>
+                    <Option :value="1">样品订单</Option>
                 </Select>
 
                 <!-- 订单日期 -->
@@ -32,6 +38,7 @@
                         <Option value="customerCompany">客户单位</Option>
                     </Select>
                 </Input>
+                <div class="stretch"></div>
             </div>
             <div>
                 <Button type="primary" :disabled="!hasPermissionForOrder()" icon="md-add" class="margin-right-10" @click="editOrder()">新建订单</Button>
@@ -50,7 +57,7 @@
 
             <!-- 客户单位 -->
             <template slot-scope="{ row: order }" slot="customer">
-                <Poptip trigger="hover" placement="top" transfer width="250">
+                <Poptip trigger="hover" placement="bottom" transfer width="250">
                     <div>{{ order.customerCompany }}</div>
 
                     <div slot="content">
@@ -151,7 +158,13 @@ export default {
             this.orders    = [];
             this.more      = false;
             this.reloading = true;
-            this.filter    = { ...this.newFilter(), state: this.filter.state, orderDateStart: this.filter.orderDateStart, orderDateEnd: this.filter.orderDateEnd };
+            this.filter    = {
+                ...this.newFilter(),
+                state: this.filter.state,
+                type: this.filter.type,
+                orderDateStart: this.filter.orderDateStart,
+                orderDateEnd: this.filter.orderDateEnd
+            };
             this.filter[this.filterKey] = this.filterValue;
 
             this.fetchMoreOrders();
@@ -226,7 +239,8 @@ export default {
         // 搜索条件
         newFilter() {
             return {
-                state: -1,
+                state: -1, // 状态: 0 (初始化)、1 (待审批)、2 (审批拒绝)、3 (审批完成)、4 (完成)、-1 (全部)
+                type : -1, // 订单类型: 0 (生产订单)、1 (样品订单)、-1 (全部)
                 customerCompany: '',
                 productNames: '',
                 orderDateStart: '',

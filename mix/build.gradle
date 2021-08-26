@@ -79,6 +79,8 @@ dependencies {
     implementation 'com.jcraft:jsch:0.1.55'
     implementation 'org.apache.rocketmq:rocketmq-client:4.9.0'
 
+    compile('org.atteo.classindex:classindex:3.4')
+    annotationProcessor('org.atteo.classindex:classindex:3.4')
 
     testCompile 'org.seleniumhq.selenium:selenium-java:3.3.1'
     testCompile 'org.springframework:spring-test:5.0.2.RELEASE'

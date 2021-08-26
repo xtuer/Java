@@ -39,6 +39,11 @@ public class OrderFilter {
     private int state;
 
     /**
+     * 订单类型: 0 (生产订单)、1 (样品订单)
+     */
+    private int type;
+
+    /**
      * 订单开始时间
      */
     private Date orderDateStart;
