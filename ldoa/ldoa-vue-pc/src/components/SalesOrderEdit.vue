@@ -412,7 +412,7 @@ export default {
                 type           : 0,     // 订单类型: 0 (生产订单)、1 (样品订单)
                 customerAddress: '',    // 客户收件地址
                 calibrated     : false, // 是否校准
-                calibrationInfo: '证书单位：\n证书地址：\n制造商：\n设备名称：\n校准内容：\n其他校准信息：', // 校准信息
+                calibrationInfo: '证书单位：\n证书地址：\n制造商：\n设备名称：\n设备类型：\n校准内容：\n其他校准信息：', // 校准信息
                 attachmentId   : '0',   // 附件 ID
                 attachment     : {},    // 附件,
             };

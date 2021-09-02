@@ -1,3 +1,4 @@
+import com.xtuer.bean.Role;
 import com.xtuer.bean.audit.AuditStep;
 import com.xtuer.util.Utils;
 import org.junit.jupiter.api.Test;
@@ -41,5 +42,10 @@ public class CommonTest {
     public void testDate() {
         System.out.println(Utils.dayStart(new Date()));
         System.out.println(Utils.dayEnd(new Date()));
+    }
+
+    @Test
+    public void toJson() {
+        System.out.println(Utils.toJson(Role.ROLE_ADMIN)); // ROLE_ADMIN
     }
 }

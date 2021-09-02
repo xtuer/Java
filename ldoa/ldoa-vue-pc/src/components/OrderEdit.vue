@@ -268,7 +268,7 @@ export default {
                 returnDate     : '',    // 规划日期
                 salespersonId  : '0',   // 销售员
                 calibrated     : false, // 是否校准
-                calibrationInfo: '证书单位：\n证书地址：\n制造商：\n设备名称：\n校准内容：\n其他校准信息：', // 校准信息
+                calibrationInfo: '证书单位：\n证书地址：\n制造商：\n设备名称：\n设备类型：\n校准内容：\n其他校准信息：', // 校准信息
                 requirement    : '',    // 要求
                 attachmentId   : '0',   // 附件 ID
                 createdAt      : '',    // 订单创建日期
