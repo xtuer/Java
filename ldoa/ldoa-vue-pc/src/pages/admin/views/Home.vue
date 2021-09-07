@@ -37,7 +37,7 @@ export default {
     data() {
         return {
             activeMenuItemName: '', // 当前菜单项名字
-            openSubMenuIndexes: [2, 3], // 展开的子菜单下标
+            openSubMenuIndexes: [2], // 展开的子菜单下标
 
             // 所有菜单项，每个菜单项有不同的权限
             subMenus: [

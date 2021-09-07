@@ -47,7 +47,7 @@
         </div>
 
         <!-- 订单列表 -->
-        <Table :data="orders" :columns="orderColumns" :loading="reloading" border
+        <Table :data="orders" :columns="orderColumns" :loading="reloading" :max-height="maxHeight" border
             @on-column-width-resize="saveTableColumnWidths(arguments)"
         >
             <!-- 订单编号 -->
@@ -134,6 +134,7 @@ export default {
             orderDetailsModal: false, // 订单详情弹窗是否可见
             orderDetailsOrderId: '0', // 查看详情的订单
             tableName: 'orders-table', // 表名
+            maxHeight: 200,
             orderColumns: [
                 // 设置 width, minWidth，当大小不够时 Table 会出现水平滚动条
                 { slot: 'orderSn',      title: '订单号', width: 180, resizable: true },
@@ -151,6 +152,7 @@ export default {
     mounted() {
         this.restoreTableColumnWidths(this.orderColumns);
         this.searchOrders();
+        this.maxHeight = this.maxTableHeight();
     },
     methods: {
         // 搜索订单

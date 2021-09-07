@@ -19,7 +19,7 @@
         </div>
 
         <!-- 物料列表 -->
-        <Table :data="items" :columns="columns" :loading="reloading" border
+        <Table :data="items" :columns="columns" :loading="reloading" :max-height="maxHeight" border
             @on-column-width-resize="saveTableColumnWidths(arguments)"
         >
             <!-- 库存告警 -->
@@ -98,6 +98,7 @@ export default {
             modal    : false, // 是否显示编辑对话框
             saving   : false, // 保存中
             tableName: 'product-items-table', // 表名
+            maxHeight: 200,
             columns  : [
                 // 设置 width, minWidth，当大小不够时 Table 会出现水平滚动条
                 { key : 'name',      title: '物料名称', width: 200, resizable: true },
@@ -135,6 +136,7 @@ export default {
     mounted() {
         this.restoreTableColumnWidths(this.columns);
         this.searchProductItems();
+        this.maxHeight = this.maxTableHeight();
     },
     methods: {
         // 搜索物料

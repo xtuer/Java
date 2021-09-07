@@ -25,7 +25,7 @@
         </div>
 
         <!-- 产品列表 -->
-        <Table :data="products" :columns="productColumns" :loading="reloading" border
+        <Table :data="products" :columns="productColumns" :loading="reloading" :max-height="maxHeight" border
             @on-column-width-resize="saveTableColumnWidths(arguments)"
         >
             <!-- 操作按钮 -->
@@ -111,6 +111,7 @@ export default {
             exporting : false, // 导出中
             itemSelect: false, // 物料选择弹窗是否可见
             tableName : 'products-table', // 表名
+            maxHeight : 200,
             // 产品的列
             productColumns: [
                 {
@@ -154,6 +155,7 @@ export default {
     mounted() {
         this.restoreTableColumnWidths(this.productColumns);
         this.searchProducts();
+        this.maxHeight = this.maxTableHeight();
     },
     methods: {
         // 搜索产品

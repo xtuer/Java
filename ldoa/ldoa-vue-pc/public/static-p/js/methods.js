@@ -158,6 +158,19 @@ const ensureInt = function(obj, field, n) {
     });
 };
 
+/**
+ * 计算 .content 中 Table 的最大高度
+ *
+ * @returns 返回 Table 的最大高度
+ */
+const maxTableHeight = function() {
+    const top = document.querySelector('.ivu-table-wrapper').getBoundingClientRect().top;
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+    const maxHeight = vh - 90 - top;
+
+    return maxHeight;
+};
+
 export default {
     download,
     exportFile,
@@ -169,4 +182,5 @@ export default {
     restoreTableColumnWidths,
     saveTableColumnWidths,
     ensureInt,
+    maxTableHeight,
 };
