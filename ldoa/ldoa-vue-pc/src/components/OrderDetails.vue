@@ -124,7 +124,10 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
         <div slot="footer">
             <!-- <Button type="text" @click="showEvent(false)">取消</Button> -->
             <!-- <Button type="primary" @click="showEvent(false)">确定</Button> -->
-            <Button v-if="canCompleteOrder" :loading="saving" type="primary" @click="completeOrder">完成订单</Button>
+            <!-- <Button v-if="canCompleteOrder" :loading="saving" type="primary" @click="completeOrder">完成订单</Button> -->
+            <Poptip v-if="canCompleteOrder" confirm transfer title="确定提交订单 ?" @on-ok="completeOrder">
+                <Button :loading="saving" type="primary">完成订单</Button>
+            </Poptip>
         </div>
     </Modal>
 </template>
@@ -181,7 +184,9 @@ export default {
         canCompleteOrder() {
             // 当前状态为 3 且其销售员为当前登陆用户
             // order.state === 3; // "初始化", "审批中", "审批拒绝", "审批通过", "完成"
-            if (this.order.state === 3 && this.isCurrentUser(this.order.salespersonId)) {
+            // 由生产调度的人从生产订单的模块点击完成
+            // if (this.order.state === 3 && this.isCurrentUser(this.order.salespersonId)) {
+            if (this.order.state === 3 && this.hasPermissionForOrderComplete()) {
                 return true;
             } else {
                 return false;

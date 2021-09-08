@@ -30,6 +30,7 @@ public enum Role {
     ROLE_PRODUCE_QUALITY("生产部质量保证"),
     ROLE_PRODUCE_SCHEDULE("生产部计划调度"),
     ROLE_PRODUCE_TEST("生产部检验测试"),
+    ROLE_PRODUCE_REPOSITORY_MANAGER("生产部库房管理"),
 
     ROLE_TECHNIQUE_HARDWARE("技术部硬件技术"),
     ROLE_TECHNIQUE_SOFTWARE("技术部软件技术");

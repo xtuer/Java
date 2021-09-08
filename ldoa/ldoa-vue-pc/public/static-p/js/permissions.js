@@ -62,6 +62,13 @@ const hasPermissionForOrder = function() {
 };
 
 /**
+ * 是否有完成生产订单的权限
+ */
+const hasPermissionForOrderComplete = function() {
+    return this.hasPermission(PERMISSIONS.orderComplete);
+};
+
+/**
  * 是否有维保订单的权限
  *
  * @return 有权限返回 true，否则返回 false
@@ -105,6 +112,7 @@ const hasPermissionForFinance = function() {
 export default {
     hasPermission,
     hasPermissionForOrder,
+    hasPermissionForOrderComplete,
     hasPermissionForMaintenance,
     hasPermissionOfSuperAdmin,
     hasPermissionForStockIn,

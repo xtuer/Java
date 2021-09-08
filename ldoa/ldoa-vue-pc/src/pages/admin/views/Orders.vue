@@ -138,7 +138,7 @@ export default {
             orderColumns: [
                 // 设置 width, minWidth，当大小不够时 Table 会出现水平滚动条
                 { slot: 'orderSn',      title: '订单号', width: 180, resizable: true },
-                { slot: 'customer',     title: '客户单位', minWidth: 180, className: 'table-poptip' },
+                { slot: 'customer',     title: '客户单位', width: 250, className: 'table-poptip', resizable: true },
                 { key : 'productNames', title: '产品名称', width: 150, tooltip: true, resizable: true },
                 { slot: 'type',         title: '类型', width: 110, align: 'center', resizable: true },
                 { slot: 'orderDate',    title: '订单日期', width: 110, align: 'center', resizable: true },

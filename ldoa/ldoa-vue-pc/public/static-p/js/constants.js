@@ -26,6 +26,7 @@ ROLE_PRODUCE_MAINTENANCE("生产部生产维保"),
 ROLE_PRODUCE_QUALITY("生产部质量保证"),
 ROLE_PRODUCE_SCHEDULE("生产部计划调度"),
 ROLE_PRODUCE_TEST("生产部检验测试"),
+ROLE_PRODUCE_REPOSITORY_MANAGER("生产部库房管理"),
 
 ROLE_TECHNIQUE_HARDWARE("技术部硬件技术"),
 ROLE_TECHNIQUE_SOFTWARE("技术部软件技术");
@@ -44,6 +45,7 @@ window.ROLES = [
     { value: 'ROLE_PRODUCE_QUALITY',     name: '生产部质量保证' },
     { value: 'ROLE_PRODUCE_SCHEDULE',    name: '生产部计划调度' },
     { value: 'ROLE_PRODUCE_TEST',        name: '生产部检验测试' },
+    { value: 'ROLE_PRODUCE_REPOSITORY_MANAGER', name: '生产部库房管理' },
 
     { value: 'ROLE_TECHNIQUE_HARDWARE', name: '技术部硬件技术' },
     { value: 'ROLE_TECHNIQUE_SOFTWARE', name: '技术部软件技术' },
@@ -53,6 +55,9 @@ window.ROLES = [
 window.PERMISSIONS = {
     // 超级管理员的权限
     superAdmin: ['ROLE_ADMIN_SYSTEM'],
+
+    // 由生产调度的人从生产订单的模块点击完成
+    orderComplete: ['ROLE_PRODUCE_SCHEDULE'],
 
     // 维保订单的权限
     maintenance: ['ROLE_PRODUCE_MAINTENANCE', 'ROLE_PRODUCE_SCHEDULE'],

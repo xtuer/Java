@@ -164,7 +164,6 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
             <Poptip confirm transfer title="确定提交订单 ?" @on-ok="saveSalesOrder(1)">
                 <Button type="primary" :loading="saving">提交</Button>
             </Poptip>
-
         </div>
 
         <!-- 用户选择弹窗 -->
