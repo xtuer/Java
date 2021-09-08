@@ -51,7 +51,7 @@
         </div>
 
         <!-- 维保订单列表 -->
-        <Table :data="orders" :columns="columns" :loading="reloading" :max-height="maxHeight" border
+        <Table :data="orders" :columns="columns" :loading="reloading" :max-height="tableMaxHeight" border
             @on-column-width-resize="saveTableColumnWidths(arguments)"
         >
             <!-- 订单号 -->
@@ -178,7 +178,7 @@ export default {
             reloading: false,
             exporting: false, // 是否导出中
             tableName: 'maintenance-orders-table', // 表名
-            maxHeight: 200,
+            tableMaxHeight: 200,
             columns  : [
                 // 设置 width, minWidth，当大小不够时 Table 会出现水平滚动条
                 { slot: 'maintenanceOrderSn', title: '维保单号', width: 180, resizable: true },
@@ -209,7 +209,7 @@ export default {
     mounted() {
         this.restoreTableColumnWidths(this.columns);
         this.searchOrders();
-        this.maxHeight = this.maxTableHeight();
+        this.tableMaxHeight = this.calculateTableMaxHeight();
     },
     methods: {
         // 搜索维保订单

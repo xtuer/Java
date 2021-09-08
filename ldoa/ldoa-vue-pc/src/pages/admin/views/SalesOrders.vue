@@ -29,7 +29,7 @@
         </div>
 
         <!-- 销售订单列表 -->
-        <Table :data="salesOrders" :columns="columns" :loading="reloading" border
+        <Table :data="salesOrders" :columns="columns" :loading="reloading" :max-height="tableMaxHeight" border
             @on-column-width-resize="saveTableColumnWidths(arguments)"
         >
             <!-- 订单编号 -->
@@ -90,6 +90,7 @@ export default {
             reloading: false,
             exporting: false, // 导出中
             tableName: 'sales-orders-table',
+            tableMaxHeight: 200,
             columns  : [
                 // 设置 width, minWidth，当大小不够时 Table 会出现水平滚动条
                 { slot: 'salesOrderSn', title: '订单编号', width: 150, resizable: true },
@@ -117,6 +118,7 @@ export default {
     mounted() {
         this.restoreTableColumnWidths(this.columns);
         this.searchSalesOrders();
+        this.tableMaxHeight = this.calculateTableMaxHeight();
     },
     methods: {
         // 搜索销售订单

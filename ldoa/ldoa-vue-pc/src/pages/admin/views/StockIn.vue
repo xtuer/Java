@@ -31,7 +31,7 @@
         </div>
 
         <!-- 入库列表 -->
-        <Table :data="stockRecords" :columns="columns" :loading="reloading" border
+        <Table :data="stockRecords" :columns="columns" :loading="reloading" :max-height="tableMaxHeight" border
             @on-column-width-resize="saveTableColumnWidths(arguments)"
         >
             <template slot-scope="{ row: record }" slot="name">
@@ -124,6 +124,7 @@ export default {
             reloading: false,
             saving   : false, // 保存中
             tableName: 'stock-in-table', // 表名
+            tableMaxHeight: 200,
             columns  : [
                 { slot: 'name',            title: '物料名称', width: 180, fixed: 'left', resizable: true },
                 { slot: 'code',            title: '物料编码', width: 150, resizable: true },
@@ -156,6 +157,7 @@ export default {
     mounted() {
         this.restoreTableColumnWidths(this.columns);
         this.searchStockRecords();
+        this.tableMaxHeight = this.calculateTableMaxHeight();
     },
     methods: {
         // 搜索入库记录

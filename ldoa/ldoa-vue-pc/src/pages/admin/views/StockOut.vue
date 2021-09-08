@@ -56,7 +56,7 @@
         </div>
 
         <!-- 出库申请列表 -->
-        <Table :data="requests" :columns="columns" :loading="reloading" border
+        <Table :data="requests" :columns="columns" :loading="reloading" :max-height="tableMaxHeight" border
             @on-column-width-resize="saveTableColumnWidths(arguments)"
         >
             <!-- 出库单号 -->
@@ -113,6 +113,7 @@ export default {
             stockRequestDetailsVisible: false,
 
             tableName: 'stock-out-table', // 表名
+            tableMaxHeight: 200,
             columns  : [
                 // 设置 width, minWidth，当大小不够时 Table 会出现水平滚动条
                 { slot: 'requestSn',         title: '出库单号', width: 200, resizable: true },
@@ -128,6 +129,7 @@ export default {
     mounted() {
         this.restoreTableColumnWidths(this.columns);
         this.searchRequests();
+        this.tableMaxHeight = this.calculateTableMaxHeight();
     },
     methods: {
         // 搜索出库
