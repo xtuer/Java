@@ -296,6 +296,11 @@ export default {
         },
         // 判断订单是否可以编辑: 售后服务人员为当前用户，且初始化或者审批拒绝的订单才能编辑
         canEditOrder(order) {
+            // Feature: 维修人员王嘉琦 (生产部计划调度) 和高金东 (生产部生产维保) 可以编辑崔晶晶维保订单录入信息的权限
+            if (this.hasPermission(['ROLE_PRODUCE_SCHEDULE', 'ROLE_PRODUCE_MAINTENANCE']) && (order.state === 0 || order.state === 2)) {
+                return true;
+            }
+
             if (this.isCurrentUser(order.servicePersonId) && (order.state === 0 || order.state === 2)) {
                 return true;
             } else {

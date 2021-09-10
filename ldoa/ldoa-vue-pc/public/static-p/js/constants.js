@@ -60,7 +60,7 @@ window.PERMISSIONS = {
     orderComplete: ['ROLE_PRODUCE_SCHEDULE'],
 
     // 维保订单的权限
-    maintenance: ['ROLE_PRODUCE_MAINTENANCE', 'ROLE_PRODUCE_SCHEDULE'],
+    maintenance: ['ROLE_PRODUCE_MAINTENANCE', 'ROLE_PRODUCE_SCHEDULE', 'ROLE_PRODUCE_QUALITY'],
 
     // 物料入库的权限
     stockIn: ['ROLE_PRODUCE_QUALITY', 'ROLE_PRODUCE_SCHEDULE'],
