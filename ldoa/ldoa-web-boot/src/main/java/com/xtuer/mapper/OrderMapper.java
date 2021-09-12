@@ -58,4 +58,12 @@ public interface OrderMapper {
      * @param state   状态
      */
     void updateOrderState(long orderId, int state);
+
+    /**
+     * 更新订单的进度
+     *
+     * @param orderId  订单 ID
+     * @param progress 进度
+     */
+    void updateOrderProgress(long orderId, String progress);
 }

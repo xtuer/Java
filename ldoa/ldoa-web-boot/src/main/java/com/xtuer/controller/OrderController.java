@@ -134,4 +134,19 @@ public class OrderController extends BaseController {
         orderMapper.updateOrderState(orderId, Order.STATE_COMPLETE);
         return Result.ok();
     }
+
+    /**
+     * 更新订单的进度
+     *
+     * 网址: http://localhost:8080/api/orders/{orderId}/progress
+     * 参数: value 进度
+     *
+     * @param orderId  订单 ID
+     * @param progress 进度
+     */
+    @PutMapping(Urls.API_ORDERS_PROGRESS)
+    public Result<Boolean> updateOrderProgress(@PathVariable long orderId, @RequestParam("value") String progress) {
+        orderMapper.updateOrderProgress(orderId, progress);
+        return Result.ok();
+    }
 }

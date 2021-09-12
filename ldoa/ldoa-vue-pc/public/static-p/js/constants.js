@@ -59,11 +59,14 @@ window.PERMISSIONS = {
     // 由生产调度的人从生产订单的模块点击完成
     orderComplete: ['ROLE_PRODUCE_SCHEDULE'],
 
+    // 权限仅限于生产调度
+    orderProgress: ['ROLE_PRODUCE_SCHEDULE'],
+
     // 维保订单的权限
     maintenance: ['ROLE_PRODUCE_MAINTENANCE', 'ROLE_PRODUCE_SCHEDULE', 'ROLE_PRODUCE_QUALITY'],
 
     // 物料入库的权限
-    stockIn: ['ROLE_PRODUCE_QUALITY', 'ROLE_PRODUCE_SCHEDULE'],
+    stockIn: ['ROLE_PRODUCE_QUALITY', 'ROLE_PRODUCE_SCHEDULE', 'ROLE_ADMIN_SYSTEM', 'ROLE_PRODUCE_QUALITY'],
 
     // 销售订单的权限
     salesOrder: ['ROLE_SALE_SALESPERSON'],

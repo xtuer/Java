@@ -39,6 +39,7 @@ const Urls = {
     API_ORDERS         : '/api/orders',                    // 订单
     API_ORDERS_BY_ID   : '/api/orders/{orderId}',          // 指定 ID 的订单
     API_ORDERS_COMPLETE: '/api/orders/{orderId}/complete', // 完成订单
+    API_ORDERS_PROGRESS: '/api/orders/{orderId}/progress', // 订单的进度
     API_ORDERS_EXPORT  : '/api/orders/export',             // 导出订单
 
     // 维保订单

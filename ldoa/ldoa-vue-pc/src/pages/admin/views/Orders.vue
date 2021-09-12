@@ -91,6 +91,19 @@
                 <Tag :color="stateColor(order.state)" type="border">{{ order.stateLabel }}</Tag>
             </template>
 
+            <!-- 进度 -->
+            <template slot-scope="{ row: order }" slot="progress">
+                <div v-show="progressEditedOrder !== order" class="progress-content">
+                    {{ order.progress }}
+                    <Icon v-show="canEditProgress(order)" type="md-create" class="clickable" @click="progressEditedOrder = order"/>
+                </div>
+                <Input v-show="progressEditedOrder === order" v-model="order.progress"
+                        v-focus="progressEditedOrder === order"
+                        @on-enter="saveProgress(order)"
+                        @on-keyup="keyupForProgress(order, $event)"
+                        @on-blur="cancelEditProgress(order)"/>
+            </template>
+
             <!-- 操作按钮 -->
             <template slot-scope="{ row: order }" slot="action">
                 <!-- <Button type="info" size="small" @click="detailsOrder(order)">详情</Button> -->
@@ -141,12 +154,14 @@ export default {
                 { slot: 'customer',     title: '客户单位', width: 250, className: 'table-poptip', resizable: true },
                 { key : 'productNames', title: '产品名称', width: 150, tooltip: true, resizable: true },
                 { slot: 'type',         title: '类型', width: 110, align: 'center', resizable: true },
+                { slot: 'progress',   title: '处理进度', width: 200, className: 'order-progress', resizable: true },
                 { slot: 'orderDate',    title: '订单日期', width: 110, align: 'center', resizable: true },
                 { slot: 'deliveryDate', title: '交货日期', width: 110, align: 'center', resizable: true },
                 { slot: 'salesperson',  title: '销售负责人', width: 110, resizable: true },
                 { slot: 'state',        title: '状态', width: 110, align: 'center', resizable: true },
                 { slot: 'action', title: '操作', width: 110, align: 'center', className: 'table-action', resizable: true },
             ],
+            progressEditedOrder: {}, // 编辑进度的订单
         };
     },
     mounted() {
@@ -251,7 +266,62 @@ export default {
                 pageNumber: 1,
             };
         },
-    }
+        // 判断是否可以编辑进度: 权限仅限于生产调度
+        canEditProgress() {
+            return this.hasPermissionForOrderProgress();
+        },
+        // 取消编辑进度
+        cancelEditProgress(order) {
+            const found = this.orders.find(o => o.orderId === order.orderId);
+
+            if (found) {
+                order.progress = found.progress;
+            }
+
+            this.progressEditedOrder = {};
+        },
+        // 保存进度
+        saveProgress(order) {
+            // 1. 在 orders 中查找表格中行的 order 对应的原始订单对象 found
+            // 2. 保存进度到服务器
+            // 3. 更新成功后更新 found 的进度
+            // 4. 重置选中的订单 progressEditedOrder，隐藏进度输入框
+
+            // [1] 在 orders 中查找表格中行的 order 对应的原始订单对象 found
+            const found = this.orders.find(o => o.orderId === order.orderId);
+
+            if (!found) {
+                return;
+            }
+
+            // [2] 保存进度到服务器
+            OrderDao.updateProgress(order.orderId, order.progress).then(() => {
+                // [3] 更新成功后更新 found 的进度
+                found.progress = order.progress;
+
+                // [4] 重置选中的订单 progressEditedOrder，隐藏进度输入框
+                this.progressEditedOrder = {};
+
+                this.$Message.success('进度保存成功');
+            });
+        },
+        // 进度的输入框键盘事件
+        keyupForProgress(order, event) {
+            if (event.keyCode === 27) {
+                this.cancelEditProgress(order);
+            }
+        },
+    },
+    directives: {
+        // 输入框获取焦点命令 (binding.value 为 v-focus="xxx" 的参数 xxx)
+        focus: function(el, binding) {
+            if (binding.value) {
+                setTimeout(() => {
+                    el.querySelector('input').focus();
+                }, 0);
+            }
+        }
+    },
 };
 </script>
 
@@ -274,6 +344,17 @@ export default {
             input {
                 width: 110px;
             }
+        }
+    }
+
+    .order-progress .progress-content {
+        .ivu-icon {
+            display: none;
+        }
+    }
+    .order-progress:hover .progress-content {
+        .ivu-icon {
+            display: inline-block;
         }
     }
 }

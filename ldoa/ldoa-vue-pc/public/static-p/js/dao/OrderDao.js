@@ -109,4 +109,23 @@ export default class {
             return Utils.response(null, success, message);
         });
     }
+
+    /**
+     * 更新订单的进度
+     *
+     * 网址: http://localhost:8080/api/orders/{orderId}/progress
+     * 参数: value 进度
+     *
+     * @param {Long} orderId  订单 ID
+     * @param {String} progress 进度
+     * @return {Promise} 返回 Promise 对象，resolve 的参数为无，reject 的参数为错误信息
+     */
+    static updateProgress(orderId, progress) {
+        return Rest.update(Urls.API_ORDERS_PROGRESS, {
+            params: { orderId },
+            data: { value: progress }
+        }).then((success, message) => {
+            return Utils.response(null, success, message);
+        });
+    }
 }

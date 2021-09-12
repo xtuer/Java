@@ -171,6 +171,11 @@ public class Order {
     private long currentAuditorId;
 
     /**
+     * 进度
+     */
+    private String progress;
+
+    /**
      * 获取订单状态 Label
      *
      * @return 返回订单状态的 Label

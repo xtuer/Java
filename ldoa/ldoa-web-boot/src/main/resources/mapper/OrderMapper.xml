@@ -7,7 +7,7 @@
     <sql id="orderFullColumns">
         o.order_id, o.order_sn, o.type, o.customer_company, o.customer_contact, o.customer_address, o.customer_phone, o.work_unit,
         o.order_date, o.delivery_date, o.return_date, o.salesperson_id, o.calibrated, o.calibration_info,
-        o.requirement, o.state, o.attachment_id, o.product_codes, o.product_names, o.created_at,
+        o.requirement, o.state, o.attachment_id, o.product_codes, o.product_names, o.created_at, o.progress,
 
         oi.order_item_id, oi.count, oi.comment, oi.price, oi.cost_price, oi.consultation_fee,
 
@@ -107,6 +107,11 @@
         UPDATE `order` SET state = #{state} WHERE order_id = #{orderId}
     </update>
 
+    <!-- 更新订单的进度 -->
+    <update id="updateOrderProgress">
+        UPDATE `order` SET progress = #{progress} WHERE order_id = #{orderId}
+    </update>
+
     <!-- 订单的结果映射 -->
     <resultMap id="orderMap" type="Order">
         <id property="orderId"             column="order_id"/>
@@ -129,6 +134,7 @@
         <result property="productCodes"    column="product_codes"/>
         <result property="productNames"    column="product_names"/>
         <result property="createdAt"       column="created_at"/>
+        <result property="progress"        column="progress"/>
 
         <association property="salesperson" resultMap="salespersonMap"/>
         <collection property="items" ofType="OrderItem" resultMap="orderItemMap"/>
