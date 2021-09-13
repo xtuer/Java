@@ -77,7 +77,7 @@ const hasPermissionForOrderComplete = function() {
  */
 const hasPermissionForOrderProgress = function() {
     return this.hasPermission(PERMISSIONS.orderProgress);
-}
+};
 
 /**
  * 是否有维保订单的权限
