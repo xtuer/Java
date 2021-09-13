@@ -14,7 +14,7 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
 -->
 
 <template>
-    <Modal :value="visible" :title="title" :mask-closable="false" class="sales-order-edit-modal relative"
+    <Modal :value="visible" :title="title" :mask-closable="false" :closable="false" class="sales-order-edit-modal relative"
         :width="900" :styles="{ top: '20px', marginBottom: '40px' }"
         @on-visible-change="showEvent">
         <!-- 弹窗 Body -->
