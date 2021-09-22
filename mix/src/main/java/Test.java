@@ -1,5 +1,7 @@
+
+
 public class Test {
-    public static void main(String[] args) throws Exception {
-        System.out.println(System.currentTimeMillis());
+    public static void main(String[] args) {
+
     }
 }
