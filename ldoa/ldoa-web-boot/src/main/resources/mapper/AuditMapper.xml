@@ -111,6 +111,7 @@
             LEFT JOIN uploaded_file uf ON uf.id = ai.attachment_id
             LEFT JOIN user u ON u.user_id = ai.applicant_id
         WHERE audit_id = #{auditId}
+        ORDER BY ai.step
     </select>
 
     <!-- 查询审批员需要审批的审批项 (state 为 -1 时查询全部) -->
@@ -130,7 +131,7 @@
                 AND ai.state = #{state}
             </if>
         </where>
-        ORDER BY ai.created_at
+        ORDER BY ai.created_at DESC
         LIMIT ${page.offset}, ${page.count}
     </select>
 
