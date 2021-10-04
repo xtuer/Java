@@ -14,7 +14,7 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
 -->
 
 <template>
-    <Modal :value="visible" :title="title" transfer width="1000" :mask-closable="false" class="stock-out-modal" @on-visible-change="showEvent">
+    <Modal :value="visible" :title="title" transfer width="1100" :mask-closable="false" class="stock-out-modal" @on-visible-change="showEvent">
         <!-- 弹窗 Body -->
         <div class="body-wrapper">
             <!-- 产品列表 -->
@@ -40,9 +40,13 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
                         </Tag>
                     </template>
 
-                    <template slot-scope="{ index }" slot="action">
+                    <template slot-scope="{ index }" slot="select">
                         <!-- 点击打开库存选择弹窗 -->
                         <Icon type="md-git-network" size="20" class="clickable" @click="openStockSelect({ product, index })"/>
+                    </template>
+                    <template slot-scope="{ index }" slot="action">
+                        <!-- 删除所在行 -->
+                        <Icon type="md-close" size="20" class="clickable" @click="product.items.remove(index)"/>
                     </template>
                 </Table>
             </div>
@@ -106,7 +110,8 @@ export default {
                 { key : 'standard',    title: '标准/规范', width: 110 },
                 { slot: 'count',       title: '数量', width: 110 },
                 { slot: 'batch-count', title: '出库批次 / 数量', width: 150, align: 'center' },
-                { slot: 'action',      title: '选择', width: 80, align: 'center' },
+                { slot: 'select',      title: '选择', width: 70, align: 'center' },
+                { slot: 'action',      title: '操作', width: 70, align: 'center' },
             ],
         };
     },

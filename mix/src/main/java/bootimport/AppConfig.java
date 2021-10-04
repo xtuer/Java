@@ -19,6 +19,6 @@ import org.springframework.context.annotation.Configuration;
 // @Import(CustomSelector.class) // [2] 例如可以用来创建 XxxAutoConfiguration 里定义的类
 // @Import(CustomRegistrar.class) // [3]
 // @Import(Tom.class) // [4] 直接 Import 一个普通 Bean 也是可以的，但不符合 Spring 的编程规范
-@EnableTom // [5] SpringBoot 的 Enable 模式，替代上面几种方式
+@EnableTom // [5] SpringBoot 的 Enable 模式，替代上面几种方式 (SpringBoot 会去查找 EnableTome 使用了的 SpringBoot 注解，然后进行相应处理)
 public class AppConfig {
 }

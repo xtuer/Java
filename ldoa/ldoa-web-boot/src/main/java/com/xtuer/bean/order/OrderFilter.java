@@ -57,4 +57,9 @@ public class OrderFilter {
      * 是否在出库请求中有记录
      */
     private boolean notInStockRequest;
+
+    /**
+     * 销售员名字
+     */
+    private String salespersonName;
 }

@@ -36,6 +36,7 @@
                     <Select v-model="filterKey" slot="prepend">
                         <Option value="productNames">产品名称</Option>
                         <Option value="customerCompany">客户单位</Option>
+                        <Option value="salespersonName">销售名字</Option>
                     </Select>
                 </Input>
                 <div class="stretch"></div>
@@ -264,6 +265,7 @@ export default {
                 orderDateEnd: '',
                 pageSize: 50,
                 pageNumber: 1,
+                salespersonName: '', // 销售负责人
             };
         },
         // 判断是否可以编辑进度: 权限仅限于生产调度

@@ -33,13 +33,13 @@
             JOIN (
                 SELECT order_id FROM `order`
                 <where>
-                    <if test="filter.orderSn!=null and filter.orderSn!='' ">
+                    <if test="@mybatis.Utils@notEmpty(filter.orderSn)">
                         AND order_sn LIKE CONCAT('%', #{filter.orderSn},'%')
                     </if>
-                    <if test="filter.productCodes!=null and filter.productCodes!='' ">
+                    <if test="@mybatis.Utils@notEmpty(filter.productCodes)">
                         AND product_codes LIKE CONCAT('%', #{filter.productCodes},'%')
                     </if>
-                    <if test="filter.productNames!=null and filter.productNames!='' ">
+                    <if test="@mybatis.Utils@notEmpty(filter.productNames)">
                         AND product_names LIKE CONCAT('%', #{filter.productNames},'%')
                     </if>
                     <if test="filter.state >= 0">
@@ -52,11 +52,17 @@
                         <!-- 参考存在一个表而不在另一个表中的数据 https://www.cnblogs.com/softidea/p/9482120.html -->
                         AND (SELECT count(1) AS num FROM stock_request r WHERE `order`.order_id = r.order_id) = 0
                     </if>
-                    <if test="filter.customerCompany!=null and filter.customerCompany!='' ">
+                    <if test="@mybatis.Utils@notEmpty(filter.customerCompany)">
                         AND customer_company LIKE CONCAT('%', #{filter.customerCompany},'%')
                     </if>
                     <if test="filter.orderDateStart != null and filter.orderDateEnd != null">
                         AND (order_date BETWEEN #{filter.orderDateStart} AND #{filter.orderDateEnd})
+                    </if>
+                    <!-- 销售名字不为空，则查询销售的 ID -->
+                    <if test="@mybatis.Utils@notEmpty(filter.salespersonName)">
+                        AND salesperson_id IN (
+                            SELECT user_id FROM user WHERE nickname LIKE CONCAT('%', #{filter.salespersonName},'%')
+                        )
                     </if>
                 </where>
                 ORDER BY created_at DESC

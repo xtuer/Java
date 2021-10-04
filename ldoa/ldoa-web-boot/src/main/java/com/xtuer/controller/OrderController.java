@@ -58,6 +58,7 @@ public class OrderController extends BaseController {
      *      pageNumber      [可选]: 页码
      *      pageSize        [可选]: 数量
      *      notInStockRequest [可选]: 是否在出库请求中有记录
+     *      salespersonName   [可选]: 销售员名字
      *
      * @param filter 过滤器
      * @param page   分页对象

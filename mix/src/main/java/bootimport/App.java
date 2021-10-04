@@ -1,6 +1,7 @@
 package bootimport;
 
-import org.springframework.context.ApplicationContext;
+import bean.User;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -8,8 +9,16 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class App {
     public static void main(String[] args) {
-        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
         Tom tom = context.getBean(Tom.class);
         System.out.println(tom);
+
+        // 手动注册 Bean
+        // 使用场景: 创建动态代理对象到 Spring 容器。参考 https://www.cnblogs.com/lgjlife/p/11060570.html。
+        User jack = new User().setUserId(1L).setUsername("Jack").setEmail("jack@gmail.com");
+        DefaultListableBeanFactory listableBeanFactory = context.getDefaultListableBeanFactory();
+        listableBeanFactory.registerSingleton("jack", jack);
+        User user = context.getBean("jack", User.class);
+        System.out.println(user);
     }
 }
