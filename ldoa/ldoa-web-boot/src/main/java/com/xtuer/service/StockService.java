@@ -15,6 +15,7 @@ import com.xtuer.mapper.ProductMapper;
 import com.xtuer.mapper.StockMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +70,12 @@ public class StockService extends BaseService {
         for (ProductItem item : productItems) {
             for (StockRecord record : records) {
                 if (record.getProductItemId() == item.getProductItemId()) {
-                    record.setProductItem(item);
+                    // 复制一份新的产品项，因为有的出库申请中会对同一个产品项的不同批次进行出库
+                    ProductItem newItem = new ProductItem();
+                    BeanUtils.copyProperties(item, newItem);
+                    newItem.setCount(record.getCount());
+                    newItem.setBatch(record.getBatch());
+                    record.setProductItem(newItem);
                 }
             }
         }

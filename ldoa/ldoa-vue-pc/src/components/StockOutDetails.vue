@@ -40,8 +40,11 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
 
                     <!-- 批次 / 数量 -->
                     <template slot-scope="{ row: productItem }" slot="batch-count">
-                        <Tag v-for="bc in productItem.batchCounts" :key="bc.batch" color="cyan">
+                        <!-- <Tag v-for="bc in productItem.batchCounts" :key="bc.batch" color="cyan">
                             {{ bc.batch }} ({{ bc.count }})
+                        </Tag> -->
+                        <Tag color="cyan">
+                            {{ productItem.batch }} ({{ productItem.count }})
                         </Tag>
                     </template>
                 </Table>

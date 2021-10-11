@@ -16,10 +16,10 @@
         record.user_id    AS user_id,
         record.created_at AS created_at,
         user.nickname     AS username,
-        pi.name  AS 'productItem.name',
-        pi.code  AS 'productItem.code',
-        pi.model AS 'productItem.model',
-        pi.unit  AS 'productItem.unit',
+        pi.name                AS 'productItem.name',
+        pi.code                AS 'productItem.code',
+        pi.model               AS 'productItem.model',
+        pi.unit                AS 'productItem.unit',
         record.product_item_id AS 'productItem.product_item_id',
         record.count           AS 'productItem.count'
     </sql>
