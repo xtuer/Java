@@ -1,13 +1,13 @@
-import com.google.common.collect.*;
-
-import java.util.Set;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Enumeration;
 
 public class Test {
     public static void main(String[] args) throws Exception {
-        Table<String, String, String> table = HashBasedTable.create();
-        table.put("Java", "Version", "1.8");
-        table.put("Java", "Company", "Oracle");
-        System.out.println(table);
-        System.out.println(table.row("Java").get("Version"));
+        System.out.println(Files.probeContentType(Paths.get("foo/test.txt")));
+        System.out.println(Files.probeContentType(Paths.get("foo/test.xlsx")));
+        System.out.println(Files.probeContentType(Paths.get("foo/test.bib")));
+        System.out.println(Files.probeContentType(Paths.get("foo/txt")));
     }
 }

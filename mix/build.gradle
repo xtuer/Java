@@ -88,6 +88,7 @@ dependencies {
     implementation 'org.apache.rocketmq:rocketmq-client:4.9.0'
     implementation 'com.google.guava:guava:31.0.1-jre'
 
+    compile files('src/main/lib/content-type-prober.jar')
 
     compile('org.atteo.classindex:classindex:3.4')
     annotationProcessor('org.atteo.classindex:classindex:3.4')
