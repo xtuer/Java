@@ -36,7 +36,9 @@ public class ContentTypeProber extends FileTypeDetector {
     private static void loadContentTypes() {
         log.info("[开始] 加载 content type file...");
 
-        try (InputStream in = ContentTypeProber.class.getClassLoader().getResourceAsStream(CONTENT_TYPE_PROPS_PATH)) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+        try (InputStream in = classLoader.getResourceAsStream(CONTENT_TYPE_PROPS_PATH)) {
             CONTENT_TYPE_PROPS.load(in);
         } catch (Exception ex) {
             log.warn(ex.getMessage());
