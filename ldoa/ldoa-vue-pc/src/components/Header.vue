@@ -5,7 +5,7 @@
 
         <!-- 消息 -->
         <Dropdown>
-            <a class="message-count-wrapper margin-right-10">
+            <a class="message-count-wrapper margin-right-10" :class="messageAnimate">
                 <Icon type="ios-notifications-outline" size="30" style="color: #ddd" class="clickable"/>
                 <div class="message-count">{{ messageCount + auditCount }}</div>
             </a>
@@ -55,6 +55,11 @@ export default {
         showMessageDropdown() {
             return this.messageCount > 0 && this.auditCount > 0;
         },
+        messageAnimate() {
+            return {
+                'message-animate': this.messageCount + this.auditCount > 0,
+            };
+        }
     }
 };
 </script>
@@ -114,6 +119,20 @@ export default {
             text-align: center;
             border-radius: 100%;
             padding: 0 1px;
+        }
+    }
+
+    .message-animate {
+        transform-origin: top center;
+        animation: messageRotate 1s infinite linear alternate;
+    }
+
+    @keyframes messageRotate {
+        0% {
+            transform: rotate(45deg);
+        }
+        100% {
+            transform: rotate(-45deg);
         }
     }
 }

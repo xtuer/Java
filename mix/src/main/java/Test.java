@@ -1,8 +1,12 @@
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class Test {
+    private String sn;
+
     public static void main(String[] args) throws Exception {
-        System.out.println(Files.probeContentType(Paths.get("a.txt")));
+        System.out.println("Hello");
     }
 }

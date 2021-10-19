@@ -10,6 +10,7 @@ public class ContentTypeProberTest {
     public void probeTest() throws IOException {
         Assert.assertEquals("text/plain", Files.probeContentType(Paths.get("foo/test.txt")));
         Assert.assertEquals("application/vndms-excel", Files.probeContentType(Paths.get("foo/test.xls")));
+        Assert.assertEquals("chemical/x-pdb", Files.probeContentType(Paths.get("foo/test.xyz")));
         Assert.assertNull(Files.probeContentType(Paths.get("foo/test.bib")));
         Assert.assertNull(Files.probeContentType(Paths.get("foo/txt")));
     }
