@@ -19,7 +19,7 @@ public final class WsMessage {
     private String to;          // 消息接收者, 例如私聊信息的目标 ID, 小组消息时为小组名字
     private String content;     // 消息内容
     private WsMessageType type; // 消息类型
-    private Date   createdAt = new Date(); // 消息创建时间
+    private Date createdAt = new Date(); // 消息创建时间
 
     /**
      * 返回消息的 JSON 字符串

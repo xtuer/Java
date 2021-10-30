@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xtuer.bean.Mime;
 import com.xtuer.bean.User;
+import com.xtuer.converter.JacksonHttpMessageConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -254,16 +255,10 @@ public final class Utils {
      * @return 返回对象的 Json 字符串表示
      */
     public static String toJson(Object object, boolean pretty) {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        // Date format
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"));
-
+        ObjectMapper objectMapper = JacksonHttpMessageConverter.newObjectMapper();
         DefaultPrettyPrinter printer = null;
 
         if (pretty) {
-            // Indent
-            // objectMapper.enable(SerializationFeature.INDENT_OUTPUT); // 2 个空格
             printer = new DefaultPrettyPrinter();
             DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("    ", DefaultIndenter.SYS_LF);
             printer.indentObjectsWith(indenter); // Indent JSON objects

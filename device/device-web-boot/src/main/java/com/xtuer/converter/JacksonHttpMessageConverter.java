@@ -34,6 +34,29 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
     }
 
     /**
+     * 创建 ObjectMapper
+     *
+     * @return 返回 ObjectMapper 对象
+     */
+    public static ObjectMapper newObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // Long to String
+        SimpleModule simpleModule = new SimpleModule();
+        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+        objectMapper.registerModule(simpleModule);
+
+        // Data Format
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+
+        // Null value
+        objectMapper.setSerializerFactory(objectMapper.getSerializerFactory().withSerializerModifier(new NullValueSerializerModifier()));
+
+        return objectMapper;
+    }
+
+    /**
      * 处理数组类型的 null 值
      */
     public static class NullArrayJsonSerializer extends JsonSerializer<Object> {
