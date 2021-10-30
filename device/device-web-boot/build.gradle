@@ -24,8 +24,8 @@ ext.versions = [
         redis      : '2.9.0',
         jsoup      : '1.12.1',
         uid        : '1.0.2.RELEASE',
-        easypoi    : '4.3.0',
-        jasypt     : '3.0.3',
+        tiows      : '3.7.4.v20210808-RELEASE',
+        guava      : '31.0.1-jre',
 ]
 
 dependencies {
@@ -36,28 +36,28 @@ dependencies {
             'org.springframework.boot:spring-boot-starter-validation',
             'javax.validation:validation-api:2.0.1.Final',
 
-            "commons-io:commons-io:20030203.000550",
-            "org.apache.commons:commons-lang3:3.12.0",
-            "org.apache.commons:commons-text:1.9",
-            "com.alibaba:fastjson:1.2.78",
-            "org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0",
-            "com.alicp.jetcache:jetcache-starter-redis:2.6.0",
-            "redis.clients:jedis:3.6.3",
-            "org.jsoup:jsoup:1.14.3",
-            "com.github.wujun234:uid-generator-spring-boot-starter:1.0.3.RELEASE",
-            "cn.afterturn:easypoi-base:4.4.0",
-            "com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4"
+            "commons-io:commons-io:${versions.commonsIO}",
+            "org.apache.commons:commons-lang3:${versions.commonsLang}",
+            "org.apache.commons:commons-text:${versions.commonsText}",
+            "com.alibaba:fastjson:${versions.fastjson}",
+            "org.mybatis.spring.boot:mybatis-spring-boot-starter:${versions.mybatis}",
+            "com.alicp.jetcache:jetcache-starter-redis:${versions.jetcache}",
+            "redis.clients:jedis:${versions.redis}",
+            "org.jsoup:jsoup:${versions.jsoup}",
+            "com.github.wujun234:uid-generator-spring-boot-starter:${versions.uid}",
+            "org.t-io:tio-websocket-server:${versions.tiows}",
+            "com.google.guava:guava:${versions.guava}",
     )
 
-    runtimeOnly("mysql:mysql-connector-java:8.0.25")
+    runtimeOnly("mysql:mysql-connector-java:${versions.mysql}")
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 
     // Lombok
-    compileOnly "org.projectlombok:lombok:1.18.22"
-    annotationProcessor "org.projectlombok:lombok:1.18.22"
+    compileOnly "org.projectlombok:lombok:${versions.lombok}"
+    annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 }
 
 test {
@@ -65,7 +65,7 @@ test {
 }
 
 bootJar {
-    archiveFileName = 'ldoa.jar'
+    archiveFileName = 'xtuer.jar'
 }
 
 ext {
