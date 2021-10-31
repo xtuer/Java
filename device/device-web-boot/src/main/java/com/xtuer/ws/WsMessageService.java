@@ -147,12 +147,15 @@ public class WsMessageService {
      * @param gatewayId 设备网关 ID
      * @param message 消息
      */
-    public void sendToGateway(String gatewayId, WsMessage message) {
-        for (ChannelContext ctx : Tio.getAll(WsServer.tioConfig).getObj()) {
-            if (ctx.getBsId().equals(gatewayId)) {
-                sendToGateway(gatewayId, message, ctx);
-                break;
-            }
+    public boolean sendToGateway(String gatewayId, WsMessage message) {
+        ChannelContext ctx = Tio.getByBsId(WsServer.tioConfig, gatewayId);
+
+        if (ctx != null) {
+            sendToGateway(gatewayId, message, ctx);
+            return true;
+        } else {
+            log.warn("[注意] 不能发送消息给设备网关，设备网关不存在或者未连接: {}", gatewayId);
+            return false;
         }
     }
 

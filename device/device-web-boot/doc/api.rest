@@ -3,7 +3,7 @@
 @host = http://localhost:8080
 @json = Content-Type: application/json
 @form = application/x-www-form-urlencoded
-@token = eyJhcHBJZCI6IioiLCJleHBpcmVkQXQiOiIxNTgxNzU1MjAzNTA5IiwiaWQiOiIxIiwibmlja25hbWUiOiLns7vnu5_nrqHnkIblkZgiLCJyb2xlcyI6IltcIlJPTEVfQURNSU5fU1lTVEVNXCJdIiwic2lnbmVkQXQiOiIxNTc5MTYzMjAzNTEwIiwidXNlcm5hbWUiOiJhZG1pbiJ9.58168d0289d754dbd9b75936eeb96805
+@token = eyJhcHBJZCI6Inh4eHgiLCJleHBpcmVkQXQiOiIxNjM4MjM5NTAwMTE3Iiwibmlja25hbWUiOiLns7vnu5_nrqHnkIblkZgiLCJyb2xlcyI6IltcIlJPTEVfQURNSU5fU1lTVEVNXCJdIiwic2lnbmVkQXQiOiIxNjM1NjQ3NTAwMTk3IiwidXNlcklkIjoiMSIsInVzZXJuYW1lIjoiYWRtaW4ifQ**.9da409c34b94c5de5db8805dff0958af
 
 ### 机构
 GET {{host}}/api/orgs
@@ -57,3 +57,9 @@ X-Requested-With: XMLHttpRequest
 ### 参数异常
 GET http://localhost:8080/api/demo/invalid
 X-Requested-With: XMLHttpRequest
+
+### 发送消息给设备网关
+POST http://localhost:8080/api/gateways/gw-1/messages
+Content-Type: application/x-www-form-urlencoded
+
+content=你好吗

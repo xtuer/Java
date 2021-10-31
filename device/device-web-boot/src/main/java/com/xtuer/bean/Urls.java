@@ -67,4 +67,5 @@ public interface Urls {
 
     // 设备网关
     String API_GATEWAYS = "/api/gateways"; // 获取所有连接的设备网关
+    String API_GATEWAYS_MESSAGES = "/api/gateways/{gatewayId}/messages";
 }
