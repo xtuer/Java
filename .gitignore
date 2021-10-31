@@ -6,6 +6,12 @@ consul
 ~*
 .history/
 
+*.user
+*.pro.user
+*.pro.user.*
+*.autosave
+!*.dll
+
 ### iView ###
 !template-vue-app/build/
 template-web-gradle/src/main/webapp/WEB-INF/page
