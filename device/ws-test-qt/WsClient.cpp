@@ -20,7 +20,10 @@ public:
     QString gatewayName;    // 设备网关名字
     QWebSocket *socket;     // Websocket 对象
     QTimer *heartbeatTimer; // 心跳定时器
+    QTimer *reconnectTimer; // 重连定时器
     bool connected;         // 是否已经和服务器连接上
+    int heartbeatInterval = 10000; // 心跳间隔
+    int reconnectInterval = 5000;  // 重连间隔
 };
 
 WsClientPrivate::WsClientPrivate(const QString &serverIpPort, const QString &gatewayId, const QString &gatewayName) {
@@ -30,9 +33,9 @@ WsClientPrivate::WsClientPrivate(const QString &serverIpPort, const QString &gat
     this->connected      = false;
     this->socket         = new QWebSocket();
     this->heartbeatTimer = new QTimer();
+    this->reconnectTimer = new QTimer();
 
     // 启动心跳定时器，定时给服务器发送心跳消息
-    this->heartbeatTimer->start(10000);
 }
 
 WsClientPrivate::~WsClientPrivate() {
@@ -60,12 +63,14 @@ WsClient::WsClient(const QString &serverIpPort, const QString &gatewayId, const 
     // 连接成功
     QObject::connect(d->socket, &QWebSocket::connected, [this] {
         d->connected = true;
+        d->heartbeatTimer->start(d->heartbeatInterval); // 连接成功启动心跳计时器
         emit this->isConnected();
     });
 
     // 连接断开
     QObject::connect(d->socket, &QWebSocket::disconnected, [this] {
         d->connected = false;
+        d->heartbeatTimer->stop(); // 连接断开时关闭心跳计时器
         emit this->isDisconnected();
     });
 
@@ -80,6 +85,13 @@ WsClient::WsClient(const QString &serverIpPort, const QString &gatewayId, const 
             d->socket->sendTextMessage("{\"type\": \"HEARTBEAT\"}");
         }
     });
+
+    // 连接断开后定时尝试重连
+    // 定时 5 秒尝试连接到服务器，如果连接断开了，测试方法: 连接上服务器，然后把服务器关闭，再打开服务器，查看连接状态。
+    // 如果不这么做，服务器重启后，设备网关连接断开不主动自动重连，那么只有重启设备网关的程序才会再次连接。
+    QObject::connect(d->reconnectTimer, &QTimer::timeout, [this] {
+        this->connectToServer(); // 如果已经是连接成功状态，不会重复连接
+    });
 }
 
 WsClient::~WsClient() {
@@ -87,10 +99,21 @@ WsClient::~WsClient() {
 }
 
 void WsClient::connectToServer() {
+    // 1. 如果已经连接，直接返回，不要重复连接
+    // 2. 如果重连计时器没有启动，则启动他，当没有连接到服务器的时候，自动尝试重连
+    // 3. 连接到服务器
+
+    // [1] 如果已经连接，直接返回，不要重复连接
     if (d->connected) {
         return;
     }
 
+    // [2] 如果重连计时器没有启动，则启动他，当没有连接到服务器的时候，自动尝试重连
+    if (!d->reconnectTimer->isActive()) {
+        d->reconnectTimer->start(d->reconnectInterval);
+    }
+
+    // [3] 连接到服务器
     QString url = d->connectUrl();
     d->socket->open(QUrl(url));
     qDebug() << "连接到服务器: " << url;
