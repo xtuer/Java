@@ -42,7 +42,7 @@ public class WsMessageHandler implements IWsMsgHandler {
 		String ipPort = channelContext.getClientNode().toString();
 		DeviceGateway gateway = msgService.getGateway(channelContext);
 
-		log.info("[建立连接] 设备网关 [{}: {}] 建立好连接，共 [{}] 人在线, 连接端口 [{}]", gateway.getName(), gateway.getId(), count, ipPort);
+		log.info("[建立连接] 设备网关 [{}: {}] 建立了连接，共有 [{}] 人在线: {}", gateway.getName(), gateway.getId(), count, ipPort);
 	}
 
 	/**

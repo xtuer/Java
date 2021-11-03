@@ -5,6 +5,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import org.tio.server.ServerTioConfig;
 import org.tio.websocket.server.WsServerStarter;
@@ -18,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @Slf4j
-public class WsServer {
+public class WsServer implements ApplicationRunner {
 	/**
 	 * 程序端口
 	 */
@@ -60,5 +62,16 @@ public class WsServer {
 
 		log.info("[操作] 启动 Websocket 服务, 端口: {}", port);
 		wsServerStarter.start();
+	}
+
+	@Autowired
+	private WsServer self;
+
+	/**
+	 * 启动 Websocket 服务
+	 */
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		self.start();
 	}
 }

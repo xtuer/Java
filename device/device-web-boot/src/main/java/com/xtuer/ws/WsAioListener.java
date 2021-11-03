@@ -36,7 +36,7 @@ public class WsAioListener extends WsServerAioListener {
 			// 提示: channelContext.toString() 为 server:0.0.0.0:3721, client:127.0.0.1:60610
 			String ipPort = channelContext.getClientNode().toString();
 			DeviceGateway gateway = msgService.getGateway(channelContext);
-			int count = Tio.getAll(channelContext.tioConfig).getObj().size();
+			int count = Tio.getAll(channelContext.tioConfig).getObj().size() - 1;
 
 			msgService.logout(channelContext);
 
