@@ -63,14 +63,16 @@ WsClient::WsClient(const QString &serverIpPort, const QString &gatewayId, const 
     // 连接成功
     QObject::connect(d->socket, &QWebSocket::connected, [this] {
         d->connected = true;
-        d->heartbeatTimer->start(d->heartbeatInterval); // 连接成功启动心跳计时器
+        d->heartbeatTimer->start(d->heartbeatInterval); // 连接成功时启动心跳计时器
+        d->reconnectTimer->stop();                      // 连接成功时关闭重连计时器
         emit this->isConnected();
     });
 
     // 连接断开
     QObject::connect(d->socket, &QWebSocket::disconnected, [this] {
         d->connected = false;
-        d->heartbeatTimer->stop(); // 连接断开时关闭心跳计时器
+        d->heartbeatTimer->stop();                      // 连接断开时关闭心跳计时器
+        d->reconnectTimer->start(d->reconnectInterval); // 连接断开时启动重连计时器
         emit this->isDisconnected();
     });
 
