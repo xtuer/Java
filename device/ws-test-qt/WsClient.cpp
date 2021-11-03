@@ -19,9 +19,9 @@ public:
     QString gatewayId;      // 设备网关 Id
     QString gatewayName;    // 设备网关名字
     QWebSocket *socket;     // Websocket 对象
+    bool connected;         // 是否已经和服务器连接上
     QTimer *heartbeatTimer; // 心跳定时器
     QTimer *reconnectTimer; // 重连定时器
-    bool connected;         // 是否已经和服务器连接上
     int heartbeatInterval = 10000; // 心跳间隔
     int reconnectInterval = 5000;  // 重连间隔
 };
