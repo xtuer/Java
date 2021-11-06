@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 public final class OtherExceptionHandler extends BaseExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public ModelAndView handleException(HttpServletRequest request, HttpServletResponse response, Exception ex) {
-        String error = "异常: 服务器 " + BaseExceptionHandler.IP + ", ID " + uidGenerator.getUID() + "\n" + ex.getMessage();
+        String error = "异常: 服务器 " + BaseExceptionHandler.IP + ", 异常 ID: " + uidGenerator.getUID() + ".\n" + ex.getMessage();
         String stack = super.getStack(request, ex);
 
         return super.handleException(request, response, ex, error, stack, 500);

@@ -1,5 +1,6 @@
 package com.xtuer.ws;
 
+import com.google.common.base.Preconditions;
 import com.xtuer.bean.DeviceGateway;
 import com.xtuer.ws.msg.Message;
 import com.xtuer.ws.msg.MessageUtils;
@@ -11,6 +12,9 @@ import org.tio.core.ChannelContext;
 import org.tio.core.Tio;
 import org.tio.http.common.HttpRequest;
 import org.tio.websocket.common.WsResponse;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 群消服务:
@@ -148,15 +152,14 @@ public class WsMessageService {
      * @param gatewayId 设备网关 ID
      * @param message 消息
      */
-    public boolean sendToGateway(String gatewayId, Message message) {
+    public void sendToGateway(String gatewayId, Message message) {
         ChannelContext ctx = Tio.getByBsId(WsServer.tioConfig, gatewayId);
 
         if (ctx != null) {
             sendToGateway(gatewayId, message, ctx);
-            return true;
         } else {
             log.warn("[注意] 不能发送消息给设备网关，设备网关不存在或者未连接: {}", gatewayId);
-            return false;
+            throw new RuntimeException("设备网关不存在或者未连接: " + gatewayId);
         }
     }
 
@@ -185,5 +188,23 @@ public class WsMessageService {
         } else {
             Tio.sendToBsId(channelContext.tioConfig, gatewayId, response);
         }
+    }
+
+    /**
+     * 获取所有连接到服务器的设备网关
+     *
+     * @return 返回设备网关的数组
+     */
+    public List<DeviceGateway> findActiveGateways() {
+        Preconditions.checkNotNull(WsServer.tioConfig, "服务器 TioConfig 未初始化");
+
+        List<DeviceGateway> gateways = new LinkedList<>();
+
+        for (ChannelContext ctx : Tio.getAll(WsServer.tioConfig).getObj()) {
+            DeviceGateway g = (DeviceGateway) ctx.getAttribute(Const.KEY_GATEWAY);
+            gateways.add(g);
+        }
+
+        return gateways;
     }
 }

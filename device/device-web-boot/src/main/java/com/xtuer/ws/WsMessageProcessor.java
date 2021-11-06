@@ -3,6 +3,7 @@ package com.xtuer.ws;
 import com.xtuer.util.Utils;
 import com.xtuer.ws.msg.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.tio.core.ChannelContext;
 
@@ -12,11 +13,14 @@ import org.tio.core.ChannelContext;
 @Component
 @Slf4j
 public class WsMessageProcessor {
+    @Autowired
+    private WsMessageService msgService;
+
     /**
      * 处理消息
      *
      * @param text 消息的原始字符串
-     * @param channelContext ChannelContext 对象
+     * @param channelContext 通道 context，为 null 表示通过业务代码调用，非 null 为 WS 直接调用
      * @return 返回消息处理结果
      */
     public Object processMessage(String text, ChannelContext channelContext) {
@@ -34,12 +38,16 @@ public class WsMessageProcessor {
         Message message = Utils.fromJson(text, Message.class);
 
         // [2] 如果转换出错则消息格式不对，return 错误信息告知发送者
-        if (message == null) {
+        if (message == null || message.getType() == null) {
             if (log.isDebugEnabled()) {
                 log.debug("[错误] 消息不支持: {}", text);
             }
 
-            return MessageUtils.createUnsupportedMessage().toJson();
+            if (channelContext == null) {
+                throw new RuntimeException("消息不支持");
+            } else {
+                return MessageUtils.createUnsupportedMessage().toJson();
+            }
         }
 
         // [3] 提前处理心跳消息, 提高效率
@@ -47,6 +55,7 @@ public class WsMessageProcessor {
             return null; // 不需要处理, 心跳消息只是为了告知服务器客户端连接仍然是活跃的
         }
 
+        // 打印收到的消息
         if (log.isDebugEnabled()) {
             log.debug("[消息] 收到消息:\n{}", text);
         }
@@ -65,7 +74,9 @@ public class WsMessageProcessor {
                 return null;
             case HEARTBEAT_DOWN:
                 HeartBeatDownMessage downMsg = Utils.fromJson(text, HeartBeatDownMessage.class);
-                log.info("收到下行心跳消息:\n{}", downMsg.toJson());
+
+                log.info("[操作] 发送下行心跳消息给设备网关 [{}]", downMsg.getGatewayId());
+                msgService.sendToGateway(downMsg.getGatewayId(), downMsg);
                 return null;
             case METRICS:
                 // 保存监控消息到数据库

@@ -121,7 +121,8 @@ public class BaseExceptionHandler {
                 Utils.toJson(request.getParameterMap()),
                 BaseExceptionHandler.IP,
                 uidGenerator.getUID(),
-                cause);
+                cause
+        );
 
         return stack;
     }

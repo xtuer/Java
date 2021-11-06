@@ -24,6 +24,10 @@ const Urls = {
     // 字典
     API_DICTS_ID : '/api/dicts/{dictId}',   // 单个查询/修改/删除
     API_DICTS    : '/api/currentOrg/dicts', // 查询当前机构字典列表
+
+    // 网关
+    API_GATEWAYS: '/api/gateways', // 获取所有连接的设备网关
+    API_GATEWAYS_MESSAGES: '/api/gateways/messages', // 给设备网关发送消息
 };
 
 window.Urls = Urls;
