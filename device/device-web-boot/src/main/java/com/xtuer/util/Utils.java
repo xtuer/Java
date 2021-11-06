@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xtuer.bean.Mime;
 import com.xtuer.bean.User;
@@ -268,6 +269,7 @@ public final class Utils {
         try {
             return objectMapper.writer(printer).writeValueAsString(object);
         } catch (JsonProcessingException e) {
+            log.warn(e.getMessage());
             return "{}";
         }
     }
@@ -280,11 +282,12 @@ public final class Utils {
      * @return 返回得到的对象，转换失败时返回 null
      */
     public static <T> T fromJson(String json, Class<T> clazz) {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = JacksonHttpMessageConverter.newObjectMapper();
 
         try {
             return objectMapper.readValue(json, clazz);
         } catch (JsonProcessingException e) {
+            log.warn(e.getMessage());
             return null;
         }
     }
@@ -297,11 +300,12 @@ public final class Utils {
      * @return 返回得到的对象，转换失败时返回 null
      */
     public static <T> T fromJson(String json, TypeReference<T> ref) {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = JacksonHttpMessageConverter.newObjectMapper();
 
         try {
             return objectMapper.readValue(json, ref);
         } catch (JsonProcessingException e) {
+            log.warn(e.getMessage());
             return null;
         }
     }

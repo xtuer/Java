@@ -1,9 +1,9 @@
-package com.xtuer.ws;
+package com.xtuer.ws.msg;
 
 /**
  * 消息类型
  */
-public enum WsMessageType {
+public enum MessageType {
     ECHO,             // Echo 消息
     GATEWAYS,         // 获取所有设备网关消息
     HEARTBEAT,        // 心跳消息

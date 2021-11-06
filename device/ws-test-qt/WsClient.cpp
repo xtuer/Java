@@ -42,10 +42,10 @@ WsClientPrivate::WsClientPrivate(const QString &serverIpPort, const QString &gat
 WsClientPrivate::~WsClientPrivate() {
     heartbeatTimer->stop();
     heartbeatTimer->deleteLater();
+    reconnectTimer->stop();
+    reconnectTimer->deleteLater();
     socket->close();
-
-    delete heartbeatTimer;
-    delete socket;
+    socket->deleteLater();
 }
 
 QString WsClientPrivate::connectUrl() const {

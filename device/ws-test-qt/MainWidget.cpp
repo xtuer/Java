@@ -14,11 +14,7 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent), ui(new Ui::MainWidget
 
     // 连接成功或者连接断开
     connect(wsClient, &WsClient::connected, [this](bool yes) {
-        if (yes) {
-            this->ui->stateLabel->setText("连接成功");
-        } else {
-            this->ui->stateLabel->setText("连接断开");
-        }
+        this->ui->stateLabel->setText(yes ? "连接成功" : "连接断开");
     });
 
     // 收到服务器发来的消息

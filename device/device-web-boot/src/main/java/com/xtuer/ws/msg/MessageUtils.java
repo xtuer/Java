@@ -1,8 +1,10 @@
-package com.xtuer.ws;
+package com.xtuer.ws.msg;
 
 import com.google.common.base.Preconditions;
 import com.xtuer.bean.DeviceGateway;
 import com.xtuer.util.Utils;
+import com.xtuer.ws.Const;
+import com.xtuer.ws.WsServer;
 import org.tio.core.ChannelContext;
 import org.tio.core.Tio;
 
@@ -12,12 +14,12 @@ import java.util.List;
 /**
  * 创建消息的工具类
  */
-public final class WsMessageUtils {
+public final class MessageUtils {
     /**
      * 创建 Echo 消息
      */
-    public static WsMessage createEchoMessage(String content) {
-        return new WsMessage().setType(WsMessageType.ECHO).setContent(content);
+    public static Message createEchoMessage(String content) {
+        return new EchoMessage().setContent(content);
     }
 
     /**
@@ -25,7 +27,7 @@ public final class WsMessageUtils {
      *
      * @return 返回消息对象
      */
-    public static WsMessage createUnsupportedMessage() {
+    public static Message createUnsupportedMessage() {
         return createErrorMessage("不支持的消息格式");
     }
 
@@ -35,12 +37,8 @@ public final class WsMessageUtils {
      * @param  error 错误信息
      * @return 返回消息对象
      */
-    public static WsMessage createErrorMessage(String error) {
-        WsMessage msg = new WsMessage();
-        msg.setContent(error);
-        msg.setType(WsMessageType.ERROR);
-
-        return msg;
+    public static Message createErrorMessage(String error) {
+        return new ErrorMessage().setError(error);
     }
 
     /**
@@ -48,9 +46,9 @@ public final class WsMessageUtils {
      *
      * @return 返回消息对象
      */
-    public static WsMessage createKickOutMessage() {
-        WsMessage message = new WsMessage();
-        message.setType(WsMessageType.KICK_AWAY);
+    public static Message createKickOutMessage() {
+        Message message = new Message();
+        message.setType(MessageType.KICK_AWAY);
 
         return message;
     }
@@ -60,7 +58,7 @@ public final class WsMessageUtils {
      *
      * @return 返回设备网关的消息对象
      */
-    public static WsMessage createGatewaysMessage() {
+    public static Message createGatewaysMessage() {
         Preconditions.checkNotNull(WsServer.tioConfig, "服务器 TioConfig 未初始化");
 
         List<DeviceGateway> gateways = new LinkedList<>();
@@ -70,8 +68,8 @@ public final class WsMessageUtils {
             gateways.add(g);
         }
 
-        WsMessage message = new WsMessage();
-        message.setType(WsMessageType.GATEWAYS);
+        CommonMessage message = new CommonMessage();
+        message.setType(MessageType.GATEWAYS);
         message.setContent(Utils.toJson(gateways, false));
 
         return message;
@@ -82,13 +80,13 @@ public final class WsMessageUtils {
      *
      * @return 返回连接数的消息对象
      */
-    public static WsMessage createConnectionCountMessage() {
+    public static Message createConnectionCountMessage() {
         Preconditions.checkNotNull(WsServer.tioConfig, "服务器 TioConfig 未初始化");
 
         int count = Tio.getAll(WsServer.tioConfig).getObj().size();
 
-        WsMessage message = new WsMessage();
-        message.setType(WsMessageType.CONNECTION_COUNT);
+        CommonMessage message = new CommonMessage();
+        message.setType(MessageType.CONNECTION_COUNT);
         message.setContent(count + "");
 
         return message;

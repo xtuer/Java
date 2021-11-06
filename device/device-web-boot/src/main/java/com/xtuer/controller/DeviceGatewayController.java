@@ -2,10 +2,11 @@ package com.xtuer.controller;
 
 import com.xtuer.bean.Result;
 import com.xtuer.bean.Urls;
-import com.xtuer.ws.WsMessage;
 import com.xtuer.ws.WsMessageService;
-import com.xtuer.ws.WsMessageType;
-import com.xtuer.ws.WsMessageUtils;
+import com.xtuer.ws.msg.CommonMessage;
+import com.xtuer.ws.msg.Message;
+import com.xtuer.ws.msg.MessageType;
+import com.xtuer.ws.msg.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +27,8 @@ public class DeviceGatewayController extends BaseController {
      * @return payload 为 WsMessage 对象
      */
     @GetMapping(Urls.API_GATEWAYS)
-    public Result<WsMessage> getAllGateways() {
-        return Result.ok(WsMessageUtils.createGatewaysMessage());
+    public Result<Message> getAllGateways() {
+        return Result.ok(MessageUtils.createGatewaysMessage());
     }
 
     /**
@@ -41,7 +42,7 @@ public class DeviceGatewayController extends BaseController {
      */
     @PostMapping(Urls.API_GATEWAYS_MESSAGES)
     public Result<Boolean> sendMessageToGateway(@PathVariable String gatewayId, @RequestParam String content) {
-        WsMessage msg = new WsMessage().setContent(content).setType(WsMessageType.CMD_CONFIG);
+        Message msg = new CommonMessage().setContent(content).setType(MessageType.CMD_CONFIG);
         boolean ret = msgService.sendToGateway(gatewayId, msg);
 
         if (ret) {

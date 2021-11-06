@@ -2,6 +2,9 @@ package com.xtuer.ws;
 
 import com.xtuer.bean.DeviceGateway;
 import com.xtuer.util.Utils;
+import com.xtuer.ws.msg.Message;
+import com.xtuer.ws.msg.MessageType;
+import com.xtuer.ws.msg.MessageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -58,7 +61,7 @@ public class WsMessageService {
             log.info("[重复登录] 踢掉 [{}: {}] 已经登录的连接 {}", gatewayName, gatewayId, previousChannelContext.getClientNode());
 
             // 给用设备网关送一条他被踢掉的消息: 阻塞消息
-            sendToGateway(gatewayId, WsMessageUtils.createKickOutMessage(), previousChannelContext, true);
+            sendToGateway(gatewayId, MessageUtils.createKickOutMessage(), previousChannelContext, true);
 
             // 踢掉设备网关
             previousChannelContext.setAttribute(Const.KEY_KICK_AWAY, true); // 踢掉的标志
@@ -147,7 +150,7 @@ public class WsMessageService {
      * @param gatewayId 设备网关 ID
      * @param message 消息
      */
-    public boolean sendToGateway(String gatewayId, WsMessage message) {
+    public boolean sendToGateway(String gatewayId, Message message) {
         ChannelContext ctx = Tio.getByBsId(WsServer.tioConfig, gatewayId);
 
         if (ctx != null) {
@@ -165,7 +168,7 @@ public class WsMessageService {
      * @param gatewayId 设备网关 ID
      * @param message 消息
      */
-    public void sendToGateway(String gatewayId, WsMessage message, ChannelContext channelContext) {
+    public void sendToGateway(String gatewayId, Message message, ChannelContext channelContext) {
         sendToGateway(gatewayId, message, channelContext, false);
     }
 
@@ -176,7 +179,7 @@ public class WsMessageService {
      * @param message 消息
      * @param isBlock 是否阻塞
      */
-    public void sendToGateway(String gatewayId, WsMessage message, ChannelContext channelContext, boolean isBlock) {
+    public void sendToGateway(String gatewayId, Message message, ChannelContext channelContext, boolean isBlock) {
         WsResponse response = WsResponse.fromText(message.toJson(), WsServerConfig.CHARSET);
 
         if (isBlock) {
@@ -205,7 +208,7 @@ public class WsMessageService {
         //    原样返回的 Echo 消息
 
         // [1] 转换消息为 Message 对象
-        WsMessage message = Utils.fromJson(text, WsMessage.class);
+        Message message = Utils.fromJson(text, Message.class);
 
         // [2] 如果转换出错则消息格式不对，return 错误信息告知发送者
         if (message == null) {
@@ -213,11 +216,11 @@ public class WsMessageService {
                 log.debug("[错误] 消息不支持: {}", text);
             }
 
-            return WsMessageUtils.createUnsupportedMessage().toJson();
+            return MessageUtils.createUnsupportedMessage().toJson();
         }
 
         // [3] 提前处理心跳消息, 提高效率
-        if (WsMessageType.HEARTBEAT.equals(message.getType())) {
+        if (MessageType.HEARTBEAT.equals(message.getType())) {
             return null; // 不需要处理, 心跳消息只是为了告知服务器客户端连接仍然是活跃的
         }
 
@@ -228,11 +231,11 @@ public class WsMessageService {
         // [4] 根据消息的类型分别进行处理
         switch (message.getType()) {
             case GATEWAYS:
-                return WsMessageUtils.createGatewaysMessage().toJson();
+                return MessageUtils.createGatewaysMessage().toJson();
             case CONNECTION_COUNT:
-                return WsMessageUtils.createConnectionCountMessage().toJson();
+                return MessageUtils.createConnectionCountMessage().toJson();
             case ECHO:
-                return WsMessageUtils.createEchoMessage(message.getContent()).toJson();
+                return text;
             case METRICS:
                 // 保存监控消息到数据库
                 return null;
