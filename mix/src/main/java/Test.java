@@ -1,35 +1,22 @@
-import java.sql.*;
+import com.google.common.base.Stopwatch;
+import com.google.common.util.concurrent.RateLimiter;
+
+import java.util.concurrent.TimeUnit;
 
 public class Test {
-    static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/gbk?useSSL=false";
-    static final String USER = "root";
-    static final String PASS = "root";
-    static final String QUERY = "SELECT id, name FROM test";
-    static final String INSERT = "INSERT INTO test(id, name) VALUES (2, '你好')";
+    // [1] 并发控制，每秒生成 1 个令牌 (令牌桶算法控制流量)，还有个设计为保持多久的令牌 (漏桶中最多存放令牌数)，并不是桶里只有 1 个令牌
+    private static final RateLimiter limiter = RateLimiter.create(1, 10, TimeUnit.SECONDS);
 
     public static void main(String[] args) {
-        query();
-    }
-
-    public static void query() {
-        try(Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(QUERY);) {
-            while (rs.next()) {
-                System.out.print("ID: " + rs.getInt("id"));
-                System.out.print(", Name: " + rs.getString("name"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void insert() {
-        try(Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
-            Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate(INSERT);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        // 瞬间产生大量并发请求，但是 RateLimiter 控制并行
+        Stopwatch watch = Stopwatch.createStarted();
+        double at = limiter.acquire(1); 
+        System.out.println("go");
+        System.out.println(watch.elapsed(TimeUnit.SECONDS));
+        System.out.println(at);
+        at = limiter.acquire(1);
+        System.out.println("go");
+        System.out.println(watch.elapsed(TimeUnit.SECONDS));
+        System.out.println(at);
     }
 }

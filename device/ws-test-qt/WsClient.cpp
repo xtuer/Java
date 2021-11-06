@@ -24,6 +24,7 @@ public:
     QTimer *reconnectTimer; // 重连定时器
     int heartbeatInterval = 10000; // 心跳间隔
     int reconnectInterval = 5000;  // 重连间隔
+    int tryConnectCount   = 0;     // 统计连接次数
 };
 
 WsClientPrivate::WsClientPrivate(const QString &serverIpPort, const QString &gatewayId, const QString &gatewayName) {
@@ -118,10 +119,17 @@ void WsClient::connectToServer() {
     // [3] 连接到服务器
     QString url = d->connectUrl();
     d->socket->open(QUrl(url));
-    qDebug() << "连接到服务器: " << url;
+
+    d->tryConnectCount++;
+    qDebug().noquote() << QString("第 %1 次尝试连接到服务器 %2 ...").arg(d->tryConnectCount).arg(url);
 }
 
 void WsClient::sendMessage(const QString &type, const QString &message) {
+    // 未连接，不发送消息
+    if (!d->connected) {
+        return;
+    }
+
     // 消息使用 JSON 格式，如 {"type": "ECHO", "content": "Hello"}
     QString msg = QString("{\"type\": \"%1\", \"content\": \"%2\"}").arg(type).arg(message);
 

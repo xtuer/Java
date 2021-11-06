@@ -88,6 +88,7 @@ dependencies {
     implementation 'com.jcraft:jsch:0.1.55'
     implementation 'org.apache.rocketmq:rocketmq-client:4.9.0'
     implementation 'com.google.guava:guava:31.0.1-jre'
+    implementation group: 'commons-dbutils', name: 'commons-dbutils', version: '1.7'
 
     compile files('src/main/lib/content-type-prober.jar')
 

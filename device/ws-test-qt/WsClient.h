@@ -8,11 +8,8 @@ class WsClientPrivate;
 class QWebSocket;
 class QTimer;
 
-/*-----------------------------------------------------------------------------|
- |                                WsClient declaration                         |
- |----------------------------------------------------------------------------*/
 /**
- * @brief Websocket 客户端，自动重连，发送心跳
+ * @brief Websocket 客户端，实现了自动重连，发送心跳
  */
 class WsClient : public QObject {
     Q_OBJECT
