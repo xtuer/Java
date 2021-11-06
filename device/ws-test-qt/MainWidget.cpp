@@ -12,11 +12,13 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent), ui(new Ui::MainWidget
     // 提示: 创建 Websocket 连接，服务器的 IP 根据实际情况填写，端口为 9321
     wsClient = new WsClient("127.0.0.1:9321", "gw-1", "gw-1");
 
-    connect(wsClient, &WsClient::isConnected, [this] {
-        this->ui->stateLabel->setText("连接成功");
-    });
-    connect(wsClient, &WsClient::isDisconnected, [this] {
-        this->ui->stateLabel->setText("连接断开");
+    // 连接成功或者连接断开
+    connect(wsClient, &WsClient::connected, [this](bool yes) {
+        if (yes) {
+            this->ui->stateLabel->setText("连接成功");
+        } else {
+            this->ui->stateLabel->setText("连接断开");
+        }
     });
 
     // 收到服务器发来的消息

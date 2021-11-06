@@ -24,7 +24,7 @@ public:
     QTimer *reconnectTimer; // 重连定时器
     int heartbeatInterval = 10000; // 心跳间隔
     int reconnectInterval = 5000;  // 重连间隔
-    int tryConnectCount   = 0;     // 统计连接次数
+    int reconnectCount    = 0;     // 重连次数
 };
 
 WsClientPrivate::WsClientPrivate(const QString &serverIpPort, const QString &gatewayId, const QString &gatewayName) {
@@ -66,7 +66,8 @@ WsClient::WsClient(const QString &serverIpPort, const QString &gatewayId, const 
         d->connected = true;
         d->heartbeatTimer->start(d->heartbeatInterval); // 连接成功时启动心跳计时器
         d->reconnectTimer->stop();                      // 连接成功时关闭重连计时器
-        emit this->isConnected();
+
+        emit this->connected(true);
     });
 
     // 连接断开
@@ -74,7 +75,8 @@ WsClient::WsClient(const QString &serverIpPort, const QString &gatewayId, const 
         d->connected = false;
         d->heartbeatTimer->stop();                      // 连接断开时关闭心跳计时器
         d->reconnectTimer->start(d->reconnectInterval); // 连接断开时启动重连计时器
-        emit this->isDisconnected();
+
+        emit this->connected(false);
     });
 
     // 收到消息
@@ -120,8 +122,8 @@ void WsClient::connectToServer() {
     QString url = d->connectUrl();
     d->socket->open(QUrl(url));
 
-    d->tryConnectCount++;
-    qDebug().noquote() << QString("第 %1 次尝试连接到服务器 %2 ...").arg(d->tryConnectCount).arg(url);
+    d->reconnectCount++;
+    qDebug().noquote() << QString("第 %1 次尝试连接到服务器 %2 ...").arg(d->reconnectCount).arg(url);
 }
 
 void WsClient::sendMessage(const QString &type, const QString &message) {

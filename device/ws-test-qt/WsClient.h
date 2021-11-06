@@ -28,8 +28,6 @@ public:
 
     /**
      * @brief 连接到服务器
-     *
-     *
      */
     void connectToServer();
 
@@ -43,14 +41,11 @@ public:
 
 signals:
     /**
-     * @brief 与服务器连接成功的信号
+     * @brief 与服务器连接成功或者连接断开的信号
+     *
+     * @param yes 连接成功时 yes 为 true, 连接断开时 yes 为 false
      */
-    void isConnected();
-
-    /**
-     * @brief 与服务器连接断开的信号
-     */
-    void isDisconnected();
+    void connected(bool yes);
 
     /**
      * @brief 收到消息
