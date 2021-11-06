@@ -21,6 +21,9 @@ public class WsMessageHandler implements IWsMsgHandler {
 	@Autowired
 	private WsMessageService msgService;
 
+	@Autowired
+	private WsMessageProcessor msgProcessor;
+
 	/**
 	 * 握手时走这个方法，业务可以在这里获取 cookie，request 参数等，决定是否握手成功
 	 * 成功: 返回 httpResponse
@@ -71,6 +74,6 @@ public class WsMessageHandler implements IWsMsgHandler {
 	 */
 	@Override
 	public Object onText(WsRequest wsRequest, String text, ChannelContext channelContext) throws Exception {
-		return msgService.processMessage(text, channelContext);
+		return msgProcessor.processMessage(text, channelContext);
 	}
 }

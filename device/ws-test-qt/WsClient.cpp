@@ -87,7 +87,7 @@ WsClient::WsClient(const QString &serverIpPort, const QString &gatewayId, const 
     // 定时发送心跳，当服务器端在指定时间内没有收到客户端的心跳消息，服务器会主动断开对应的连接
     QObject::connect(d->heartbeatTimer, &QTimer::timeout, [this] {
         if (d->connected) {
-            d->socket->sendTextMessage("{\"type\": \"HEARTBEAT\"}");
+            d->socket->sendTextMessage(R"({"type": "HEARTBEAT"})");
         }
     });
 
@@ -133,7 +133,6 @@ void WsClient::sendMessage(const QString &type, const QString &message) {
     }
 
     // 消息使用 JSON 格式，如 {"type": "ECHO", "content": "Hello"}
-    QString msg = QString("{\"type\": \"%1\", \"content\": \"%2\"}").arg(type).arg(message);
-
+    QString msg = QString(R"({"type": "%1", "content": "%2"})").arg(type).arg(message);
     d->socket->sendTextMessage(msg);
 }
