@@ -47,10 +47,7 @@ public final class MessageUtils {
      * @return 返回消息对象
      */
     public static Message createKickOutMessage() {
-        Message message = new Message();
-        message.setType(MessageType.KICK_AWAY);
-
-        return message;
+        return new Message().setType(MessageType.KICK_AWAY);
     }
 
     /**
