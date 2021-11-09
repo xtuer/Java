@@ -68,15 +68,15 @@ public class WsMessageProcessor {
                 return MessageUtils.createConnectionCountMessage().toJson();
             case ECHO:
                 return text;
-            case HEARTBEAT_UP:
-                HeartBeatUpMessage upMsg = Utils.fromJson(text, HeartBeatUpMessage.class);
-                log.info("收到上行心跳消息:\n{}", upMsg.toJson());
+            case STATUS_UP:
+                StatusUpMessage statusUpMsg = Utils.fromJson(text, StatusUpMessage.class);
+                log.info("收到设备状态上报消息:\n{}", statusUpMsg.toJson());
                 return null;
-            case HEARTBEAT_DOWN:
-                HeartBeatDownMessage downMsg = Utils.fromJson(text, HeartBeatDownMessage.class);
+            case STATUS_DOWN:
+                StatusDownMessage statusDownMsg = Utils.fromJson(text, StatusDownMessage.class);
 
-                log.info("[操作] 发送下行心跳消息给设备网关 [{}]", downMsg.getGatewayId());
-                msgService.sendToGateway(downMsg.getGatewayId(), downMsg);
+                log.info("[操作] 发送设备状态请求消息给设备网关 [{}]", statusDownMsg.getGatewayId());
+                msgService.sendToGateway(statusDownMsg.getGatewayId(), statusDownMsg);
                 return null;
             case METRICS:
                 // 保存监控消息到数据库

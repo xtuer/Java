@@ -4,7 +4,7 @@
 
         <Input class="message" v-model="message" type="textarea" :autosize="{minRows: 4,maxRows: 5}" placeholder="请输 JSON 格式的消息..." />
         <div class="message-buttons">
-            <Button @click="createHeatbeatDownMessage">下行心跳消息</Button>
+            <Button @click="createHeatbeatDownMessage">设备状态请求消息</Button>
             <div class="stretch"></div>
             <Button type="primary" :loading="loading" @click="sendMessage">发送消息</Button>
         </div>
@@ -32,19 +32,24 @@ export default {
                 this.gateways = gateways;
             });
         },
-        // 创建下行心跳消息
+        // 创建设备状态请求消息
         createHeatbeatDownMessage() {
-            this.message = '{"gatewayId": "gw-1", "deviceId": "", "type": "HEARTBEAT_DOWN", "address": 123}';
+            this.message = '{"gatewayId": "gw-1", "deviceId": "", "type": "STATUS_DOWN", "address": 123}';
         },
         // 给网关发送消息
         sendMessage() {
-            this.loading = true;
-            GatewayDao.sendMessageToGateway(this.message).then(() => {
-                this.$Message.success('发送成功');
-                this.loading = false;
-            }).catch(() => {
-                this.loading = false;
-            });
+            try {
+                const msg = JSON.parse(this.message);
+                this.loading = true;
+                GatewayDao.sendMessageToGateway(msg).then(() => {
+                    this.$Message.success('发送成功');
+                    this.loading = false;
+                }).catch(() => {
+                    this.loading = false;
+                });
+            } catch (err) {
+                this.$Message.error('消息的 JSON 格式错误: ' + err.toString());
+            }
         }
     }
 };

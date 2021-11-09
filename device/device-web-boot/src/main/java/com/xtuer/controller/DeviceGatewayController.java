@@ -1,19 +1,24 @@
 package com.xtuer.controller;
 
+import com.google.common.base.Preconditions;
 import com.xtuer.bean.DeviceGateway;
 import com.xtuer.bean.Result;
 import com.xtuer.bean.Urls;
 import com.xtuer.ws.WsMessageProcessor;
 import com.xtuer.ws.WsMessageService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
  * 设备网关的控制器
  */
 @RestController
+@Slf4j
 public class DeviceGatewayController extends BaseController {
     @Autowired
     private WsMessageService msgService;
@@ -39,7 +44,8 @@ public class DeviceGatewayController extends BaseController {
      * 给设备网关发送消息
      *
      * 网址: http://localhost:8080/api/gateways/messages
-     * 参数: message (必要): JSON 格式的消息内容
+     * 参数: 无
+     * 请求体: JSON 格式的消息内容
      *
      * @param message 消息内容
      */

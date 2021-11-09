@@ -14,6 +14,11 @@ public enum MessageType {
     METRICS,          // 设备监控数据
     CMD_CONFIG,       // 配置命令
 
-    HEARTBEAT_UP,     // 上行心跳消息
-    HEARTBEAT_DOWN,   // 下行心跳消息
+    STATUS_DOWN,          // 下行状态请求消息 (Has class)
+    STATUS_UP,            // 上行状态上报消息 (Has class)
+    GATEWAY_RESET_DOWN,   // 下行复位网关消息
+    GATEWAY_VERSION_DOWN, // 下行获取网关版本消息
+    GATEWAY_VERSION_UP,   // 上行网关版本消息 (Has class)
+    DEVICE_SEARCH_DOWN,   // 下行设备入网搜索请求消息
+    DEVICE_RESET_DOWN,    // 下行复位设备消息
 }

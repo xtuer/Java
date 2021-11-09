@@ -5,18 +5,18 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * 下行心跳消息
+ * 下行状态请求消息
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-public class HeartBeatDownMessage extends Message {
+public class StatusDownMessage extends Message {
     /**
      * 设备通信地址，广播地址 0xFFFF 或者单播地址
      */
     private int address;
 
-    public HeartBeatDownMessage() {
-        super.setType(MessageType.HEARTBEAT_DOWN);
+    public StatusDownMessage() {
+        super.setType(MessageType.STATUS_DOWN);
     }
 }

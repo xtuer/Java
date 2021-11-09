@@ -11,9 +11,10 @@ export default class GatewayDao {
      * @return {Promise} 返回 Promise 对象，resolve 的参数为网关数组，reject 的参数为错误信息
      */
     static findActiveGateways() {
-        return Rest.data({ connected: true }).get(Urls.API_GATEWAYS).then(({ data: gateways, success, message }) => {
-            return Utils.response(gateways, success, message);
-        });
+        return Rest.url(Urls.API_GATEWAYS).data({ connected: true }).get()
+            .then(({ data: gateways, success, message }) => {
+                return Utils.response(gateways, success, message);
+            });
     }
 
     /**
@@ -26,8 +27,7 @@ export default class GatewayDao {
      * @return {Promise} 返回 Promise 对象，resolve 的参数为无，reject 的参数为错误信息
      */
     static sendMessageToGateway(message) {
-        return Rest.url(Urls.API_GATEWAYS_MESSAGES).data(message).json(true)
-            .create()
+        return Rest.url(Urls.API_GATEWAYS_MESSAGES).data(message).json(true).create()
             .then(({ success, message: msg }) => {
                 return Utils.response(null, success, msg);
             });
