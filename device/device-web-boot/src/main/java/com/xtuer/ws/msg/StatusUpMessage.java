@@ -39,7 +39,7 @@ public class StatusUpMessage extends Message {
     /**
      * 校准时间
      */
-    private int calcTime;
+    private long calcTime;
 
     /**
      * 设备序列号
@@ -59,17 +59,17 @@ public class StatusUpMessage extends Message {
     /**
      * 采样开始时间
      */
-    private int startTime;
+    private long startTime;
 
     /**
      * 采样结束时间
      */
-    private int closeTime;
+    private long closeTime;
 
     /**
      * 当前设备时间
      */
-    private int currentTime;
+    private long currentTime;
 
     /**
      * 采样间隔时间
@@ -79,12 +79,12 @@ public class StatusUpMessage extends Message {
     /**
      * 最小采样时间
      */
-    private int miniTime;
+    private long miniTime;
 
     /**
      * 上电时间长度
      */
-    private int powerOnTime;
+    private long powerOnTime;
 
     public StatusUpMessage() {
         super.setType(MessageType.STATUS_UP);
