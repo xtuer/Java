@@ -21,4 +21,5 @@ public enum MessageType {
     GATEWAY_VERSION_UP,   // 上行网关版本消息 (Has class)
     DEVICE_SEARCH_DOWN,   // 下行设备入网搜索请求消息
     DEVICE_RESET_DOWN,    // 下行复位设备消息
+    HEARTBEAT_DOWN,       // 下行心跳消息 (Has class)
 }

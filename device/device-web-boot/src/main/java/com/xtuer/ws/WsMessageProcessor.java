@@ -86,6 +86,7 @@ public class WsMessageProcessor {
                 case GATEWAY_VERSION_DOWN:
                 case DEVICE_SEARCH_DOWN:
                 case DEVICE_RESET_DOWN:
+                case HEARTBEAT_DOWN:
                     log.info("[操作] 转发消息给设备网关: 消息类型 [{}]，网关 [{}], 消息:\n{}", message.getType(), message.getGatewayId(), text);
                     msgService.sendToGateway(message.getGatewayId(), text);
                     return null;

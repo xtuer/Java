@@ -9,6 +9,8 @@
             <Button @click="createMessage('GATEWAY_VERSION_DOWN')">下行获取网关版本消息</Button>
             <Button @click="createMessage('DEVICE_SEARCH_DOWN')">下行设备入网搜索请求消息</Button>
             <Button @click="createMessage('DEVICE_RESET_DOWN')">下行复位设备消息</Button>
+            <Button @click="createMessage('HEARTBEAT_DOWN')">下行心跳消息</Button>
+
             <div class="stretch"></div>
             <Button type="primary" :loading="loading" @click="sendMessage">发送消息</Button>
         </div>
@@ -48,6 +50,8 @@ export default {
                 this.message = '{"gatewayId": "gw-1", "deviceId": "", "type": "DEVICE_SEARCH_DOWN"}';
             } else if ('DEVICE_RESET_DOWN' === type) {
                 this.message = '{"gatewayId": "gw-1", "deviceId": "", "type": "DEVICE_RESET_DOWN"}';
+            } else if ('HEARTBEAT_DOWN' === type) {
+                this.message = '{"gatewayId": "gw-1", "deviceId": "", "type": "HEARTBEAT_DOWN", "address": 456}';
             }
         },
         // 给网关发送消息
