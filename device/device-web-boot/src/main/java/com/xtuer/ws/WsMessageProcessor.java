@@ -61,28 +61,44 @@ public class WsMessageProcessor {
         }
 
         // [4] 根据消息的类型分别进行处理
-        switch (message.getType()) {
-            case GATEWAYS:
-                return MessageUtils.createGatewaysMessage().toJson();
-            case CONNECTION_COUNT:
-                return MessageUtils.createConnectionCountMessage().toJson();
-            case ECHO:
-                return text;
-            case STATUS_UP:
-                StatusUpMessage statusUpMsg = Utils.fromJson(text, StatusUpMessage.class);
-                log.info("收到设备状态上报消息:\n{}", statusUpMsg.toJson());
-                return null;
-            case STATUS_DOWN:
-                StatusDownMessage statusDownMsg = Utils.fromJson(text, StatusDownMessage.class);
+        try {
+            switch (message.getType()) {
+                case GATEWAYS:
+                    return MessageUtils.createGatewaysMessage().toJson();
+                case CONNECTION_COUNT:
+                    return MessageUtils.createConnectionCountMessage().toJson();
+                case ECHO:
+                    return text;
 
-                log.info("[操作] 发送设备状态请求消息给设备网关 [{}]", statusDownMsg.getGatewayId());
-                msgService.sendToGateway(statusDownMsg.getGatewayId(), statusDownMsg);
+                // 设备上报的消息
+                case STATUS_UP:
+                    StatusUpMessage statusUpMsg = Utils.fromJson(text, StatusUpMessage.class);
+                    log.info("收到设备状态上报消息:\n{}", statusUpMsg.toJson());
+                    return null;
+                case GATEWAY_VERSION_UP:
+                    GatewayVersionUpMessage gvUpMsg = Utils.fromJson(text, GatewayVersionUpMessage.class);
+                    log.info("收到设备状态上报消息:\n{}", gvUpMsg.toJson());
+                    return null;
+
+                // 转发消息到设备网关
+                case STATUS_DOWN:
+                case GATEWAY_RESET_DOWN:
+                case GATEWAY_VERSION_DOWN:
+                case DEVICE_SEARCH_DOWN:
+                case DEVICE_RESET_DOWN:
+                    log.info("[操作] 转发消息给设备网关: 消息类型 [{}]，网关 [{}], 消息:\n{}", message.getType(), message.getGatewayId(), text);
+                    msgService.sendToGateway(message.getGatewayId(), text);
+                    return null;
+                default:
+                    return null;
+            }
+        } catch (RuntimeException ex) {
+            // 业务调用 processMessage 发生的异常，再次抛出给调用者
+            if (channelContext == null) {
+                throw ex;
+            } else {
                 return null;
-            case METRICS:
-                // 保存监控消息到数据库
-                return null;
-            default:
-                return null;
+            }
         }
     }
 }

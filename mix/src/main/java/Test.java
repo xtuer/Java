@@ -1,26 +1,14 @@
-import java.util.Arrays;
+import java.sql.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Test {
+    static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/exam?useSSL=false";
+    static final String USER   = "root";
+    static final String PASS   = "root";
+
     public static void main(String[] args) {
-        int n = 8;
-        int[] mem = new int[n+1];
-        fibonacci(n, mem);
-        System.out.println(Arrays.toString(mem));
-    }
-
-    public static int fibonacci(int n, int[] mem) {
-        if (n == 0) {
-            return 0;
-        }
-        if (n == 1) {
-            mem[1] = 1;
-            return 1;
-        }
-        if (mem[n] != 0) {
-            return mem[n];
-        }
-
-        mem[n] = fibonacci(n-1, mem) + fibonacci(n-2, mem);
-        return mem[n];
+        int[] ns = {1, 2, 3};
+        String[] ss = {"One"};
     }
 }

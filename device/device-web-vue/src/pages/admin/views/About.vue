@@ -4,7 +4,11 @@
 
         <Input class="message" v-model="message" type="textarea" :autosize="{minRows: 4,maxRows: 5}" placeholder="请输 JSON 格式的消息..." />
         <div class="message-buttons">
-            <Button @click="createHeatbeatDownMessage">设备状态请求消息</Button>
+            <Button @click="createMessage('STATUS_DOWN')">下行状态请求消息</Button>
+            <Button @click="createMessage('GATEWAY_RESET_DOWN')">下行复位网关消息</Button>
+            <Button @click="createMessage('GATEWAY_VERSION_DOWN')">下行获取网关版本消息</Button>
+            <Button @click="createMessage('DEVICE_SEARCH_DOWN')">下行设备入网搜索请求消息</Button>
+            <Button @click="createMessage('DEVICE_RESET_DOWN')">下行复位设备消息</Button>
             <div class="stretch"></div>
             <Button type="primary" :loading="loading" @click="sendMessage">发送消息</Button>
         </div>
@@ -32,9 +36,19 @@ export default {
                 this.gateways = gateways;
             });
         },
-        // 创建设备状态请求消息
-        createHeatbeatDownMessage() {
-            this.message = '{"gatewayId": "gw-1", "deviceId": "", "type": "STATUS_DOWN", "address": 123}';
+        // 创建消息
+        createMessage(type) {
+            if ('STATUS_DOWN' === type) { // 创建设备状态请求消息
+                this.message = '{"gatewayId": "gw-1", "deviceId": "", "type": "STATUS_DOWN", "address": 123}';
+            } else if ('GATEWAY_RESET_DOWN' === type) {
+                this.message = '{"gatewayId": "gw-1", "deviceId": "", "type": "GATEWAY_RESET_DOWN"}';
+            } else if ('GATEWAY_VERSION_DOWN' === type) {
+                this.message = '{"gatewayId": "gw-1", "deviceId": "", "type": "GATEWAY_VERSION_DOWN"}';
+            } else if ('DEVICE_SEARCH_DOWN' === type) {
+                this.message = '{"gatewayId": "gw-1", "deviceId": "", "type": "DEVICE_SEARCH_DOWN"}';
+            } else if ('DEVICE_RESET_DOWN' === type) {
+                this.message = '{"gatewayId": "gw-1", "deviceId": "", "type": "DEVICE_RESET_DOWN"}';
+            }
         },
         // 给网关发送消息
         sendMessage() {
@@ -63,6 +77,10 @@ export default {
 
     .message-buttons {
         display: flex;
+
+        button:not(:first-child) {
+            margin-left: 10px;
+        }
     }
 }
 </style>
