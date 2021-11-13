@@ -22,4 +22,5 @@ public enum MessageType {
     DEVICE_SEARCH_DOWN,   // 下行设备入网搜索请求消息
     DEVICE_RESET_DOWN,    // 下行复位设备消息
     HEARTBEAT_DOWN,       // 下行心跳消息 (Has class)
+    HEARTBEAT_UP,         // 上行心跳消息 (Has class)
 }

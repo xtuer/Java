@@ -77,7 +77,11 @@ public class WsMessageProcessor {
                     return null;
                 case GATEWAY_VERSION_UP:
                     GatewayVersionUpMessage gvUpMsg = Utils.fromJson(text, GatewayVersionUpMessage.class);
-                    log.info("收到设备状态上报消息:\n{}", gvUpMsg.toJson());
+                    log.info("收到上行网关版本消息:\n{}", gvUpMsg.toJson());
+                    return null;
+                case HEARTBEAT_UP:
+                    HeartbeatUpMessage ubUpMsg = Utils.fromJson(text, HeartbeatUpMessage.class);
+                    log.info("收到上行心跳消息消息:\n{}", ubUpMsg.toJson());
                     return null;
 
                 // 转发消息到设备网关
