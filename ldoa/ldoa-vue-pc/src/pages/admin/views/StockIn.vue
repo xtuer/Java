@@ -246,7 +246,7 @@ export default {
         // 是否可删除
         canDelete(reord) {
             // Feature: 您帮我把物料管理和库存部分的编辑和删除权限开一下 (质量保证, 或者您给管理员开通也行)
-            if (this.hasPermission(['ROLE_PRODUCE_QUALITY', 'ROLE_ADMIN_SYSTEM'])) {
+            if (this.hasPermission(['ROLE_ADMIN_SYSTEM'])) {
                 return true;
             }
 
