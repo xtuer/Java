@@ -89,8 +89,14 @@ dependencies {
     implementation 'org.apache.rocketmq:rocketmq-client:4.9.0'
     implementation 'com.google.guava:guava:31.0.1-jre'
     implementation group: 'commons-dbutils', name: 'commons-dbutils', version: '1.7'
+    // https://mvnrepository.com/artifact/com.jcraft/jsch
+    implementation group: 'com.jcraft', name: 'jsch', version: '0.1.55'
 
     compile files('src/main/lib/content-type-prober.jar')
+    // compile files('src/main/lib/opengauss-jdbc-2.0.1-compatibility.jar')
+    compile files('src/main/lib/postgresql-og.jar')
+    // implementation 'org.postgresql:postgresql:42.2.2'
+    // implementation 'org.opengauss:opengauss-jdbc:2.0.1-compatibility'
 
     compile('org.atteo.classindex:classindex:3.4')
     annotationProcessor('org.atteo.classindex:classindex:3.4')
