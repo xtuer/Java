@@ -38,6 +38,7 @@
                         <Option value="servicePersonName">售后人员</Option>
                         <Option value="productName">产品名称</Option>
                         <Option value="productCode">产品编码</Option>
+                        <Option value="productModel">型号/规格</Option>
                         <Option value="customerName">客户</Option>
                     </Select>
                 </Input>

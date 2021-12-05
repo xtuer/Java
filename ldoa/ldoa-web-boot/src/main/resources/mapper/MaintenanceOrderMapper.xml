@@ -54,6 +54,9 @@
             <if test="filter.productCode!=null and filter.productCode!='' ">
                 AND product_code LIKE CONCAT('%', #{filter.productCode},'%')
             </if>
+            <if test="filter.productModel!=null and filter.productModel!='' ">
+                AND product_model LIKE CONCAT('%', #{filter.productModel},'%')
+            </if>
             <if test="filter.servicePersonName!=null and filter.servicePersonName!=null">
                 AND user.nickname LIKE CONCAT('%', #{filter.servicePersonName},'%')
             </if>

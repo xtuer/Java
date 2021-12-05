@@ -72,7 +72,7 @@ window.PERMISSIONS = {
     salesOrder: ['ROLE_SALE_SALESPERSON'],
 
     // 财务的权限
-    finance: ['ROLE_FINANCE'],
+    finance: ['ROLE_FINANCE', 'ROLE_ADMIN'],
 };
 
 // 权限控制: 黑名单

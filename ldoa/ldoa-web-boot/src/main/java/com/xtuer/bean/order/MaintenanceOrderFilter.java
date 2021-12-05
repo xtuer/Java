@@ -47,6 +47,11 @@ public class MaintenanceOrderFilter {
     private String productCode;
 
     /**
+     * 规格/型号
+     */
+    private String productModel;
+
+    /**
      * 收货开始时间
      */
     private Date receivedStartAt;
