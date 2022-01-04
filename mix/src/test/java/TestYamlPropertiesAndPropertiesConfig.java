@@ -4,16 +4,16 @@ import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
+// import javax.annotation.Resource;
 import java.util.Properties;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration({"classpath:spring-beans-config.xml"})
 public class TestYamlPropertiesAndPropertiesConfig {
-    @Resource(name = "yamlProperties")
+    // @Resource(name = "yamlProperties")
     private Properties yamlProperties;
 
-    @Resource(name = "propertiesConfig")
+    // @Resource(name = "propertiesConfig")
     private PropertiesConfiguration propertiesConfig;
 
     @Test

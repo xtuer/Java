@@ -99,6 +99,9 @@ public class DBUtilsTest {
         String pass = "root";
 
         try (Connection conn = DriverManager.getConnection(url, user, pass)) {
+            DatabaseMetaData meta = conn.getMetaData();
+            System.out.println(meta.getDatabaseProductName());
+
             String sql = "SELECT dt FROM test";
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);

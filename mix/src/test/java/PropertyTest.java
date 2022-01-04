@@ -5,7 +5,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.junit.Test;
 
-import javax.annotation.Resource;
+// import javax.annotation.Resource;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -14,7 +14,7 @@ public class PropertyTest {
     @Autowired
     private TokenWhiteListService tokenWhiteListService;
 
-    @Resource(name="ns")
+    // @Resource(name="ns")
     private List<String> ns;
 
     @Test

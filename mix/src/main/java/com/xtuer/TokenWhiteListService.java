@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+// import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -12,7 +12,7 @@ import java.util.Set;
 @Service
 @Slf4j
 public class TokenWhiteListService {
-    @Resource(name = "whiteList")
+    // @Resource(name = "whiteList")
     private Set<String> whiteList;
 
     public void foo() {

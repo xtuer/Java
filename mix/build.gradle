@@ -24,7 +24,6 @@ ext {
 // [2] 打包: gradle clean shadowJar [-DmainClass=Foo]
 shadowJar {
     mergeServiceFiles('META-INF/spring.*')
-    archiveName = 'app.jar' // 输出的 jar 包名字
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -36,53 +35,53 @@ repositories {
 
 dependencies {
     implementation 'junit:junit:4.12'
-    compile "org.springframework.security:spring-security-web:5.0.0.RELEASE"
-    compile "org.springframework.security:spring-security-config:5.0.0.RELEASE"
+    implementation "org.springframework.security:spring-security-web:5.0.0.RELEASE"
+    implementation "org.springframework.security:spring-security-config:5.0.0.RELEASE"
 
-    compile 'com.alibaba:fastjson:1.2.21'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.4'
-    compile 'com.github.sd4324530:fastexcel:0.0.4'
-    compile 'commons-beanutils:commons-beanutils:1.9.2'
-    compile 'commons-codec:commons-codec:1.10'
-    compile 'commons-configuration:commons-configuration:1.10'
-    compile 'commons-io:commons-io:2.5'
-    compile 'org.apache.commons:commons-compress:1.11'
-    compile 'org.apache.commons:commons-csv:1.7'
-    compile 'org.apache.commons:commons-lang3:3.9'
-    compile 'org.apache.poi:poi-scratchpad:3.15-beta1'
-    compile 'org.apache.poi:poi:3.15-beta1'
-    compile 'org.fusesource.mqtt-client:mqtt-client:1.12'
-    compile 'org.springframework:spring-context:5.0.2.RELEASE'
-    compile 'org.springframework:spring-webmvc:5.0.2.RELEASE'
-    compile 'org.yaml:snakeyaml:1.27'
-    compile 'org.springframework.session:spring-session-data-redis:1.3.1.RELEASE'
-    compile 'com.flowpowered:flow-noise:1.0.0'
-    compile group: 'eu.medsea.mimeutil', name: 'mime-util', version: '2.1.3'
-    compile group: 'org.apache.curator', name: 'curator-recipes', version: '2.12.0'
-    compile "org.java-websocket:Java-WebSocket:1.4.0"
-    compile 'commons-cli:commons-cli:1.4'
-    compile 'net.sourceforge.javacsv:javacsv:2.0'
+    implementation 'com.alibaba:fastjson:1.2.21'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.7.4'
+    implementation 'com.github.sd4324530:fastexcel:0.0.4'
+    implementation 'commons-beanutils:commons-beanutils:1.9.2'
+    implementation 'commons-codec:commons-codec:1.10'
+    implementation 'commons-configuration:commons-configuration:1.10'
+    implementation 'commons-io:commons-io:2.5'
+    implementation 'org.apache.commons:commons-compress:1.11'
+    implementation 'org.apache.commons:commons-csv:1.7'
+    implementation 'org.apache.commons:commons-lang3:3.9'
+    implementation 'org.apache.poi:poi-scratchpad:3.15-beta1'
+    implementation 'org.apache.poi:poi:3.15-beta1'
+    implementation 'org.fusesource.mqtt-client:mqtt-client:1.12'
+    implementation 'org.springframework:spring-context:5.0.2.RELEASE'
+    implementation 'org.springframework:spring-webmvc:5.0.2.RELEASE'
+    implementation 'org.yaml:snakeyaml:1.27'
+    implementation 'org.springframework.session:spring-session-data-redis:1.3.1.RELEASE'
+    implementation 'com.flowpowered:flow-noise:1.0.0'
+    implementation group: 'eu.medsea.mimeutil', name: 'mime-util', version: '2.1.3'
+    implementation group: 'org.apache.curator', name: 'curator-recipes', version: '2.12.0'
+    implementation "org.java-websocket:Java-WebSocket:1.4.0"
+    implementation 'commons-cli:commons-cli:1.4'
+    implementation 'net.sourceforge.javacsv:javacsv:2.0'
     implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.1'
     implementation group: 'com.github.ulisesbocchio', name: 'jasypt-spring-boot-starter', version: '3.0.3'
 
-    compile 'org.docx4j:docx4j:3.3.3'
-    compile 'com.itextpdf:itextpdf:5.5.11'
-    compile 'org.apache.poi:poi:3.16'
-    compile 'org.apache.poi:poi-scratchpad:3.16'
-    compile group: 'com.xiaoleilu', name: 'hutool-all', version: '3.0.9'
-    compile 'commons-beanutils:commons-beanutils:1.9.3'
+    implementation 'org.docx4j:docx4j:3.3.3'
+    implementation 'com.itextpdf:itextpdf:5.5.11'
+    implementation 'org.apache.poi:poi:3.16'
+    implementation 'org.apache.poi:poi-scratchpad:3.16'
+    implementation group: 'com.xiaoleilu', name: 'hutool-all', version: '3.0.9'
+    implementation 'commons-beanutils:commons-beanutils:1.9.3'
 
-    compile 'cn.afterturn:easypoi-base:3.0.1'
-    compile 'org.jodconverter:jodconverter-local:4.1.0'
-    compile 'org.dom4j:dom4j:2.1.0'
-    compile 'net.coobird:thumbnailator:0.4.8'
-    compile 'org.jsoup:jsoup:1.11.2'
-    compile 'com.auth0:java-jwt:3.3.0'
-    compile 'org.t-io:tio-websocket-server:2.4.0.v20180508-RELEASE'
-    compile 'net.bramp.ffmpeg:ffmpeg:0.6.2'
-    compile 'com.hankcs:hanlp:portable-1.6.4'
-    compile 'cglib:cglib:3.2.10'
-    compile("mysql:mysql-connector-java:5.1.46")
+    implementation 'cn.afterturn:easypoi-base:3.0.1'
+    implementation 'org.jodconverter:jodconverter-local:4.1.0'
+    implementation 'org.dom4j:dom4j:2.1.0'
+    implementation 'net.coobird:thumbnailator:0.4.8'
+    implementation 'org.jsoup:jsoup:1.11.2'
+    implementation 'com.auth0:java-jwt:3.3.0'
+    implementation 'org.t-io:tio-websocket-server:2.4.0.v20180508-RELEASE'
+    implementation 'net.bramp.ffmpeg:ffmpeg:0.6.2'
+    implementation 'com.hankcs:hanlp:portable-1.6.4'
+    implementation 'cglib:cglib:3.2.10'
+    implementation("mysql:mysql-connector-java:5.1.46")
 
     implementation 'org.apache.commons:commons-vfs2:2.8.0'
     implementation 'com.jcraft:jsch:0.1.55'
@@ -92,29 +91,29 @@ dependencies {
     // https://mvnrepository.com/artifact/com.jcraft/jsch
     implementation group: 'com.jcraft', name: 'jsch', version: '0.1.55'
 
-    compile files('src/main/lib/content-type-prober.jar')
+    implementation files('src/main/lib/content-type-prober.jar')
     // compile files('src/main/lib/opengauss-jdbc-2.0.1-compatibility.jar')
-    compile files('src/main/lib/postgresql-og.jar')
+//    implementation files('src/main/lib/postgresql-og.jar')
     // implementation 'org.postgresql:postgresql:42.2.2'
     // implementation 'org.opengauss:opengauss-jdbc:2.0.1-compatibility'
 
-    compile('org.atteo.classindex:classindex:3.4')
+    implementation('org.atteo.classindex:classindex:3.4')
     annotationProcessor('org.atteo.classindex:classindex:3.4')
 
-    testCompile 'org.seleniumhq.selenium:selenium-java:3.3.1'
-    testCompile 'org.springframework:spring-test:5.0.2.RELEASE'
-    testCompile 'junit:junit:4.12'
+    testImplementation 'org.seleniumhq.selenium:selenium-java:3.3.1'
+    testImplementation 'org.springframework:spring-test:5.0.2.RELEASE'
+    testImplementation 'junit:junit:4.12'
 
     // Log dependencies
-    compile(
+    implementation(
             "ch.qos.logback:logback-classic:1.3.0-alpha4", // slf4j-logback绑定
             "org.slf4j:jcl-over-slf4j:1.7.25",         // redirect apache commons logging
             "org.slf4j:jul-to-slf4j:1.7.25",           // redirect jdk util logging
             "org.slf4j:log4j-over-slf4j:1.7.25",       // redirect log4j
     )
 
-    compile 'org.projectlombok:lombok:1.16.18'
-    annotationProcessor "org.projectlombok:lombok:1.16.18"
+    implementation 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor "org.projectlombok:lombok:1.18.22"
 }
 
 ////////////////////////////////////////////////////////////////////////////////
