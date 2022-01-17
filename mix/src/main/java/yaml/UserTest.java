@@ -10,9 +10,9 @@ import java.io.InputStream;
 
 public class UserTest {
     public static void main(String[] args) throws IOException {
-        // unmarshalUserTest1();
+        unmarshalUserTest1();
         // unmarshalUserTest2();
-        unmarshalUserHolderTest();
+        // unmarshalUserHolderTest();
     }
 
     public static void unmarshalUserTest1() {
