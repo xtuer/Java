@@ -1,6 +1,6 @@
 package com.xtuer.bean.stock;
 
-import com.xtuer.bean.product.BatchCount;
+import com.xtuer.bean.product.ProductItem;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,14 +14,19 @@ import java.util.List;
 @Setter
 public class StockOutRequestFormBean {
     /**
-     * 订单 ID
+     * 出库类型: 1 (产品项出库)、2 (产品出库)、3 (订单出库)
      */
-    private long orderId;
+    private int targetType;
 
     /**
-     * 物料出库的批次和数量
+     * 出库对象的 ID: 产品 ID、订单 ID (产品项出库时为 0，因可能有多个产品项)
      */
-    private List<BatchCount> batchCounts = new LinkedList<>();
+    private long targetId;
+
+    /**
+     * 要出库的产品项 (只需要产品 ID、产品项 ID 和 count)
+     */
+    private List<ProductItem> productItems = new LinkedList<>();
 
     /**
      * 当前审批员 ID

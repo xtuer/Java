@@ -45,7 +45,7 @@ tags: Index
 */
 public class HexoSitemapGenerator {
     // Hexo Blog 的默认目录
-    private static final String DEFAULT_BLOG_DIR = "D:/workspace/Blog/source/_posts" ; // "/Users/Biao/Documents/workspace/Blog/source/_posts";
+    private static final String DEFAULT_BLOG_DIR = "/Users/biao/Documents/workspace/Blog/source/_posts" ; // "/Users/Biao/Documents/workspace/Blog/source/_posts";
 
     // Sitemap 的头部
     private static final String SITEMAP_HEADER = "---\n" +

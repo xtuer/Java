@@ -107,8 +107,8 @@ public class StockController extends BaseController {
      * 参数:
      *      productItemId (必要): 物料 ID
      *      count         (必要): 入库数量
-     *      batch         (必要): 批次
      *      warehouse     [可选]: 仓库
+     *      productItemType [可选]: 类型
      *
      * @param record 库存操作记录
      * @return payload 为更新后的入库记录
@@ -138,19 +138,26 @@ public class StockController extends BaseController {
      * 网址: http://localhost:8080/api/stocks/out/requests
      * 参数: 无
      * 请求体:
-     *      orderId     : 订单 ID
-     *      productItems: 出库的产品项数组
-     *      batchCounts : 出库的批出数量
+     *      targetId:   出库对象的 ID: 产品 ID、订单 ID (产品项出库时为 0，因可能有多个产品项)
+     *      targetType: 出库类型: 1 (产品项出库)、2 (产品出库)、3 (订单出库)
      *      currentAuditorId: 当前审批员 ID
+     *      desc: 描述: 产品项出库 (物料出库)、产品出库 (产品名字) 、订单出库 (订单 SN)
+     *      comment: 出库备注
+     *      productItemNames: 物料名字拼起来的字符串
+     *      records: 出库项
+     *          productId:     物料所属产品 ID
+     *          productItemId: 物料 ID
+     *          count:         物料出库数量
      *
-     * @param out 出库信息
+     * @param request 出库信息
+     * @return payload 为服务器创建的出库申请
      */
     @PostMapping(Urls.API_STOCKS_OUT_REQUESTS)
-    public Result<StockRequest> stockOutRequest(@RequestBody StockOutRequestFormBean out) {
+    public Result<StockRequest> stockOutRequest(@RequestBody StockRequest request) {
         User user = super.getCurrentUser();
 
         try {
-            return stockService.stockOutRequest(out, user);
+            return stockService.stockOutRequest(request, user);
         } catch (ApplicationException ex) {
             // 没有配置出库审批流程的异常
             if (ex.getCode() == 10) {
@@ -215,5 +222,19 @@ public class StockController extends BaseController {
     @GetMapping(Urls.API_STOCKS_EXPORT)
     public Result<String> exportStocks(StockFilter filter) throws IOException {
         return Result.ok(stockService.exportStocks(filter));
+    }
+
+    /**
+     * 查询物料的出库申请
+     *
+     * 网址: http://localhost:8080/api/stocks/product-items/{productItemId}/out/requests
+     * 参数: 无
+     *
+     * @param productItemId 物料 ID
+     * @return payload 为物料的出库申请数组
+     */
+    @GetMapping(Urls.API_STOCKS_PRODUCT_ITEM_OUT_REQUESTS)
+    public Result<List<StockRequest>> findStockRequestsByProductItemId(@PathVariable long productItemId) {
+        return Result.ok(stockMapper.findStockRequestsByProductItemId(productItemId));
     }
 }

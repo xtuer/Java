@@ -23,7 +23,6 @@
                         <Option value="code">物料编码</Option>
                         <Option value="model">规格型号</Option>
                         <Option value="manufacturer">生产厂家</Option>
-                        <Option value="batch">入库批次</Option>
                     </Select>
                 </Input>
             </div>
@@ -70,9 +69,6 @@
                 </FormItem>
                 <FormItem label="厂家:" prop="manufacturer">
                     <Input v-model="stockRecord.manufacturer" placeholder="请输入生产厂家"/>
-                </FormItem>
-                <FormItem label="批次:" prop="batch">
-                    <Input v-model="stockRecord.batch" placeholder="请输入批次"/>
                 </FormItem>
                 <FormItem label="类型:" prop="productItemType">
                     <Select v-model="stockRecord.productItemType" placeholder="请选择类型">
@@ -129,7 +125,6 @@ export default {
                 { slot: 'name',            title: '物料名称', width: 180, fixed: 'left', resizable: true },
                 { slot: 'code',            title: '物料编码', width: 150, resizable: true },
                 { slot: 'model',           title: '规格/型号', width: 150, resizable: true },
-                { key : 'batch',           title: '批次', width: 150, resizable: true },
                 { key : 'productItemType', title: '类型', width: 110, align: 'center', resizable: true },
                 { slot: 'count',           title: '数量', width: 110, align: 'right', resizable: true },
                 { slot: 'date',            title: '日期', width: 150, align: 'center', resizable: true },
@@ -142,9 +137,6 @@ export default {
             productItemModal: false,
             stockRecord: { count: 10 },
             itemRules: {
-                batch: [
-                    { required: true, whitespace: true, message: '批次不能为空', trigger: 'blur' }
-                ],
                 productItemType: [
                     { required: true, whitespace: true, message: '类型不能为空', trigger: 'blur' }
                 ],
@@ -230,9 +222,8 @@ export default {
             // 3. 提示删除成功
 
             const record = this.stockRecords[index];
-            const info = `物料 ${record.productItem.name}，批次 ${record.batch}`;
             this.$Modal.confirm({
-                title: `确定删除 <font color="red">${info}</font> 的入库吗?`,
+                title: `确定删除物料 <font color="red">${record.productItem.name}</font> 的入库吗?`,
                 loading: true,
                 onOk: () => {
                     StockDao.deleteStockRecord(record.stockRecordId).then(() => {

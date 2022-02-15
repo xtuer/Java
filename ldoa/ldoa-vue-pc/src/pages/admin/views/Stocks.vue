@@ -13,9 +13,6 @@
                 <Input v-model="filter.code" placeholder="请输入物料编码" @on-enter="searchProductItems">
                     <span slot="prepend">物料编码</span>
                 </Input>
-                <Input v-model="filter.batch" placeholder="入库批次" @on-enter="searchProductItems">
-                    <span slot="prepend">入库批次</span>
-                </Input>
                 <Input v-model="filter.count" placeholder="请输入物料编码" search enter-button @on-search="searchProductItems">
                     <span slot="prepend">数量小于</span>
                 </Input>
@@ -28,6 +25,23 @@
         <Table :data="items" :columns="columns" :loading="reloading" :max-height="tableMaxHeight" border
             @on-column-width-resize="saveTableColumnWidths(arguments)"
         >
+            <!-- 编码 -->
+            <template slot-scope="{ row: item }" slot="code">
+                <Poptip trigger="click" placement="right" width="450" transfer @on-popper-show="findStockRequestsByProductItemId(item.productItemId)">
+                    <Icon type="md-search" class="clickable"/>
+                    <div slot="content" class="stock-out-request-content-wrapper">
+                        <Spin v-if="currentStockOutRequestsLoading" fix size="large"></Spin>
+
+                        <div v-for="request in currentStockOutRequests" :key="request.stockRequestSn" class="stock-out-request-content">
+                            <span>出库单号:</span><span>{{ request.stockRequestSn }}</span>
+                            <span>出库说明:</span><span>{{ request.desc }}</span>
+                        </div>
+                        <div v-if="currentStockOutRequests.length === 0">无</div>
+                    </div>
+                </Poptip>
+                {{ item.code }}
+            </template>
+
             <!-- 数量 -->
             <template slot-scope="{ row: item }" slot="count">
                 <span :class="itemClass(item)">{{ item.count }}</span> {{item.unit}}
@@ -72,15 +86,18 @@ export default {
             columns  : [
                 // 设置 width, minWidth，当大小不够时 Table 会出现水平滚动条
                 { key : 'name',     title: '物料名称', width: 200, resizable: true },
-                { key : 'code',     title: '物料编码', width: 110, resizable: true },
+                { slot: 'code',     title: '物料编码', width: 110, resizable: true },
                 { key : 'type',     title: '物料类型', width: 110, resizable: true },
                 { key : 'model',    title: '规格/型号', width: 110, resizable: true },
                 { key : 'standard', title: '标准/规范', width: 110, resizable: true },
                 { key : 'material', title: '材质', width: 110, resizable: true },
                 { slot: 'count',    title: '数量', width: 110, align: 'right', resizable: true },
-                { slot: 'batch',    title: '批次', width: 110, resizable: true },
                 { key : 'desc',     title: '物料描述', minWidth: 150 },
             ],
+
+            // 物料出库申请
+            currentStockOutRequests: [],
+            currentStockOutRequestsLoading: false,
         };
     },
     mounted() {
@@ -124,9 +141,41 @@ export default {
                 this.exporting = false;
             });
         },
+        // 查询物料的出库申请
+        findStockRequestsByProductItemId(productItemId) {
+            this.currentStockOutRequestsLoading = true;
+            StockDao.findStockRequestsByProductItemId(productItemId).then(requests => {
+                this.currentStockOutRequests = requests;
+                this.currentStockOutRequestsLoading = false;
+            }).then(() => {
+                this.currentStockOutRequestsLoading = false;
+            });
+        },
     },
 };
 </script>
 
 <style lang="scss">
+.stock-out-request-content-wrapper {
+    position: relative;
+    height: 400px;
+    overflow: auto;
+
+    .stock-out-request-content {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        grid-gap: 3px 10px;
+
+        span:nth-child(odd) {
+            text-align: right;
+            color: $iconColor;
+        }
+
+        &:not(:first-child) {
+            border-top: 1px solid $borderColor;
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+    }
+}
 </style>

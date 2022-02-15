@@ -14,7 +14,8 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
 -->
 
 <template>
-    <Modal :value="visible" title="产品选择" :mask-closable="false" transfer width="700" class="product-select-modal" @on-visible-change="showEvent">
+    <Modal :value="visible" title="产品选择" :mask-closable="false" transfer width="700" class="product-select-modal"
+           :styles="{ top: '40px', marginBottom: '80px' }" @on-visible-change="showEvent">
         <!-- 内容显示 -->
         <Scroll>
         <div class="list-page">
@@ -106,6 +107,9 @@ export default {
                 this.$Message.warning('请选择产品');
                 return;
             }
+
+            // 去掉 productSelected 中 productItemId 为 '0' 的项
+            this.productSelected.items = this.productSelected.items.filter(i => i.productItemId !== '0');
 
             this.$emit('on-ok', this.productSelected);
             this.showEvent(false); // 关闭弹窗

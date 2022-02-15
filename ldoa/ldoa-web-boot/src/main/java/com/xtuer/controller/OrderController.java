@@ -6,7 +6,9 @@ import com.xtuer.bean.Urls;
 import com.xtuer.bean.User;
 import com.xtuer.bean.order.Order;
 import com.xtuer.bean.order.OrderFilter;
+import com.xtuer.bean.product.Product;
 import com.xtuer.mapper.OrderMapper;
+import com.xtuer.mapper.ProductMapper;
 import com.xtuer.service.OrderService;
 import com.xtuer.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class OrderController extends BaseController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private ProductMapper productMapper;
 
     /**
      * 查询指定 ID 的订单
@@ -149,5 +154,19 @@ public class OrderController extends BaseController {
     public Result<Boolean> updateOrderProgress(@PathVariable long orderId, @RequestParam("value") String progress) {
         orderMapper.updateOrderProgress(orderId, progress);
         return Result.ok();
+    }
+
+    /**
+     * 查询订单的产品
+     *
+     * 网址: http://localhost:8080/api/orders/{orderId}/products
+     * 参数: 无
+     *
+     * @param orderId 订单 ID
+     * @return payload 为订单的参数数组
+     */
+    @GetMapping(Urls.API_ORDERS_PRODUCTS)
+    public Result<List<Product>> findProductsByOrderId(@PathVariable long orderId) {
+        return Result.ok(productMapper.findProductsByOrderId(orderId));
     }
 }

@@ -138,6 +138,20 @@ const colorForValue = function(value, pairs) {
     return pairs.filter(p => p.value === value).map(p => p.color).join('') || 'default';
 };
 
+/**
+ * 出库类型的 Int 对应的字符串 Label
+ *
+ * @param {Int} type 出库类型
+ * @returns 返回出库类型的 Label
+ */
+const stockOutRequestType = function(type) {
+    switch (type) {
+    case window.STOCK_OUT_TYPE.PRODUCT_ITEM: return '物料';
+    case window.STOCK_OUT_TYPE.PRODUCT: return '产品';
+    case window.STOCK_OUT_TYPE.ORDER: return '订单';
+    default: return '未知';
+    }
+};
 
 export default {
     formatDate,
@@ -151,4 +165,5 @@ export default {
     auditTypeName,
     labelForValue,
     colorForValue,
+    stockOutRequestType,
 };

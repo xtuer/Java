@@ -14,7 +14,8 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
 -->
 
 <template>
-    <Modal :value="visible" title="物料选择" :mask-closable="false" transfer width="700" class="product-item-select-modal" @on-visible-change="showEvent">
+    <Modal :value="visible" title="物料选择" :mask-closable="false" transfer width="700" class="product-item-select-modal"
+           :styles="{ top: '40px', marginBottom: '80px' }" @on-visible-change="showEvent">
         <!-- 弹窗 Body -->
         <Scroll>
         <div class="list-page">

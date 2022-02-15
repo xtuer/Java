@@ -63,6 +63,15 @@
         ORDER BY p.created_at DESC, pwi.created_at ASC
     </select>
 
+    <!-- 查询订单的产品 -->
+    <select id="findProductsByOrderId" resultMap="productMap">
+        SELECT <include refid="productColumns"/>
+        FROM product p
+            JOIN order_item oi ON oi.order_id = #{orderId} AND  p.product_id = oi.product_id
+            LEFT JOIN product_with_item pwi ON p.product_id = pwi.product_id
+            LEFT JOIN product_item pi ON pi.product_item_id = pwi.product_item_id
+    </select>
+
     <!-- 检测产品编码是否可用 (没有被其他产品使用即为可用) -->
     <select id="isProductCodeAvailable" resultType="boolean">
         SELECT NOT EXISTS (
@@ -150,6 +159,16 @@
     <select id="findProductItemCount" resultType="int">
         SELECT count FROM product_item WHERE product_item_id = #{productItemId}
     </select>
+
+    <!-- 减少产品项的库存 -->
+    <update id="decreaseProductItemCount">
+        UPDATE product_item SET count = count - #{count} WHERE product_item_id = #{productItemId}
+    </update>
+
+    <!-- 增加产品项的库存 -->
+    <update id="increaseProductItemCount">
+        UPDATE product_item SET count = count + #{count} WHERE product_item_id = #{productItemId}
+    </update>
 
     <!-- 删除产品项 -->
     <delete id="deleteProductItem">

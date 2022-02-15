@@ -50,7 +50,7 @@
                     </if>
                     <if test="filter.notInStockRequest == true">
                         <!-- 参考存在一个表而不在另一个表中的数据 https://www.cnblogs.com/softidea/p/9482120.html -->
-                        AND (SELECT count(1) AS num FROM stock_request r WHERE `order`.order_id = r.order_id) = 0
+                        AND (SELECT count(1) AS num FROM stock_request r WHERE `order`.order_id = r.target_id AND r.target_type = 3) = 0
                     </if>
                     <if test="@mybatis.Utils@notEmpty(filter.customerCompany)">
                         AND customer_company LIKE CONCAT('%', #{filter.customerCompany},'%')

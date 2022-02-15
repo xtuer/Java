@@ -27,13 +27,13 @@ repositories {
 }
 
 dependencies {
-    compile 'commons-io:commons-io:2.5'
-    compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'commons-cli:commons-cli:1.4'
+    implementation 'commons-io:commons-io:2.5'
+    implementation 'org.apache.commons:commons-lang3:3.4'
+    implementation 'commons-cli:commons-cli:1.4'
 
-    compileOnly 'org.projectlombok:lombok:1.16.18'
-    annotationProcessor 'org.projectlombok:lombok:1.16.18'
-    testCompile 'junit:junit:4.12'
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    testImplementation 'junit:junit:4.12'
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -128,4 +128,19 @@ export default class {
             return Utils.response(null, success, message);
         });
     }
+
+    /**
+     * 查询订单的产品
+     *
+     * 网址: http://localhost:8080/api/orders/{orderId}/products
+     * 参数: 无
+     *
+     * @param {Long} orderId 订单 ID
+     *  @return {Promise} 返回 Promise 对象，resolve 的参数为订单的参数数组，reject 的参数为错误信息
+     */
+    static findProductsByOrderId(orderId) {
+        return Rest.get(Urls.API_ORDERS_PRODUCTS, { params: { orderId } }).then(({ data: products, success, message }) => {
+            return Utils.response(products, success, message);
+        });
+    }
 }

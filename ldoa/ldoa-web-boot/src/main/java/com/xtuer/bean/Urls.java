@@ -83,6 +83,7 @@ public interface Urls {
     String API_ORDERS_COMPLETE = "/api/orders/{orderId}/complete"; // 完成订单
     String API_ORDERS_PROGRESS = "/api/orders/{orderId}/progress"; // 订单的进度
     String API_ORDERS_EXPORT   = "/api/orders/export";             // 导出订单
+    String API_ORDERS_PRODUCTS = "/api/orders/{orderId}/products"; // 订单的产品
 
     // 维保订单
     String API_MAINTENANCE_ORDERS          = "/api/maintenance-orders";
@@ -115,6 +116,7 @@ public interface Urls {
     String API_STOCKS_OUT_REQUESTS_BY_ID = "/api/stocks/out/requests/{requestId}"; // 指定 ID 的出库申请
     String API_STOCKS_REQUESTS           = "/api/stocks/requests";     // 库存操作申请
     String API_STOCKS_REQUESTS_BY_ID     = "/api/stocks/requests/{requestId}"; // 指定 ID 的库存操作申请
+    String API_STOCKS_PRODUCT_ITEM_OUT_REQUESTS = "/api/stocks/product-items/{productItemId}/out/requests"; // 物料的出库记录
 
     // 销售
     String API_SALES_CUSTOMERS         = "/api/sales/customers"; // 客户

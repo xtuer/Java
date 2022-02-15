@@ -31,6 +31,14 @@ public interface ProductMapper {
     List<Product> findProducts(ProductFilter filter, Page page);
 
     /**
+     * 查询订单的产品
+     *
+     * @param orderId 订单 ID
+     * @return 返回查询到的产品数组
+     */
+    List<Product> findProductsByOrderId(long orderId);
+
+    /**
      * 检测产品编码是否可用 (没有被其他产品使用即为可用)
      *
      * @param productId 产品 ID
@@ -108,6 +116,22 @@ public interface ProductMapper {
      * @return 返回产品项的数量
      */
     int findProductItemCount(long productItemId);
+
+    /**
+     * 减少产品项的库存
+     *
+     * @param productItemId 产品项 ID
+     * @param count 减少的数量
+     */
+    void decreaseProductItemCount(long productItemId, int count);
+
+    /**
+     * 增加产品项的库存
+     *
+     * @param productItemId
+     * @param count
+     */
+    void increaseProductItemCount(long productItemId, int count);
 
     /**
      * 删除产品项

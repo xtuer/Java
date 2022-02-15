@@ -45,6 +45,16 @@ public class StockRequest {
     private StockRecord.Type type;
 
     /**
+     * 出库类型: 1 (产品项出库)、2 (产品出库)、3 (订单出库)
+     */
+    private int targetType;
+
+    /**
+     * 出库对象的 ID: 产品 ID、订单 ID (产品项出库时为 0，因可能有多个产品项)
+     */
+    private long targetId;
+
+    /**
      * 订单 ID [可选]
      */
     private long orderId;
@@ -88,6 +98,16 @@ public class StockRequest {
      * 当前审批员 ID
      */
     private long currentAuditorId;
+
+    /**
+     * 出库的物料总数
+     */
+    private int totalCount;
+
+    /**
+     * 出库备注
+     */
+    private String comment;
 
     /**
      * 库存操作记录，每个操作记录管理一个物料的信息

@@ -157,6 +157,19 @@ window.GENDERS = [
     { value: 2, name: '女' },
 ];
 
+// 出库类型
+window.STOCK_OUT_TYPES = [
+    { value: 0, label: '未知' },
+    { value: 1, label: '物料出库' },
+    { value: 2, label: '产品出库' },
+    { value: 3, label: '订单出库' },
+];
+window.STOCK_OUT_TYPE = {
+    PRODUCT_ITEM: 1,
+    PRODUCT: 2,
+    ORDER: 3,
+};
+
 // 题目类型
 window.QUESTION_TYPE = {
     SINGLE_CHOICE  : 1, // 单选题

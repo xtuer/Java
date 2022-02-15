@@ -50,6 +50,11 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
                 </Table>
             </div>
 
+            <!-- 出库备注 -->
+            <div class="comment">
+                出库备注: <b>{{ comment }}</b>
+            </div>
+
             <!-- 审批信息 -->
             <div class="audit">
                 <div v-for="step in audit.steps" :key="step.step" class="audit-item-wrapper">
@@ -86,6 +91,7 @@ export default {
     components: { AuditStep },
     data() {
         return {
+            comment: '',
             audit: {},
             orderSn: '',
             products: [],
@@ -93,12 +99,12 @@ export default {
             productItemColumns: [
                 // 设置 width, minWidth，当大小不够时 Table 会出现水平滚动条
                 { key : 'name',     title: '物料名称', minWidth: 150 },
-                { key : 'code',     title: '物料编码', width: 110 },
+                { key : 'code',     title: '物料编码', width: 150 },
                 { key : 'type',     title: '物料类型', width: 110 },
                 { key : 'model',    title: '规格/型号', width: 110 },
                 { key : 'standard', title: '标准/规范', width: 110 },
                 { slot: 'count',    title: '数量', width: 110, align: 'center' },
-                { slot: 'batch-count', title: '出库批次 / 数量', width: 150, align: 'center' },
+                // { slot: 'batch-count', title: '出库批次 / 数量', width: 150, align: 'center' },
             ],
             loading  : false,
             saving   : false,
@@ -159,6 +165,7 @@ export default {
                 const productItems = request.records.map(record => record.productItem);
                 recordProductItems.push(...productItems);
                 this.auditPass = request.state === 3; // "初始化", "审批中", "审批拒绝", "审批通过", "完成"
+                this.comment = request.comment;
 
                 // [2] 从出库申请中提取物料的出库批次数量
                 this.batchCounts = this.extractBatchCountsFromStockRequest(request.records);
@@ -233,6 +240,10 @@ export default {
 
 <style lang="scss">
 .stock-out-details-modal {
+    .comment {
+        margin-top: 20px;
+    }
+
     .product {
         .product-info {
             display: flex;

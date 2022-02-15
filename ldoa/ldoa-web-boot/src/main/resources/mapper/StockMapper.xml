@@ -29,12 +29,15 @@
         request.stock_request_id AS stock_request_id,
         request.stock_request_sn AS stock_request_sn,
         request.type         AS type,
-        request.order_id     AS order_id,
+        request.target_type  AS targetType,
+        request.target_id    AS targetId,
         request.state        AS state,
         request.desc         AS 'desc',
         request.created_at   AS created_at,
         request.applicant_id AS applicant_id,
         user.nickname        AS applicant_username,
+        request.total_count  AS total_count,
+        request.comment      AS `comment`,
         request.product_item_names  AS product_item_names,
         request.product_item_models AS product_item_models
     </sql>
@@ -157,10 +160,10 @@
 
     <!-- 创建库存操作申请 -->
     <insert id="insertStockRequest">
-        INSERT INTO stock_request(stock_request_id, stock_request_sn, type, order_id, applicant_id, state, `desc`,
-            applicant_username, product_item_names, product_item_models)
-        VALUES (#{stockRequestId}, #{stockRequestSn}, #{type}, #{orderId}, #{applicantId}, #{state}, #{desc},
-            #{applicantUsername}, #{productItemNames}, #{productItemModels})
+        INSERT INTO stock_request(stock_request_id, stock_request_sn, type, target_type, target_id, applicant_id, state, `desc`,
+            applicant_username, product_item_names, product_item_models, total_count, `comment`)
+        VALUES (#{stockRequestId}, #{stockRequestSn}, #{type}, #{targetType}, #{targetId}, #{applicantId}, #{state}, #{desc},
+            #{applicantUsername}, #{productItemNames}, #{productItemModels}, #{totalCount}, #{comment})
     </insert>
 
     <!-- 更新库存操作申请的状态 -->
@@ -176,7 +179,7 @@
     <!-- 判断订单是否已经存在出库操作申请 -->
     <select id="hasOrderStockOutRequest" resultType="boolean">
         SELECT EXISTS (
-            SELECT 1 FROM stock_request WHERE order_id = #{orderId} AND type = 'OUT'
+            SELECT 1 FROM stock_request WHERE target_id = #{orderId} AND type = 'OUT' AND target_type = 3
         )
     </select>
 
@@ -199,20 +202,13 @@
     <select id="findStocks" resultType="ProductItem">
         SELECT pi.product_item_id, pi.name, pi.code, pi.type, pi.model,
                pi.standard, pi.material, pi.unit, pi.desc, pi.warn_count,
-               stock.count, stock.batch
+               pi.count
         FROM product_item pi
-        LEFT JOIN stock ON stock.product_item_id = pi.product_item_id
-            <if test="filter.count > 0"><![CDATA[
-                AND stock.count <= #{filter.count}
-            ]]></if>
         <where>
-            stock.count > 0
+            pi.count > 0
 
             <if test="filter.productItemId > 0">
                 AND pi.product_item_id = #{filter.productItemId}
-            </if>
-            <if test="filter.batch!=null and filter.batch!='' ">
-                AND stock.batch LIKE CONCAT('%', #{filter.batch},'%')
             </if>
             <if test="filter.name!=null and filter.name!='' ">
                 AND pi.name LIKE CONCAT('%', #{filter.name},'%')
@@ -230,5 +226,12 @@
         SELECT count
         FROM stock
         WHERE product_item_id = #{productItemId}  AND batch = #{batch}
+    </select>
+
+    <!-- 查询物料的出库申请 -->
+    <select id="findStockRequestsByProductItemId" resultType="StockRequest">
+        SELECT DISTINCT stock_request_sn, `desc` FROM stock_request WHERE stock_request_id IN (
+            SELECT stock_request_id FROM stock_record WHERE product_item_id=#{productItemId}
+        ) AND type = 'OUT';
     </select>
 </mapper>
