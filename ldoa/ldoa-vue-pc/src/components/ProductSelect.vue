@@ -109,7 +109,12 @@ export default {
             }
 
             // 去掉 productSelected 中 productItemId 为 '0' 的项
-            this.productSelected.items = this.productSelected.items.filter(i => i.productItemId !== '0');
+            this.productSelected.items = this.productSelected.items
+                .filter(i => i.productItemId !== '0')
+                .map(i => {
+                    i.stockOutCount = 1;
+                    return i;
+                });
 
             this.$emit('on-ok', this.productSelected);
             this.showEvent(false); // 关闭弹窗

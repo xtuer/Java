@@ -11,7 +11,7 @@
         pi.product_item_id AS item_id, pi.name AS item_name, pi.code AS item_code, pi.type AS item_type,
         pi.desc AS item_desc, pi.model AS item_model, pi.standard AS item_standard,
         pi.material AS item_material, pi.unit AS item_unit, pi.user_id AS item_user_id,
-        pwi.product_item_count AS item_count
+        pi.count AS item_count
     </sql>
 
     <!-- 产品项的列 -->
@@ -103,7 +103,7 @@
     <insert id="insertProductItems">
         <foreach collection="list" item="item" separator=";">
             INSERT IGNORE INTO product_with_item (product_id, product_item_id, product_item_count)
-            VALUES (#{item.productId}, #{item.productItemId}, #{item.count})
+            VALUES (#{item.productId}, #{item.productItemId}, 0)
         </foreach>
     </insert>
 

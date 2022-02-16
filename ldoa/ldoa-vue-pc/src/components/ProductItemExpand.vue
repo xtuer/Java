@@ -11,7 +11,7 @@ product: 产品项
         <div><b>规格/型号</b></div>
         <div><b>物料材质</b></div>
         <div><b>标准/规范</b></div>
-        <div><b>数量</b></div>
+        <div><b>库存数量</b></div>
 
         <template v-for="item in product.items">
             <div :key="item.productItemId + '1'">{{ item.name }}</div>

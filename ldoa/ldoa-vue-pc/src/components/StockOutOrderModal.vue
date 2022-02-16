@@ -12,16 +12,22 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
 <StockOutOrderModal v-model="visible" @on-ok="stockOutRequestOk"/>
 -->
 <template>
-    <Modal :value="visible" :title="title" transfer width="900" :mask-closable="false" class="stock-out-order-modal" @on-visible-change="showEvent">
+    <Modal :value="visible" :title="title" transfer width="1000"
+           :styles="{ top: '40px', marginBottom: '80px' }" :mask-closable="false" class="stock-out-order-modal" @on-visible-change="showEvent">
         <!-- 弹窗 Body -->
         <div class="body-wrapper">
             <!-- 物料列表 -->
             <div v-for="product in products" :key="product.productId" class="product">
                 <div class="product-info">产品名称: <b>{{ product.name }}</b></div>
                 <Table :data="product.items" :columns="productItemColumns" border>
-                    <!-- 出库数量 -->
+                    <!-- 库存数量 -->
                     <template slot-scope="{ index }" slot="count">
-                        <InputNumber :min="0" v-model="product.items[index].count"></InputNumber> {{ product.items[index].unit }}
+                        {{ product.items[index].count }} {{ product.items[index].unit }}
+                    </template>
+
+                    <!-- 出库数量 -->
+                    <template slot-scope="{ index }" slot="stockOutCount">
+                        <InputNumber :min="0" v-model="product.items[index].stockOutCount"></InputNumber> {{ product.items[index].unit }}
                     </template>
 
                     <template slot-scope="{ index }" slot="action">
@@ -80,7 +86,8 @@ export default {
                 { key : 'type',     title: '物料类型', width: 110 },
                 { key : 'model',    title: '规格/型号', width: 110 },
                 { key : 'standard', title: '标准/规范', width: 110 },
-                { slot: 'count',    title: '数量', width: 120, className: 'table-column-number-input-with-unit' },
+                { slot: 'count',    title: '库存数量', width: 110 },
+                { slot: 'stockOutCount', title: '出库数量', width: 120, className: 'table-column-number-input-with-unit' },
                 // { slot: 'action',   title: '操作', width: 70, align: 'center' },
             ],
             saving: false, // 保存中
@@ -121,7 +128,12 @@ export default {
             OrderDao.findProductsByOrderId(this.order.orderId).then(products => {
                 // 去掉产品中无效的产品项
                 for (let product of products) {
-                    product.items = product.items.filter(i => i.productItemId !== '0');
+                    product.items = product.items
+                        .filter(i => i.productItemId !== '0')
+                        .map(i => {
+                            i.stockOutCount = 1;
+                            return i;
+                        });
                 }
 
                 this.products = products;
@@ -157,13 +169,14 @@ export default {
             for (let product of this.products) {
                 for (let item of product.items) {
                     // [3] 出库数量不为 0 的每一个物料创建一个出库记录
-                    if (item.count > 0) {
+                    if (item.stockOutCount > 0) {
                         request.records.push({
                             productId: item.productId,
                             productItemId: item.productItemId,
-                            count: item.count,
+                            count: item.stockOutCount,
                         });
-                        itemNames.push(item.name);
+                        // itemNames.push(item.name);
+                        itemNames.push(`${item.code}(${item.stockOutCount})`);
                     }
                 }
             }

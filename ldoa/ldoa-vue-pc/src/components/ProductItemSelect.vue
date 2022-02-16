@@ -14,7 +14,7 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
 -->
 
 <template>
-    <Modal :value="visible" title="物料选择" :mask-closable="false" transfer width="700" class="product-item-select-modal"
+    <Modal :value="visible" title="物料选择" :mask-closable="false" transfer width="900" class="product-item-select-modal"
            :styles="{ top: '40px', marginBottom: '80px' }" @on-visible-change="showEvent">
         <!-- 弹窗 Body -->
         <Scroll>
@@ -75,9 +75,10 @@ export default {
                 // 设置 width, minWidth，当大小不够时 Table 会出现水平滚动条
                 { slot: 'action', title: '选择', width: 70, align: 'center' },
                 { key : 'name',   title: '物料名称' },
-                { key : 'code',   title: '物料编码', width: 130 },
-                { key : 'type',   title: '物料类型', width: 130 },
-                { key : 'model',  title: '规格/型号', width: 130 },
+                { key : 'code',   title: '物料编码', width: 140 },
+                { key : 'type',   title: '物料类型', width: 120 },
+                { key : 'model',  title: '规格/型号', width: 120 },
+                { key : 'count',  title: '库存', width: 110 },
             ],
         };
     },
@@ -98,7 +99,7 @@ export default {
                 return;
             }
 
-            this.itemSelected.count = 1;
+            this.itemSelected.stockOutCount = 1;
             this.$emit('on-ok', this.itemSelected);
             this.showEvent(false); // 关闭弹窗
         },

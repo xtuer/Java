@@ -12,14 +12,19 @@ on-visible-change: 显示或隐藏时触发，显示时参数为 true，隐藏�
 <StockOutProductItemModal v-model="visible" @on-ok="stockOutRequestOk"/>
 -->
 <template>
-    <Modal :value="visible" title="物料出库" transfer width="900" :mask-closable="false" class="stock-out-product-item-modal" @on-visible-change="showEvent">
+    <Modal :value="visible" title="物料出库" transfer width="1000" :mask-closable="false" class="stock-out-product-item-modal" @on-visible-change="showEvent">
         <!-- 弹窗 Body -->
         <div class="body-wrapper">
             <!-- 物料列表 -->
             <Table :data="items" :columns="productItemColumns" border>
-                <!-- 出库数量 -->
+                <!-- 库存数量 -->
                 <template slot-scope="{ index }" slot="count">
-                    <InputNumber :min="1" v-model="items[index].count"></InputNumber> {{ items[index].unit }}
+                    {{ items[index].count }} {{ items[index].unit }}
+                </template>
+
+                <!-- 出库数量 -->
+                <template slot-scope="{ index }" slot="stockOutCount">
+                    <InputNumber :min="1" v-model="items[index].stockOutCount"></InputNumber> {{ items[index].unit }}
                 </template>
 
                 <template slot-scope="{ index }" slot="action">
@@ -75,7 +80,8 @@ export default {
                 { key : 'type',     title: '物料类型', width: 110 },
                 { key : 'model',    title: '规格/型号', width: 110 },
                 { key : 'standard', title: '标准/规范', width: 110 },
-                { slot: 'count',    title: '数量', width: 120, className: 'table-column-number-input-with-unit' },
+                { slot: 'count',    title: '库存数量', width: 110 },
+                { slot: 'stockOutCount', title: '出库数量', width: 120, className: 'table-column-number-input-with-unit' },
                 { slot: 'action',   title: '操作', width: 70, align: 'center' },
             ],
             saving: false, // 保存中
@@ -140,13 +146,14 @@ export default {
 
             for (let item of this.items) {
                 // [3] 出库数量不为 0 的每一个物料创建一个出库记录
-                if (item.count > 0) {
+                if (item.stockOutCount > 0) {
                     request.records.push({
                         productId: item.productId,
                         productItemId: item.productItemId,
-                        count: item.count,
+                        count: item.stockOutCount,
                     });
-                    itemNames.push(item.name);
+                    // itemNames.push(item.name);
+                    itemNames.push(`${item.code}(${item.stockOutCount})`);
                 }
             }
             request.productItemNames = itemNames.join(', ');
