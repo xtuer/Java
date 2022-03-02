@@ -11,6 +11,7 @@ consul
 *.pro.user.*
 *.autosave
 !*.dll
+arthas-output/
 
 ### iView ###
 !template-vue-app/build/

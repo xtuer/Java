@@ -8,14 +8,17 @@ import com.xtuer.exception.ApplicationException;
 import com.xtuer.mapper.CommonMapper;
 import com.xtuer.service.CommonService;
 import com.xtuer.service.OrderService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -23,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@Slf4j
 public class ZooController extends BaseController {
     @Autowired
     private CommonService commonService;
@@ -210,5 +214,14 @@ public class ZooController extends BaseController {
         System.out.println(obj);
 
         return Result.ok(obj.getClass().getClassLoader().getClass().getName());
+    }
+
+    @PostMapping("/demo/api/upload")
+    public Result<String> uploadFile(@RequestParam MultipartFile file,
+                                     @RequestParam(required = false, defaultValue = "Alice") String name,
+                                     @RequestParam int cost) throws IOException {
+        log.info("文件: 文件名 [{}], 大小 [{}M]", file.getOriginalFilename(), file.getSize() / 1024.0 / 1024.0);
+        log.info("参数: name [{}], cost [{}]", name, cost);
+        return Result.ok();
     }
 }
