@@ -1,34 +1,28 @@
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.ExecuteWatchdog;
-import org.apache.commons.exec.PumpStreamHandler;
-
-import java.io.ByteArrayOutputStream;
+import java.util.concurrent.CountDownLatch;
 
 public class Test {
-    public static void main(String[] args) throws Exception {
-        CommandLine cmdLine = CommandLine.parse("echo hello ; go | bash");
-        DefaultExecutor executor = new DefaultExecutor();
-        executor.setExitValues(null);
+    public volatile int value = 0; // volatile 不保证原子性，只保证内存可见性
 
-        ExecuteWatchdog watchdog = new ExecuteWatchdog(60000);
-        executor.setWatchdog(watchdog);
+    public static void main(String[] args) throws InterruptedException {
+        final int len = 10;
+        CountDownLatch latch = new CountDownLatch(len);
+        Test t = new Test();
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
-        PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream,errorStream);
+        for (int i = 0; i < len; i++) {
+            new Thread(() -> {
+                for (int j = 0; j < 10_000; j++) {
+                    t.value++;
+                }
 
-        executor.setStreamHandler(streamHandler);
-        executor.execute(cmdLine);
+                latch.countDown();
+            }).start();
+        }
 
-        // 获取程序外部程序执行结果
-        String out = outputStream.toString("UTF-8");
-        String error = errorStream.toString("UTF-8");
+        latch.await();
+        System.out.println(t.value); // 输出值大概在 3  万多，不到 100_000
 
-        // 处理结果
-        System.out.println("==== ok ====");
-        System.out.println(out);
-        System.out.println("==== error ====");
-        System.out.println(error);
+        // Nono
+        // N3
+        // N4
     }
 }
