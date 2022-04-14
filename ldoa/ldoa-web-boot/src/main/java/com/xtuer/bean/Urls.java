@@ -115,6 +115,7 @@ public interface Urls {
     String API_STOCKS_OUT_REQUESTS       = "/api/stocks/out/requests"; // 出库申请
     String API_STOCKS_OUT_REQUESTS_BY_ID = "/api/stocks/out/requests/{requestId}"; // 指定 ID 的出库申请
     String API_STOCKS_REQUESTS           = "/api/stocks/requests";     // 库存操作申请
+    String API_STOCKS_REQUESTS_COUNT     = "/api/stocks/requests/count";       // 库存操作申请数量
     String API_STOCKS_REQUESTS_BY_ID     = "/api/stocks/requests/{requestId}"; // 指定 ID 的库存操作申请
     String API_STOCKS_PRODUCT_ITEM_OUT_REQUESTS = "/api/stocks/product-items/{productItemId}/out/requests"; // 物料的出库记录
 

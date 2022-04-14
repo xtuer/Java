@@ -87,6 +87,26 @@ public class StockController extends BaseController {
     }
 
     /**
+     * 统计库存操作数量
+     *
+     * 网址: http://localhost:8080/api/stocks/requests?type=OUT
+     * 参数: 参考 findStockRequests
+     *
+     * @param filter 过滤条件
+     * @return payload 为数量
+     */
+    @GetMapping(Urls.API_STOCKS_REQUESTS_COUNT)
+    public Result<Integer> countStockRequests(StockRequestFilter filter) {
+        // 设置查询时间范围
+        filter.setStartAt(Utils.dayStart(filter.getStartAt()));
+        filter.setEndAt(Utils.dayEnd(filter.getEndAt()));
+
+        Utils.dump(filter);
+
+        return Result.ok(stockMapper.countStockRequests(filter, Page.of(1, 20)));
+    }
+
+    /**
      * 查询指定 ID 的库存操作申请
      *
      * 网址: http://localhost:8080/api/stocks/requests/{requestId}

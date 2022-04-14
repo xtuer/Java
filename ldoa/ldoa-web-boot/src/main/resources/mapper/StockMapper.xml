@@ -126,6 +126,38 @@
         LIMIT ${page.offset}, ${page.count}
     </select>
 
+    <!-- 统计库存操作申请 -->
+    <select id="countStockRequests" resultType="_int">
+        SELECT count(1)
+        FROM stock_request request
+        LEFT JOIN user ON user.user_id = request.applicant_id
+        <where>
+            request.type = #{filter.type}
+
+            <if test="filter.applicantId > 0">
+                AND request.applicant_id = #{filter.applicantId}
+            </if>
+            <if test="filter.stockRequestSn!=null and filter.stockRequestSn!='' ">
+                AND request.stock_request_sn LIKE CONCAT('%', #{filter.stockRequestSn},'%')
+            </if>
+            <if test="filter.startAt!=null and filter.endAt!=null">
+                AND (request.created_at BETWEEN #{filter.startAt} AND #{filter.endAt})
+            </if>
+            <if test="filter.state >= 0">
+                AND request.state = #{filter.state}
+            </if>
+            <if test="filter.applicantUsername!=null and filter.applicantUsername!='' ">
+                AND request.applicant_username LIKE CONCAT('%', #{filter.applicantUsername},'%')
+            </if>
+            <if test="filter.productItemName!=null and filter.productItemName!='' ">
+                AND request.product_item_names LIKE CONCAT('%', #{filter.productItemName},'%')
+            </if>
+            <if test="filter.productItemModel!=null and filter.productItemModel!='' ">
+                AND request.product_item_models LIKE CONCAT('%', #{filter.productItemModel},'%')
+            </if>
+        </where>
+    </select>
+
     <!-- 查询指定 ID 的库存操作申请 -->
     <select id="findStockRequestById" resultType="StockRequest">
         SELECT <include refid="stockRequestColumns"/>

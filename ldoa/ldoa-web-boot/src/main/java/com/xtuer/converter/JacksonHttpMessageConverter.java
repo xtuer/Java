@@ -22,7 +22,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
     }
 
     /**
-     * 设置 objectMapper 的输出格式
+     * 设置 objectMapper 的输出格式、属性处理方式等
      *
      * @param objectMapper Jackson ObjectMapper
      */

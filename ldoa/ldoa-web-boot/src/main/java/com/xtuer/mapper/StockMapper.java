@@ -47,6 +47,14 @@ public interface StockMapper {
     List<StockRequest> findStockRequests(StockRequestFilter filter, Page page);
 
     /**
+     * 统计库存操作申请
+     *
+     * @param filter 过滤器
+     * @return 返回库存操作申请数量
+     */
+    int countStockRequests(StockRequestFilter filter, Page page);
+
+    /**
      * 查询指定 ID 的库存操作申请
      *
      * @param requestId 操作申请 ID

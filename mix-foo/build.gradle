@@ -48,6 +48,9 @@ dependencies {
     implementation 'mysql:mysql-connector-java:5.1.46'
     implementation 'org.apache.commons:commons-exec:1.3'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+    implementation 'org.infobip.lib:popout:2.1.1'
+    implementation 'com.oracle.database.jdbc:ojdbc8:12.2.0.1'
+
 
     // BigQueue 的依赖
     implementation 'org.slf4j:slf4j-api:1.6.4'
