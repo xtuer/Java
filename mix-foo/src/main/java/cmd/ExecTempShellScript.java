@@ -1,4 +1,4 @@
-package comm;
+package cmd;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;

@@ -1,0 +1,31 @@
+<config xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xmlns='http://www.ehcache.org/v3'
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core.xsd">
+
+    <!-- 缓存保存到磁盘上的路径 -->
+    <!-- <persistence directory="${java.io.tmpdir}/ehcache-data"/>-->
+    <persistence directory="/Users/biao/Documents/temp/ehcache-data"/>
+
+    <!-- 缓存, alias 为缓存的名字 -->
+    <cache alias="bar">
+        <!-- key value 类型，可以使用泛型访问 -->
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.String</value-type>
+
+        <expiry>
+            <!-- 超过 500 秒未访问即过期，过期的缓存会被删除，未过期，但是一级缓存放不下，则会踢到下一级缓存 -->
+            <tti unit="seconds">50</tti>
+        </expiry>
+
+        <resources>
+            <!-- 被声明在堆上缓存的元素最大数量 -->
+            <heap unit="entries">50</heap>
+
+            <!-- 在它开始被驱逐之前，还有多达 50 MB的外堆内存 -->
+            <offheap unit="MB">50</offheap>
+
+            <!-- 磁盘文件配置 -->
+            <disk persistent="true" unit="MB">100</disk>
+        </resources>
+    </cache>
+</config>
