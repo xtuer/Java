@@ -1,3 +1,5 @@
+package misc;
+
 import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;

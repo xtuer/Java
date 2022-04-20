@@ -1,16 +1,9 @@
 public class Test {
     public static void main(String[] args) throws InterruptedException {
-        // kill PID, kill -1 PID 可以触发 shutdown hook
-        // kill -9 PID 不能触发
-        // Ctrl + C 强制退出可以触发
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            System.out.println("One");
-        }));
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            System.out.println("Two");
-        }));
-
-        Thread.sleep(100000);
+        StringBuilder sb = new StringBuilder();
+        sb.append("One").append("Two");
+        System.out.println(sb);
+        sb = new StringBuilder(sb.substring(0, sb.length() - 1)); // 去掉最后一个 $
+        System.out.println(sb);
     }
 }

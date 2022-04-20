@@ -1,3 +1,5 @@
+package misc;
+
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.layout.font.FontProvider;

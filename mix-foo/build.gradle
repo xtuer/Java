@@ -51,6 +51,7 @@ dependencies {
     implementation 'org.infobip.lib:popout:2.1.1'
     implementation 'com.oracle.database.jdbc:ojdbc8:12.2.0.1'
     implementation 'org.ehcache:ehcache:3.10.0'
+    implementation 'commons-dbutils:commons-dbutils:1.7'
 
     // BigQueue 的依赖
     implementation 'org.slf4j:slf4j-api:1.6.4'
