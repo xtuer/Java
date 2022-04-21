@@ -1,9 +1,9 @@
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public class Test {
-    public static void main(String[] args) throws InterruptedException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("One").append("Two");
-        System.out.println(sb);
-        sb = new StringBuilder(sb.substring(0, sb.length() - 1)); // 去掉最后一个 $
-        System.out.println(sb);
+    public static void main(String[] args) {
+        System.out.println("ORACLE_SID".hashCode());
     }
 }

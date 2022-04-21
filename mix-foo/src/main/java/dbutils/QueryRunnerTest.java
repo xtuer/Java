@@ -2,6 +2,7 @@ package dbutils;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.dbutils.StatementConfiguration;
 import org.apache.commons.dbutils.handlers.*;
 
 import java.sql.Connection;
@@ -15,6 +16,7 @@ import java.util.Map;
  * 2. QueryRunner 执行 SQL 并用 ResultSetHandler 处理为目标类型，不需要自己创建 Statement 和直接处理 ResultSet
  *    核心类是 QueryRunner 和 ResultSetHandler
  *    query 方法返回 ResultSetHandler#handle 的结果
+ *    batch 可以批量更新或插入
  *
  * 主要的 ResultSetHandler 有:
  * * BeanHandler      : 只取第一行转为 Bean
@@ -31,7 +33,8 @@ public class QueryRunnerTest {
         // testBean();
         // testBeanList();
         // testScalar();
-        testScalar2();
+        // testScalar2();
+        testStmtConfig();
         // testCustomResultSetHandler();
         // testMapList();
         // testColumnList();
@@ -93,6 +96,7 @@ public class QueryRunnerTest {
 
     public static void testMapList() throws SQLException {
         try (Connection conn = ConnectionUtils.getConnection()) {
+            // 一行转换为一个 key value 的 map
             List<Map<String, Object>> users = new QueryRunner().query(conn, "SELECT id, name FROM test", new MapListHandler());
             System.out.println(users);
         }
@@ -100,9 +104,20 @@ public class QueryRunnerTest {
 
     public static void testColumnList() throws SQLException {
         try (Connection conn = ConnectionUtils.getConnection()) {
+            // 获取某一列的数据
             ResultSetHandler<List<String>> handler = new ColumnListHandler<>("name");
             List<String> names = new QueryRunner().query(conn, "SELECT name FROM test", handler);
             System.out.println(names);
+        }
+    }
+
+    public static void testStmtConfig() throws SQLException {
+        try (Connection conn = ConnectionUtils.getConnection()) {
+            // 可配置 fetchSize, maxRows, queryTimeout 等
+            StatementConfiguration config = new StatementConfiguration.Builder().queryTimeout(5).build();
+            ResultSetHandler<Long> handler = new ScalarHandler<>(1);
+            long r = new QueryRunner(config).query(conn, "SELECT sleep(10)", handler);
+            System.out.println(r);
         }
     }
 }
