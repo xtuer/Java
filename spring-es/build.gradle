@@ -36,21 +36,21 @@ ext.versions = [
 ]
 
 dependencies {
-    compile(
+    implementation(
             "org.springframework:spring-context-support:${versions.spring}",
             "org.springframework.data:spring-data-elasticsearch:${versions.elasticsearch}",
     )
 
     // Log dependencies
-    compile(
+    implementation(
             "ch.qos.logback:logback-classic:${versions.logback}", // slf4j-logback 绑定
             "org.slf4j:jcl-over-slf4j:${versions.slf4j}",         // redirect apache commons logging
             "org.slf4j:jul-to-slf4j:${versions.slf4j}",           // redirect jdk util logging
             "org.slf4j:log4j-over-slf4j:${versions.slf4j}",       // redirect log4j
     )
 
-    testCompile "junit:junit:${versions.junit}"
-    testCompile "org.springframework:spring-test:${versions.spring}"
+    testImplementation "junit:junit:${versions.junit}"
+    testImplementation "org.springframework:spring-test:${versions.spring}"
     compileOnly "org.projectlombok:lombok:${versions.lombok}"
     annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 }

@@ -1,9 +1,9 @@
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 public class Test {
-    public static void main(String[] args) {
-        System.out.println("ORACLE_SID".hashCode());
+    public static void main(String[] args) throws IOException {
+        Base64.Encoder encoder = Base64.getEncoder();
     }
 }

@@ -1,9 +1,8 @@
 package com.xtuer.service;
 
-import com.alibaba.fastjson.JSON;
 import com.xtuer.bean.UploadedFile;
-import com.xtuer.config.AppConfig;
 import com.xtuer.bean.Urls;
+import com.xtuer.config.AppConfig;
 import com.xtuer.mapper.FileMapper;
 import com.xtuer.util.Utils;
 import lombok.extern.slf4j.Slf4j;
@@ -143,7 +142,7 @@ public class TempFileService extends BaseService {
         // [7] 插入文件 ID、原始文件名到数据库
         fileMapper.upsertUploadedFile(uploadedFile);
 
-        log.info("[结束] 上传文件 {}\n{}", originalFilename, JSON.toJSONString(uploadedFile, true));
+        log.info("[结束] 上传文件 {}\n{}", originalFilename, Utils.toJson(uploadedFile));
 
         // [8] 返回上传结果
         return uploadedFile;

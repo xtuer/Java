@@ -1,7 +1,5 @@
 package com.xtuer.bean;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONPObject;
 import com.xtuer.util.Utils;
 import lombok.Getter;
 import lombok.Setter;
@@ -89,35 +87,5 @@ public final class Result<T> {
 
     public static <T> Result<T> single(T data, String error) {
         return (data != null) ? Result.ok(data) : Result.fail(error);
-    }
-
-    /**
-     * 使用传入的回调函数名字 callback 和参数 params 构造一个 JSONP 响应格式的字符串。
-     *
-     * @param callback 浏览器端 JSONP 回调函数的名字
-     * @param data 参数列表
-     * @return 返回 JSONP 格式的字符串
-     */
-    public static String jsonp(String callback, Object data) {
-        JSONPObject jp = new JSONPObject(callback);
-        jp.addParameter(data);
-
-        return jp.toString();
-    }
-
-    // 测试
-    public static void main(String[] args) {
-        // Result
-        Result<User> r1 = Result.ok();
-        Result<User> r2 = Result.ok(new User("Alice", "Passw0rd", Role.ROLE_ADMIN_SYSTEM));
-
-        // JSON
-        System.out.println(JSON.toJSONString(r1));
-        System.out.println(JSON.toJSONString(r2));
-
-        System.out.println(JSON.toJSONString(r2.getData(), true));
-
-        // JSONP
-        System.out.println(Result.jsonp("callback", Result.ok("Hello")));
     }
 }

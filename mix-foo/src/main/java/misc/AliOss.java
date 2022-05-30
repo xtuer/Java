@@ -21,8 +21,8 @@ public class AliOss {
         // [1] Endpoint 以北京为例，其它 Region 请按实际情况填写
         // [2] 阿里云主账号 AccessKey 拥有所有 API 的访问权限，风险很高，可以使用子账号的
         String endpoint        = "oss-cn-beijing.aliyuncs.com";
-        String accessKeyId     = "LTAI4FoHxoqGpSvNfAW4T8Zg";
-        String accessKeySecret = "Y4DUYZ920XAlC07P6m5I8MZGLDixWp";
+        String accessKeyId     = "";
+        String accessKeySecret = "";
 
         // [3] 创建 OSSClient 实例
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
