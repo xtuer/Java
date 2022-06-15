@@ -18,7 +18,7 @@ public class OracleDataTransfer {
     static final String PASS   = "system";
 
     public static void main(String[] args) throws Exception {
-        transferData("dbmon", "select * from test");
+        transferData("dbmon", "select ID, NAME from test");
         // insertData();
     }
 
@@ -54,9 +54,8 @@ public class OracleDataTransfer {
             Preconditions.checkArgument(tableName != null, "查询语句不符合单表查询要求");
 
             // [2] 查询得到结果集
-            Statement stmt = conn.createStatement();
+            Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = stmt.executeQuery(selectSql);
-            System.out.println(selectSql);
 
             // 如果没有记录则返回，不进行数据的转储
             if (!rs.next()) {
@@ -85,7 +84,7 @@ public class OracleDataTransfer {
                 // [7] 把结果集的数据插入到转储的表中 (直接使用 ResultSet 避免了不同数据类型的手动转换)
                 // INSERT INSERT INTO ${tableName} ("COL1, "COL2", "COL3") VALUES(?, ?, ?)
                 // PreparedStatement.setObject(i, rs.getObject(colName))
-                // 可以如 500 条开启一个事务进行提交
+                // 可以如 500 条 insert 作为一个批次执行
                 String insertSql = OracleDataTransferUtils.generatePreparedInsertSql(newCreateTableSqlMap.get("tableName"), columnNames);
                 PreparedStatement pstmt = conn2.prepareStatement(insertSql);
                 System.out.println("插入语句: " + insertSql);
@@ -94,20 +93,21 @@ public class OracleDataTransfer {
                 int len = 500;
 
                 do {
+                    // 按列设置参数
                     int colIndex = 0;
                     for (String col : columnNames) {
                         pstmt.setObject(++colIndex, rs.getObject(col));
                     }
                     pstmt.addBatch();
 
-                    // len 次作为一次批量提交
+                    // len 个 insert 作为一次批量提交
                     if (++executeCount % len == 0) {
                         pstmt.executeBatch();
                         System.out.printf("插入数据到 %d 条", executeCount);
                     }
                 } while (rs.next());
 
-                // 非 len 整数倍则说明最后一次批量未执行
+                // 非 len 整数倍则说明最后一次批量未执行，在此执行
                 if (executeCount % len != 0) {
                     pstmt.executeBatch();
                     System.out.printf("插入数据到 %d 条", executeCount);

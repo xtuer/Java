@@ -19,4 +19,12 @@ public class OracleDataTransferTest {
         System.out.println(newCreateTableSqlMap);
         System.out.println(OracleDataTransferUtils.generatePreparedInsertSql(newCreateTableSqlMap.get("tableName"), columnNames));
     }
+
+    @Test
+    public void testFormatSql() {
+        String sql = "CREATE table \"DBMON\".\"TEST\" (\"id\" NUMBER(*, 0),\n" +
+                "  \"NAME\" VARCHAR2(256),  \"AGE\" NUMBER(*, 0)\n" +
+                ") SEGMENT CREATION DEFERRED PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING TABLESPACE \"USERS\"";
+        System.out.println(OracleDataTransferUtils.formatSql(sql));
+    }
 }
