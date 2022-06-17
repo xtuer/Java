@@ -1,42 +1,38 @@
 package misc;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Properties;
 
 /**
- * Oracle 同库备份
+ * 把 ResultSet 导出为 INSERT 语句
  */
-public class OracleBackupInTheSameDb {
+public class OracleDumpResultSetToInsertSql {
     static final String DB_URL = "jdbc:oracle:thin:@//192.168.12.16:31002/orcl";
     static final String USER   = "system";
     static final String PASS   = "system";
 
     public static void main(String[] args) throws Exception {
-        backup("dbmon", "update test set name='Hello'");
+        String schema = "DBMON";
+        String selectSql = "select * from test";
+        String tableName = "test_123";
+        String insertSqls = OracleDumpResultSetToInsertSql.dumpInsertSqls(schema, selectSql, tableName);
+        System.out.println(insertSqls);
     }
 
     /**
-     * 对传入的 dmlSql 影响的数据进行备份
+     * 把查询语句 selectSql 的结果集导出为 INSERT 语句。
      *
-     * @param dmlSql 更新的 SQL 语句，包含 UPDATE 和 DELETE
+     * @param selectSql 查询 SQL 语句
+     * @param targetTableName 导出的表名
      */
-    public static void backup(String schema, String dmlSql) throws Exception {
-        /*
-         逻辑:
-         1. 构造备份语句: create table test4 as select * from test where id > 1
-         2. 执行备份语句
-         */
+    public static String dumpInsertSqls(String schema, String selectSql, String targetTableName) throws SQLException {
         try (Connection conn = createConnection()) {
             conn.setSchema(schema);
-
-            String backupSql = OracleBackupInTheSameDbUtils.generateBackupSql(dmlSql);
             Statement stmt = conn.createStatement();
-            stmt.executeUpdate(backupSql);
+            ResultSet rs = stmt.executeQuery(selectSql);
 
-            System.out.println("完成同库备份，备份 SQL: " + backupSql);
+            String insertSqls = OracleDumpResultSetToInsertSqlUtils.dumpResultSetToString(rs, targetTableName);
+            return insertSqls;
         }
     }
 
