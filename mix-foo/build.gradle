@@ -55,6 +55,8 @@ dependencies {
     implementation 'org.apache.any23:apache-any23-encoding:2.7'
     implementation 'com.github.vertical-blank:sql-formatter:2.0.3'
     implementation 'com.trilead:trilead-ssh2:1.0.0-build222'
+    implementation 'ch.qos.logback:logback-classic:1.2.11'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.3'
 
     // BigQueue 的依赖
     implementation 'org.slf4j:slf4j-api:1.6.4'

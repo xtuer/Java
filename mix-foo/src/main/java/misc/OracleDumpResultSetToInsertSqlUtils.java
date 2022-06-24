@@ -62,8 +62,8 @@ public class OracleDumpResultSetToInsertSqlUtils {
                     sql.append(",");
                 }
             }
-            sql.append(");");
-            result.append(sql).append("\n");
+            sql.append(");\n");
+            result.append(sql);
         }
 
         return result.toString();
@@ -137,13 +137,15 @@ public class OracleDumpResultSetToInsertSqlUtils {
 
     /**
      * 根据 SQL 规范把字符串中的特殊字符进行转义，例如
-     * A. ' 变为 \'
-     * B. 回车变为 \n
+     * A. \ 变为 \\
+     * B. ' 变为 \'
+     * C. 回车变为 \n
      *
      * @param str 字符串
      * @return 返回转义后的字符串
      */
     public static String escapeString(String str) {
+        str = str.replace("\\", "\\\\");
         str = str.replace("'", "\\'");
         str = str.replace("\n", "\\n");
 

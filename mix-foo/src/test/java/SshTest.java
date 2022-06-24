@@ -204,6 +204,29 @@ public class SshTest {
         SshUtils.scpTo(conn, shPath.toString(), "/root/");
     }
 
+    /**
+     * 测试非 root 用户执行 salt 命令。
+     * 此用户已经添加到 publisher_acl 中。
+     */
+    @Test
+    public void testSaltViaUserFoo() throws IOException {
+        Connection conn = SshUtils.sshConnect("192.168.1.164", 22, "foo", "Passw0rd");
+        String cmd = "salt '192.168.12.102' cmd.run 'whoami' --out=json"; // 输出 root
+        SshResult result = runCommand(conn, cmd);
+        dumpResult(result);
+
+        conn.close();
+    }
+
+    /**
+     * 测试确保远程机器上的目录存在
+     */
+    @Test
+    public void testMakeSureDirectory() throws IOException {
+        Connection conn = SshUtils.sshConnect("192.168.1.164", 22, "foo", "Passw0rd");
+        SshUtils.makeSureDirectory(conn, "/srv/salt/base/scripts-temp/2022-06-21");
+    }
+
     private void dumpResult(SshResult result) {
         System.out.printf("Code: %d, Result: \n%s", result.getCode(), result.getContent());
     }
