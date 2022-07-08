@@ -38,22 +38,11 @@ import static util.SshUtils.runCommand;
  * B. 介质文件: 自动化编排时指定位置
  */
 @Slf4j
-public class SaltStackRun {
+public class SaltStackRunner {
     /**
-     * SaltMaster 默认的文件系统根路径。
+     * SaltStack 配置
      */
-    private static final String DEFAULT_SALT_FILE_SYSTEM_BASE = "/srv/salt/base";
-
-    /**
-     * Minion FileSystem 的文件根路径。
-     * Minion 复制到 Master 文件的路径如 /var/cache/salt/master/192.168.12.102/root/test.txt。
-     */
-    private static final String MINION_FILE_SYSTEM_BASE = "/var/cache/salt/master";
-
-    /**
-     * SaltStack 文件系统的根路径，脚本文件和介质文件都放在这个路径下，建议使用默认值。
-     */
-    private String saltFileSystemBase = DEFAULT_SALT_FILE_SYSTEM_BASE;
+    private final SaltStackConfig config;
 
     /**
      * Salt 执行 shell 脚本的命令模板。
@@ -72,6 +61,15 @@ public class SaltStackRun {
      * 例如: salt '192.168.12.102' cp.get_dir 'salt://scripts-encrypted' '/root/foo/bar' makedirs=True --out=json
      */
     private static final String SALT_TRANSFER_DIR_FORMAT = "salt '%s' cp.get_dir '%s' '%s' makedirs=True --out=json";
+
+    /**
+     * 使用配置创建对象。
+     *
+     * @param config 自动化使用的 SaltStack 配置
+     */
+    public SaltStackRunner(SaltStackConfig config) {
+        this.config = config;
+    }
 
     /**
      * 使用 SaltStack 在 SaltMinion 上执行脚本。
@@ -93,7 +91,7 @@ public class SaltStackRun {
 
         // 建立到 SaltMaster 的 ssh 连接
         Connection conn = connectToSaltMaster();
-        Script script = new Script(saltFileSystemBase, scriptName);
+        Script script = new Script(config.getSaltFileSystemBase(), scriptName);
 
         try {
             // [1] Web 服务器从 SaltMaster 获取 shell 脚本
@@ -108,7 +106,7 @@ public class SaltStackRun {
             String encryptedScriptContent = result.getContent();
 
             // [2] 解密 shell 脚本，并保存到本地临时文件
-            String scriptContent = encryptedScriptContent; // TODO: 解密 shell 脚本
+            String scriptContent = encryptedScriptContent; // TODO: 解密 shell 脚本 (自动化的脚本都是加密保存的，需要解密后才能使用)
             log.info("脚本内容:\n{}", scriptContent);
 
             // 保存到本地临时文件，文件名格式为 <scriptName>-<random>.sh，例如 init.sh-1058843542831845790.sh
@@ -129,10 +127,13 @@ public class SaltStackRun {
 
             return result;
         } finally {
+            // TODO: 清理临时文件 (可配置是否清理，调试时不清理非常有用，方便定位问题):
+            // A. 本地临时文件不需要删除，操作系统会自动删除
+            // B. SaltMaster 上会产生大量的临时脚本，按天存储，可以使用 crontab 定时任务处理，没必要在程序里删除
+            // C. SaltMinion 上会产生少量的临时脚本，按天存储，其实不清理也没事
+
             // 关闭 ssh 连接
             conn.close();
-
-            // TODO: 清理临时文件 (可配置是否清理，调试时不清理)
         }
     }
 
@@ -176,7 +177,7 @@ public class SaltStackRun {
          */
 
         // [1] 把操作系统文件路径转为 Salt 文件系统的路径，以 salt:// 开头，如 salt://a.txt
-        String sourcePathInSaltFileSystem = SaltStackRun.convertPathToSaltFileSystemPath(saltFileSystemBase, sourcePath);
+        String sourcePathInSaltFileSystem = SaltStackRunner.convertPathToSaltFileSystemPath(config.getSaltFileSystemBase(), sourcePath);
         if (sourcePathInSaltFileSystem == null) {
             return new SshResult(10000, "文件不在 Salt 文件系统下: " + sourcePath);
         }
@@ -235,7 +236,7 @@ public class SaltStackRun {
          */
 
         // [1] 把操作系统文件路径转为 Salt 文件系统的路径，以 salt:// 开头，如 salt://a.txt
-        String sourceDirInSaltFileSystem = SaltStackRun.convertPathToSaltFileSystemPath(saltFileSystemBase, sourceDir);
+        String sourceDirInSaltFileSystem = SaltStackRunner.convertPathToSaltFileSystemPath(config.getSaltFileSystemBase(), sourceDir);
         if (sourceDirInSaltFileSystem == null) {
             return new SshResult(10001, "目录不在 Salt 文件系统下: " + sourceDir);
         }
@@ -354,9 +355,8 @@ public class SaltStackRun {
      * @return 返回 ssh 连接
      * @throws IOException 连接异常
      */
-    public Connection connectToSaltMaster() throws IOException {
-        // TODO: 根据情况修改
-        return SshUtils.sshConnect("192.168.1.164", 22, "root", "Newdt@cn");
+    private Connection connectToSaltMaster() throws IOException {
+        return SshUtils.sshConnect(config.getSaltMasterIp(), config.getSaltMasterPort(), config.getSaltMasterUsername(), config.getSaltMasterPassword());
     }
 
     /**

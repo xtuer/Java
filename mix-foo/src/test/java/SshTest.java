@@ -21,7 +21,7 @@ public class SshTest {
 
     @BeforeClass
     public static void setup() throws IOException {
-        conn = SshUtils.sshConnect("192.168.1.164", 22, "root", "Newdt@cn");
+        conn = SshUtils.sshConnect("192.168.12.101", 22, "root", "Newdt@cn");
     }
 
     @AfterClass
@@ -43,7 +43,7 @@ public class SshTest {
      */
     @Test
     public void testSaltPing() throws IOException {
-        String cmd = "salt '192.168.12.102' test.ping --out=json";
+        String cmd = "salt '192.168.12.101' test.ping --out=json";
         SshResult result = runCommand(conn, cmd);
         dumpResult(result);
     }

@@ -1,4 +1,4 @@
-package graph;
+package kafka.graph;
 
 import java.util.LinkedList;
 import java.util.List;

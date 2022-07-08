@@ -76,7 +76,7 @@ public class LockAspect {
     /**
      * 初始化时连接 Zookeeper
      */
-    @PostConstruct
+    // @PostConstruct
     public void connectToZookeeper() {
         client = CuratorFrameworkFactory.newClient("127.0.0.1:2181", new ExponentialBackoffRetry(10000, 3));
         client.start();

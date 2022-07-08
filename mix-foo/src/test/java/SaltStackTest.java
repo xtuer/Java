@@ -1,4 +1,5 @@
-import misc.SaltStackRun;
+import misc.SaltStackConfig;
+import misc.SaltStackRunner;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import util.SshUtils;
@@ -7,13 +8,17 @@ import util.SshUtils.*;
 import java.io.IOException;
 
 public class SaltStackTest {
-    private static SaltStackRun saltRun;
+    private static SaltStackRunner saltRun;
 
     private static final String MINION_IP = "192.168.12.102";
 
     @BeforeClass
     public static void setup() {
-        saltRun = new SaltStackRun();
+        SaltStackConfig config = new SaltStackConfig();
+        config.setSaltMasterIp("192.168.12.101");
+        config.setSaltMasterUsername("foo");
+        config.setSaltMasterPassword("Passw0rd");
+        saltRun = new SaltStackRunner(config);
     }
 
     /**
@@ -22,6 +27,15 @@ public class SaltStackTest {
     @Test
     public void testExecuteSh() throws IOException {
         SshResult result = saltRun.executeScript(MINION_IP, "x.sh", "a=阿布 b=Bob c=Carry");
+        dumpResult(result);
+    }
+
+    /**
+     * 测试复制文件
+     */
+    @Test
+    public void testTransferFile() throws IOException {
+        SshResult result = saltRun.transferFileFromMasterToMinion(MINION_IP, "/srv/salt/base/scripts-encrypted/y.sh", "/dmp/temp");
         dumpResult(result);
     }
 

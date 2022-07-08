@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -88,5 +89,14 @@ public class ZooController extends BaseController {
     @GetMapping("/api/demo/array")
     public Result<List<Integer>> array(@RequestParam List<Integer> ids) {
         return Result.ok(ids);
+    }
+
+    /**
+     * 获取请求头
+     */
+    @GetMapping("/api/demo/headers")
+    public Result<String> getHeaders(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        return Result.ok(token);
     }
 }

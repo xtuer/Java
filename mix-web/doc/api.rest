@@ -15,3 +15,7 @@ GET http://localhost:8080/api/products/1/increase?inc=3000&mode=3
 
 ### 增加产品的数量 (注解实现的分布式锁)
 GET http://localhost:8080/api/products/2/increase?inc=3000&mode=4
+
+### Header 测试
+GET http://localhost:8080/api/demo/headers
+x-token: Biao
