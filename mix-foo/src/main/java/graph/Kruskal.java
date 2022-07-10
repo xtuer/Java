@@ -1,4 +1,4 @@
-package kafka.graph;
+package graph;
 
 import com.alibaba.fastjson.JSON;
 
