@@ -1,13 +1,18 @@
 package util;
 
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
+import com.jcraft.jsch.*;
+import lombok.extern.slf4j.Slf4j;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -18,8 +23,19 @@ import java.util.stream.Collectors;
  * What's the exact differences between jsch ChannelExec and ChannelShell?
  * https://stackoverflow.com/questions/6265278/whats-the-exact-differences-between-jsch-channelexec-and-channelshell
  */
+@Slf4j
 public class JschUtils implements AutoCloseable {
+    /**
+     * Session 对应 TCP Socket，使用后需要关闭，否则会造成连接泄漏。
+     * 注:
+     * A. Session 打开的 Channel 不会建立新的 Socket 连接。
+     * B. 一个 Session 只支持 10 个 channel 并发执行命令。
+     */
     private final Session session;
+
+    /**
+     * 建立连接的超时时间。
+     */
     private int timeout = 60000;
 
     public JschUtils(final String ipAddress, final String username, final String password) throws Exception {
@@ -39,6 +55,8 @@ public class JschUtils implements AutoCloseable {
      * @throws Exception 命令执行失败时抛出异常
      */
     public String runCommand(String command) throws Exception {
+        log.info("执行命令: 主机 [{}]，命令 [{}]", session.getHost(), command);
+
         ChannelExec channel = (ChannelExec) session.openChannel("exec");
         channel.setCommand(command);
         InputStream okOutput = channel.getInputStream();
@@ -65,14 +83,78 @@ public class JschUtils implements AutoCloseable {
      * @throws Exception scp 复制文件失败时抛异常，例如远程文件夹不存在
      */
     public void sftpPut(String localPath, String remoteDirectory) throws Exception {
+        log.info("上传文件: 主机 [{}]，本地文件 [{}]，远程目录 [{}]", session.getHost(), localPath, remoteDirectory);
+
         ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
         channel.connect();
 
+        // 如果目录以 ~ 开头，则把其转换为用户目录的路径
+        if (remoteDirectory.startsWith("~")) {
+            remoteDirectory = channel.getHome() + "/" + remoteDirectory.substring(1);
+        }
+
+        // 确保目录存在
+        JschUtils.makeSureDirs(channel, remoteDirectory);
+
         channel.cd(remoteDirectory);
-        File file = new File(localPath);
-        channel.put(Files.newInputStream(file.toPath()), file.getName());
+        Path path = Paths.get(localPath);
+        channel.put(Files.newInputStream(path), path.getFileName().toString());
 
         channel.disconnect();
+    }
+
+    /**
+     * 确保远程机器上的目录存在，不存在则创建。
+     *
+     * @param channel Sftp 通道
+     * @param remoteDirectory 远程目录
+     * @throws RuntimeException 创建目录出错跑运行时异常
+     */
+    public static void makeSureDirs(ChannelSftp channel, String remoteDirectory) {
+        /*
+         逻辑: 倒序测试目录是否存在，把需要创建的目录路径加入 newDirs
+         1. 获取文件属性，如果不存在则抛 SftpException 异常
+         2. 获取文件属性成功，是目录则结束循环，非目录抛异常
+         3. 获取文件属性出错，异常信息里包含 "No such file" 则说明目录不存在，加入要创建目录的列表
+         4. 创建需要的目录
+         */
+        List<String> newDirs = new LinkedList<>();
+        Path path = Paths.get(remoteDirectory);
+
+        while (path != null) {
+            try {
+                // [1] 获取文件属性，如果不存在则抛 SftpException 异常
+                SftpATTRS attrs = channel.lstat(path.toString());
+
+                // [2] 获取文件属性成功，是目录则结束循环，非目录抛异常
+                if (attrs.isDir()) {
+                    break;
+                } else {
+                    throw new RuntimeException("文件存在，但不是目录: " + path);
+                }
+            } catch (SftpException ex) {
+                String message = ex.getMessage();
+
+                // [3] 获取文件属性出错，异常信息里包含 "No such file" 则说明目录不存在，加入要创建目录的列表
+                if (message.contains("No such file")) {
+                    newDirs.add(0, path.toString());
+                    path = path.getParent();
+                } else {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+
+        // [4] 创建需要的目录
+        for (String dir : newDirs) {
+            try {
+                String host = channel.getSession().getHost();
+                log.info("创建目录: 主机 [{}]，远程目录 [{}]", host, dir);
+                channel.mkdir(dir);
+            } catch (SftpException | JSchException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 
     public void sftpGet() throws Exception {
@@ -93,7 +175,7 @@ public class JschUtils implements AutoCloseable {
         }
     }
 
-    private void setTimeout(int timeout) {
+    public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
 

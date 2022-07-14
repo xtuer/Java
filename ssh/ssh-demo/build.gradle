@@ -28,8 +28,10 @@ repositories {
 
 dependencies {
     implementation project(':ssh-wrapper')
+//    implementation files('/Users/biao/Documents/workspace/newdt/ndtssh/target/newdt-ssh-1.4.jar')
     implementation 'com.jcraft:jsch:0.1.55'
     implementation "org.springframework:spring-webmvc:5.2.6.RELEASE"
+    implementation 'ch.qos.logback:logback-classic:1.2.11'
 
     testImplementation 'junit:junit:4.13.2'
     compileOnly 'org.projectlombok:lombok:1.18.24'

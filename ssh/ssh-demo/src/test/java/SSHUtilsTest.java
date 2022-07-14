@@ -2,12 +2,9 @@ import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.SCPClient;
 import ch.ethz.ssh2.Session;
 import cn.newdt.autop.ansible.SSHUtils;
-import com.jcraft.jsch.ChannelExec;
 import org.junit.Test;
-import util.JschUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -24,7 +21,7 @@ public class SSHUtilsTest {
         System.out.println(result);
 
         System.out.println("-----------------------------");
-        result = sshUtils.runCommand(conn, "ls /root", false, null);
+        result = sshUtils.runCommand(conn, "ls ~", false, null);
         System.out.println(result);
 
         conn.close();
@@ -51,7 +48,7 @@ public class SSHUtilsTest {
         SSHUtils sshUtils = new SSHUtils();
         Connection conn = sshUtils.SSHConnect();
         SCPClient scp = conn.createSCPClient();
-        scp.put("/Users/biao/Downloads/test.js", "/root/temp/x.js");
+        scp.put("/Users/biao/Downloads/test.js", "/root/temp");
 
         conn.close();
     }
