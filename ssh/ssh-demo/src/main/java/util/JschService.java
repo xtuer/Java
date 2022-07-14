@@ -24,23 +24,24 @@ import java.util.stream.Collectors;
  * https://stackoverflow.com/questions/6265278/whats-the-exact-differences-between-jsch-channelexec-and-channelshell
  */
 @Slf4j
-public class JschUtils implements AutoCloseable {
+public class JschService implements AutoCloseable {
     /**
      * Session 对应 TCP Socket，使用后需要关闭，否则会造成连接泄漏。
-     * 注:
+     *
+     * 提示:
      * A. Session 打开的 Channel 不会建立新的 Socket 连接。
-     * B. 一个 Session 只支持 10 个 channel 并发执行命令。
+     * B. 一个 Session 只支持 10 个 channel 并发执行命令，可以使用 Semaphore(10) 进行优化控制并发量。
      */
     private final Session session;
 
     /**
      * 建立连接的超时时间。
      */
-    private int timeout = 60000;
+    private int timeout = 6000;
 
-    public JschUtils(final String ipAddress, final String username, final String password) throws Exception {
+    public JschService(final String host, final String username, final String password) throws Exception {
         JSch jsch = new JSch();
-        this.session = jsch.getSession(username, ipAddress, 22);
+        this.session = jsch.getSession(username, host, 22);
         this.session.setPassword(password);
         this.session.setConfig("StrictHostKeyChecking", "no");
         this.session.setTimeout(this.timeout);
@@ -54,21 +55,21 @@ public class JschUtils implements AutoCloseable {
      * @return 返回命令的结果
      * @throws Exception 命令执行失败时抛出异常
      */
-    public String runCommand(String command) throws Exception {
+    public String executeCommand(String command) throws Exception {
         log.info("执行命令: 主机 [{}]，命令 [{}]", session.getHost(), command);
 
         ChannelExec channel = (ChannelExec) session.openChannel("exec");
         channel.setCommand(command);
-        InputStream okOutput = channel.getInputStream();
+        InputStream okOutput  = channel.getInputStream();
         InputStream errOutput = channel.getErrStream();
 
         channel.connect();
-        String ok = JschUtils.readString(okOutput);
-        String err = JschUtils.readString(errOutput);
+        String ok  = JschService.readAsString(okOutput);
+        String err = JschService.readAsString(errOutput);
         channel.disconnect();
 
-        // 如果错误输出有内容，则说明命令执行失败，抛出异常
-        if (err != null  && !"".equals(err)) {
+        // 命令 return code 不为 0 则说明执行命令失败
+        if (channel.getExitStatus() != 0) {
             throw new RuntimeException(err);
         }
 
@@ -76,7 +77,7 @@ public class JschUtils implements AutoCloseable {
     }
 
     /**
-     * 使用 sftp 复制本地文件到远程机器。
+     * 使用 sftp 复制本地文件到远程机器，如果远程目录不存在则会自动创建。
      *
      * @param localPath 本地文件路径
      * @param remoteDirectory 目标机器上的目录
@@ -88,13 +89,18 @@ public class JschUtils implements AutoCloseable {
         ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
         channel.connect();
 
-        // 如果目录以 ~ 开头，则把其转换为用户目录的路径
+        // 如果目录以 ~ 开头，则把其转换为用户目录的路径，JSch 上传文件时路径不支持 ~
         if (remoteDirectory.startsWith("~")) {
             remoteDirectory = channel.getHome() + "/" + remoteDirectory.substring(1);
         }
 
+        // 路径需要以 / 开头
+        if (!remoteDirectory.startsWith("/")) {
+            throw new RuntimeException("路径需要以 / 开头，不能使用相对路径: " + remoteDirectory);
+        }
+
         // 确保目录存在
-        JschUtils.makeSureDirs(channel, remoteDirectory);
+        JschService.makeSureDirectories(channel, remoteDirectory);
 
         channel.cd(remoteDirectory);
         Path path = Paths.get(localPath);
@@ -110,7 +116,7 @@ public class JschUtils implements AutoCloseable {
      * @param remoteDirectory 远程目录
      * @throws RuntimeException 创建目录出错跑运行时异常
      */
-    public static void makeSureDirs(ChannelSftp channel, String remoteDirectory) {
+    private static void makeSureDirectories(ChannelSftp channel, String remoteDirectory) {
         /*
          逻辑: 倒序测试目录是否存在，把需要创建的目录路径加入 newDirs
          1. 获取文件属性，如果不存在则抛 SftpException 异常
@@ -167,7 +173,7 @@ public class JschUtils implements AutoCloseable {
      * @param in 输入流
      * @return 返回输入流中的字符串
      */
-    private static String readString(InputStream in) {
+    private static String readAsString(InputStream in) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
             return reader.lines().collect(Collectors.joining("\n"));
         } catch (IOException e) {

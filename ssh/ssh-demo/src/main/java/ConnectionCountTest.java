@@ -1,4 +1,4 @@
-import util.JschUtils;
+import util.JschService;
 
 import java.util.concurrent.TimeUnit;
 
@@ -18,15 +18,15 @@ public class ConnectionCountTest {
     }
 
     public static void testChannelDoesNotClose() throws Exception {
-        JschUtils jschUtils = new JschUtils(IP, USER, PASS);
+        JschService jschService = new JschService(IP, USER, PASS);
 
         for (int i = 0; i < LEN; i++) {
-            String res = jschUtils.runCommand("cat /root/SaltGUI-master/README.md");
+            String res = jschService.executeCommand("cat /root/SaltGUI-master/README.md");
             System.out.println(res);
             System.out.println("-------------------> " + i);
         }
 
         TimeUnit.SECONDS.sleep(50);
-        jschUtils.close();
+        jschService.close();
     }
 }
