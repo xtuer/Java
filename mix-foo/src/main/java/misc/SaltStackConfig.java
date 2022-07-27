@@ -27,22 +27,27 @@ public class SaltStackConfig {
     private String saltFileSystemBase = DEFAULT_SALT_FILE_SYSTEM_BASE;
 
     /**
-     * SaltMaster IP
+     * SaltMaster IP。
      */
-    private String saltMasterIp;
+    private String masterIp;
 
     /**
-     * SaltMaster 的 ssh 用户名
+     * SaltMaster 的 ssh 用户名。
      */
-    private String saltMasterUsername;
+    private String masterSshUsername;
 
     /**
-     * SaltMaster 的 ssh 密码
+     * SaltMaster 的 ssh 密码。
      */
-    private String saltMasterPassword;
+    private String masterSshPassword;
 
     /**
-     * SaltMaster 的 ssh 端口
+     * SaltMaster 的 ssh 端口。
      */
-    private int saltMasterPort;
+    private int masterSshPort = 22;
+
+    /**
+     * 是否启用 SaltStack。
+     */
+    private boolean enabled;
 }

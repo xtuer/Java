@@ -1,54 +1,126 @@
 import misc.SaltStackConfig;
 import misc.SaltStackRunner;
+import misc.SshHelper;
+import static misc.SshHelper.SshResult;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import util.SshUtils;
-import util.SshUtils.*;
 
-import java.io.IOException;
-
+/**
+ * 测试内容:
+ * X. 执行脚本
+ * A. Master -> Minion: File and Dir
+ * B. Minion -> Master: File and Dir
+ * C. Minion -> Minion: File and Dir
+ */
 public class SaltStackTest {
-    private static SaltStackRunner saltRun;
+    private static SaltStackRunner salt;
 
-    private static final String MINION_IP = "192.168.12.102";
+    private static final String MINION_IP_1 = "192.168.1.51";
+    private static final String MINION_IP_2 = "192.168.12.102";
+
+    // 准备数据: mkdir -p /dmp && chmod 777 /dmp && mkdir -p /root/test && echo 'hostname' > /root/test/get_hostname.sh
+
+    private static final String MINION_DIR         = "/root/test";
+    private static final String MINION_FILE_BIG    = "/data/dmp-release-8.1.1-mysql-20220310.tar.gz"; // 1.2G, 在 192.168.1.51 上
+    private static final String MINION_FILE_LITTLE = "/root/test/get_hostname.sh";
+    private static final String MASTER_SALT_FILE   = "/srv/salt/base/x.sls";
+    private static final String MASTER_SALT_DIR    = "/srv/salt/base/scripts-encrypted";
+    private static final String DEST_DIR           = "/dmp/2022-07"; // 保存传输文件的目录, Master+Minion 上都要创建好，目录 /dmp 权限为 777
 
     @BeforeClass
     public static void setup() {
         SaltStackConfig config = new SaltStackConfig();
-        config.setSaltMasterIp("192.168.12.101");
-        config.setSaltMasterUsername("foo");
-        config.setSaltMasterPassword("Passw0rd");
-        saltRun = new SaltStackRunner(config);
+        config.setMasterIp("192.168.12.101");
+        config.setMasterSshUsername("foo");
+        config.setMasterSshPassword("Passw0rd");
+        salt = new SaltStackRunner(config);
     }
 
     /**
      * 测试执行 Salt Master 上的脚本
      */
     @Test
-    public void testExecuteSh() throws IOException {
-        SshResult result = saltRun.executeScript(MINION_IP, "x.sh", "a=阿布 b=Bob c=Carry");
+    public void testExecuteSh() throws Exception {
+        SshResult result = salt.executeScript(MINION_IP_1, "x.sh", "-A 阿布 -B Bob -C Carry");
         dumpResult(result);
     }
 
     /**
-     * 测试复制文件
+     * 测试传输文件: Master -> Minion
      */
     @Test
-    public void testTransferFile() throws IOException {
-        SshResult result = saltRun.transferFileFromMasterToMinion(MINION_IP, "/srv/salt/base/scripts-encrypted/y.sh", "/dmp/temp");
+    public void testTransferFileFromMasterToMinion() throws Exception {
+        SshResult result = salt.transferFile(null, MINION_IP_1, MASTER_SALT_FILE, DEST_DIR);
         dumpResult(result);
     }
 
     /**
-     * 测试复制文件夹
+     * 测试传输目录: Master -> Minion
      */
     @Test
-    public void testTransferDir() throws IOException {
-        SshResult result = saltRun.transferDirFromMasterToMinion(MINION_IP, "/srv/salt/base/foo", "/dmp/files");
+    public void testTransferDirFromMasterToMinion() throws Exception {
+        SshResult result = salt.transferDir(null, MINION_IP_1, MASTER_SALT_DIR, DEST_DIR);
         dumpResult(result);
     }
 
-    private void dumpResult(SshUtils.SshResult result) {
+    /**
+     * 测试传输文件: Minion -> Master
+     */
+    @Test
+    public void testTransferFileFromMinionToMaster() throws Exception {
+        SshResult result = salt.transferFile(MINION_IP_1, null, MINION_FILE_LITTLE, DEST_DIR);
+        dumpResult(result);
+    }
+
+    /**
+     * 测试传输文件: Minion -> Master 大文件
+     */
+    @Test
+    public void testTransferFileFromMinionToMasterBigFile() throws Exception {
+        SshResult result = salt.transferFile(MINION_IP_1, null, MINION_FILE_BIG, DEST_DIR);
+        dumpResult(result);
+    }
+
+    /**
+     * 测试传输目录: Minion -> Master
+     */
+    @Test
+    public void testTransferDirFromMinionToMaster() throws Exception {
+        SshResult result = salt.transferDir(MINION_IP_1, null, MINION_DIR, DEST_DIR);
+        dumpResult(result);
+    }
+
+    /**
+     * 测试传输文件: Minion -> Minion
+     */
+    @Test
+    public void testTransferFileFromMinionToMinion() throws Exception {
+        SshResult result = salt.transferFile(MINION_IP_1, MINION_IP_2, MINION_FILE_LITTLE, DEST_DIR);
+        dumpResult(result);
+    }
+
+    /**
+     * 测试传输文件: Minion -> Minion 大文件
+     */
+    @Test
+    public void testTransferFileFromMinionToMinionBigFile() throws Exception {
+        SshResult result = salt.transferFile(MINION_IP_1, MINION_IP_2, MINION_FILE_BIG, DEST_DIR);
+        dumpResult(result);
+    }
+
+    /**
+     * 测试传输目录: Minion -> Minion
+     */
+    @Test
+    public void testTransferDirFromMinionToMinion() throws Exception {
+        SshResult result = salt.transferDir(MINION_IP_1, MINION_IP_2, MINION_DIR, DEST_DIR);
+        dumpResult(result);
+    }
+
+    /**
+     * 打印出结果
+     */
+    private void dumpResult(SshHelper.SshResult result) {
         System.out.printf("Code: %d, Result: \n%s\n", result.getCode(), result.getContent());
     }
 }

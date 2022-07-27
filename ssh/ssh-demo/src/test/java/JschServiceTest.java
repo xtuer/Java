@@ -5,9 +5,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class JschServiceTest {
-    private static final String HOST = "192.168.12.101";
+    // private static final String HOST = "192.168.12.101";
+    // private static final String USER = "root";
+    // private static final String PASS = "Newdt@cn";
+
+    private static final String HOST = "118.195.181.149";
     private static final String USER = "root";
-    private static final String PASS = "Newdt@cn";
+    private static final String PASS = "*#Passw0rd#";
 
     @Test
     public void testExecuteCommandSuccess() throws Exception {
@@ -20,7 +24,7 @@ public class JschServiceTest {
     @Test
     public void testExecuteCommandFailure() throws Exception {
         JschService jschService = new JschService(HOST, USER, PASS);
-        String res = jschService.executeCommand("ls /root/xyz/b/c");
+        String res = jschService.executeCommand("ls /root/z");
         System.out.println(res);
         jschService.close();
     }
@@ -28,7 +32,7 @@ public class JschServiceTest {
     @Test
     public void testSftpPutFile() throws Exception {
         try (JschService jschService = new JschService(HOST, USER, PASS)) {
-        jschService.sftpPut("/Users/biao/Downloads/test.js", "~/foo/bar/");
+            jschService.sftpPut("/Users/biao/Downloads/test.js", "~/foo/bar/");
         }
     }
 

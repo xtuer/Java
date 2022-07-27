@@ -58,6 +58,7 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.2.11'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.3'
     implementation 'com.alibaba:druid:1.2.11'
+    implementation 'com.jcraft:jsch:0.1.55'
 
     // BigQueue 的依赖
     implementation 'org.slf4j:slf4j-api:1.6.4'

@@ -18,15 +18,14 @@ public class ConnectionCountTest {
     }
 
     public static void testChannelDoesNotClose() throws Exception {
-        JschService jschService = new JschService(IP, USER, PASS);
-
         for (int i = 0; i < LEN; i++) {
+            JschService jschService = new JschService(IP, USER, PASS);
             String res = jschService.executeCommand("cat /root/SaltGUI-master/README.md");
             System.out.println(res);
             System.out.println("-------------------> " + i);
+            // jschService.close();
         }
 
         TimeUnit.SECONDS.sleep(50);
-        jschService.close();
     }
 }

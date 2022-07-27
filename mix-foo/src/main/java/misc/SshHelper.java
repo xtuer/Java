@@ -1,6 +1,7 @@
-package util;
+package misc;
 
 import com.jcraft.jsch.*;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
  * https://stackoverflow.com/questions/6265278/whats-the-exact-differences-between-jsch-channelexec-and-channelshell
  */
 @Slf4j
-public class JschService implements AutoCloseable {
+public class SshHelper implements AutoCloseable {
     /**
      * Session 对应 TCP Socket，使用后需要关闭，否则会造成连接泄漏。
      *
@@ -39,9 +40,9 @@ public class JschService implements AutoCloseable {
      */
     private int timeout = 6000;
 
-    public JschService(final String host, final String username, final String password) throws Exception {
+    public SshHelper(final String host, final String username, final String password, int port) throws Exception {
         JSch jsch = new JSch();
-        this.session = jsch.getSession(username, host, 22);
+        this.session = jsch.getSession(username, host, port);
         this.session.setPassword(password);
         this.session.setConfig("StrictHostKeyChecking", "no");
         this.session.setTimeout(this.timeout);
@@ -55,7 +56,7 @@ public class JschService implements AutoCloseable {
      * @return 返回命令的结果
      * @throws Exception 命令执行失败时抛出异常
      */
-    public String executeCommand(String command) throws Exception {
+    public SshResult executeCommand(String command) throws Exception {
         log.info("执行命令: 主机 [{}]，命令 [{}]", session.getHost(), command);
 
         ChannelExec channel = (ChannelExec) session.openChannel("exec");
@@ -64,8 +65,8 @@ public class JschService implements AutoCloseable {
         InputStream errOutput = channel.getErrStream();
 
         channel.connect();
-        String ok  = JschService.readAsString(okOutput);
-        String err = JschService.readAsString(errOutput);
+        String ok  = SshHelper.readAsString(okOutput);
+        String err = SshHelper.readAsString(errOutput);
         channel.disconnect();
 
         // Shell 里使用 echo $? 查看命令进程的返回值 return code。
@@ -74,15 +75,15 @@ public class JschService implements AutoCloseable {
         // 参考 SSH command in Java/JSch giving exit code -1:
         // https://stackoverflow.com/questions/40896820/ssh-command-in-java-jsch-giving-exit-code-1
         int rc = channel.getExitStatus();
-        if (rc == -1 && err != null && err.equals("")) {
-            log.warn("命令状态未知，return code [{}]", rc);
-            throw new RuntimeException(err);
+        if (rc == -1 && !"".equals(err)) {
+            log.warn("命令状态未知，return code [{}]，错误信息 [{}]", rc, err);
+            return new SshResult(-1, err);
         } else if (rc != 0) {
-            log.warn("命令执行错误，return code [{}]", rc);
-            throw new RuntimeException(err);
+            log.warn("命令执行错误，return code [{}]，错误信息 [{}]", rc, err);
+            return new SshResult(rc, err);
         }
 
-        return ok;
+        return new SshResult(0, ok);
     }
 
     /**
@@ -109,7 +110,7 @@ public class JschService implements AutoCloseable {
         }
 
         // 确保目录存在
-        JschService.makeSureDirectories(channel, remoteDirectory);
+        SshHelper.makeSureDirectories(channel, remoteDirectory);
 
         channel.cd(remoteDirectory);
         Path path = Paths.get(localPath);
@@ -197,5 +198,49 @@ public class JschService implements AutoCloseable {
     @Override
     public void close() {
         this.session.disconnect();
+    }
+
+    /**
+     * Ssh 执行结果。
+     */
+    @Data
+    public static class SshResult {
+        public SshResult(int code, String content) {
+            this.code = code;
+            this.content = content;
+        }
+
+        /**
+         * sh 命令的 return code。
+         * code 为 0 表示执行成功，code 非 0 表示执行失败。
+         */
+        private int code;
+
+        /**
+         * 命令执行结果。
+         */
+        private String content;
+
+        /**
+         * 结果类型 (SaltStack 命令成功执行的结果有时候需要特殊处理)。
+         */
+        private SshResultType type = SshResultType.SSH;
+
+        /**
+         * 判断操作是否成功。
+         *
+         * @return 成功返回 true，失败返回 false。
+         */
+        public boolean isSuccess() {
+            return code == 0;
+        }
+    }
+
+    /**
+     * 结果类型
+     */
+    public enum SshResultType {
+        SSH,        // 普通 ssh 命令的结果
+        SALT_STACK, // SaltStack 命令的结果
     }
 }

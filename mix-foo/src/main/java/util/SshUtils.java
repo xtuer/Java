@@ -6,6 +6,7 @@ import com.trilead.ssh2.Session;
 import com.trilead.ssh2.StreamGobbler;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import misc.SshHelper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
