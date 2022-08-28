@@ -43,6 +43,7 @@ public class JschService implements AutoCloseable {
         JSch jsch = new JSch();
         this.session = jsch.getSession(username, host, 22);
         this.session.setPassword(password);
+        this.session.setConfig("PreferredAuthentications", "password");
         this.session.setConfig("StrictHostKeyChecking", "no");
         this.session.setTimeout(this.timeout);
         this.session.connect();
@@ -183,8 +184,17 @@ public class JschService implements AutoCloseable {
      * @return 返回输入流中的字符串
      */
     private static String readAsString(InputStream in) {
+        StringBuilder sb = new StringBuilder();
+
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-            return reader.lines().collect(Collectors.joining("\n"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+                log.debug(line);
+            }
+            return sb.toString();
+
+            // return reader.lines().collect(Collectors.joining("\n"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

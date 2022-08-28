@@ -25,7 +25,7 @@ public class SaltStackTest {
     private static final String MINION_FILE_LITTLE = "/root/test/get_hostname.sh";
     private static final String MASTER_SALT_FILE   = "/srv/salt/base/x.sls";
     private static final String MASTER_SALT_DIR    = "/srv/salt/base/scripts-encrypted";
-    private static final String DEST_DIR           = "/dmp/2022-07"; // 保存传输文件的目录, Master+Minion 上都要创建好，目录 /dmp 权限为 777
+    private static final String DEST_DIR           = "/dmp/2022-08"; // 保存复制文件的目录, Master+Minion 上都要创建好，目录 /dmp 权限为 777
 
     @BeforeClass
     public static void setup() {
@@ -46,74 +46,74 @@ public class SaltStackTest {
     }
 
     /**
-     * 测试传输文件: Master -> Minion
+     * 测试复制文件: Master -> Minion
      */
     @Test
-    public void testTransferFileFromMasterToMinion() throws Exception {
-        SshResult result = salt.transferFile(null, MINION_IP_1, MASTER_SALT_FILE, DEST_DIR);
+    public void testCopyFileFromMasterToMinion() throws Exception {
+        SshResult result = salt.copyFile(null, MINION_IP_1, MASTER_SALT_FILE, DEST_DIR);
         dumpResult(result);
     }
 
     /**
-     * 测试传输目录: Master -> Minion
+     * 测试复制目录: Master -> Minion
      */
     @Test
-    public void testTransferDirFromMasterToMinion() throws Exception {
-        SshResult result = salt.transferDir(null, MINION_IP_1, MASTER_SALT_DIR, DEST_DIR);
+    public void testCopyDirFromMasterToMinion() throws Exception {
+        SshResult result = salt.copyDir(null, MINION_IP_1, MASTER_SALT_DIR, DEST_DIR);
         dumpResult(result);
     }
 
     /**
-     * 测试传输文件: Minion -> Master
+     * 测试复制文件: Minion -> Master
      */
     @Test
-    public void testTransferFileFromMinionToMaster() throws Exception {
-        SshResult result = salt.transferFile(MINION_IP_1, null, MINION_FILE_LITTLE, DEST_DIR);
+    public void testCopyFileFromMinionToMaster() throws Exception {
+        SshResult result = salt.copyFile(MINION_IP_1, null, MINION_FILE_LITTLE, DEST_DIR);
         dumpResult(result);
     }
 
     /**
-     * 测试传输文件: Minion -> Master 大文件
+     * 测试复制文件: Minion -> Master 大文件
      */
     @Test
-    public void testTransferFileFromMinionToMasterBigFile() throws Exception {
-        SshResult result = salt.transferFile(MINION_IP_1, null, MINION_FILE_BIG, DEST_DIR);
+    public void testCopyFileFromMinionToMasterBigFile() throws Exception {
+        SshResult result = salt.copyFile(MINION_IP_1, null, MINION_FILE_BIG, DEST_DIR);
         dumpResult(result);
     }
 
     /**
-     * 测试传输目录: Minion -> Master
+     * 测试复制目录: Minion -> Master
      */
     @Test
-    public void testTransferDirFromMinionToMaster() throws Exception {
-        SshResult result = salt.transferDir(MINION_IP_1, null, MINION_DIR, DEST_DIR);
+    public void testCopyDirFromMinionToMaster() throws Exception {
+        SshResult result = salt.copyDir(MINION_IP_1, null, MINION_DIR, DEST_DIR);
         dumpResult(result);
     }
 
     /**
-     * 测试传输文件: Minion -> Minion
+     * 测试复制文件: Minion -> Minion
      */
     @Test
-    public void testTransferFileFromMinionToMinion() throws Exception {
-        SshResult result = salt.transferFile(MINION_IP_1, MINION_IP_2, MINION_FILE_LITTLE, DEST_DIR);
+    public void testCopyFileFromMinionToMinion() throws Exception {
+        SshResult result = salt.copyFile(MINION_IP_1, MINION_IP_2, MINION_FILE_LITTLE, DEST_DIR);
         dumpResult(result);
     }
 
     /**
-     * 测试传输文件: Minion -> Minion 大文件
+     * 测试复制文件: Minion -> Minion 大文件
      */
     @Test
-    public void testTransferFileFromMinionToMinionBigFile() throws Exception {
-        SshResult result = salt.transferFile(MINION_IP_1, MINION_IP_2, MINION_FILE_BIG, DEST_DIR);
+    public void testCopyFileFromMinionToMinionBigFile() throws Exception {
+        SshResult result = salt.copyFile(MINION_IP_1, MINION_IP_2, MINION_FILE_BIG, DEST_DIR);
         dumpResult(result);
     }
 
     /**
-     * 测试传输目录: Minion -> Minion
+     * 测试复制目录: Minion -> Minion
      */
     @Test
-    public void testTransferDirFromMinionToMinion() throws Exception {
-        SshResult result = salt.transferDir(MINION_IP_1, MINION_IP_2, MINION_DIR, DEST_DIR);
+    public void testCopyDirFromMinionToMinion() throws Exception {
+        SshResult result = salt.copyDir(MINION_IP_1, MINION_IP_2, MINION_DIR, DEST_DIR);
         dumpResult(result);
     }
 

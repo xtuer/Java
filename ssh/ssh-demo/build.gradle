@@ -14,6 +14,7 @@ ext {
 }
 
 // [2] 打包: gradle clean shadowJar [-DmainClass=Foo]
+// gradle clean shadowJar -DmainClass=AnsibleLongTaskWithTrileadTest
 shadowJar {
     mergeServiceFiles('META-INF/spring.*')
     archiveFileName = 'ssh-demo.jar' // 输出的 jar 包名字
@@ -32,6 +33,7 @@ dependencies {
     implementation 'com.jcraft:jsch:0.1.55'
     implementation "org.springframework:spring-webmvc:5.2.6.RELEASE"
     implementation 'ch.qos.logback:logback-classic:1.2.11'
+    implementation 'com.trilead:trilead-ssh2:1.0.0-build222'
 
     testImplementation 'junit:junit:4.13.2'
     compileOnly 'org.projectlombok:lombok:1.18.24'

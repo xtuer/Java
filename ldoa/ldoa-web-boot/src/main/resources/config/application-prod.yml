@@ -1,0 +1,10 @@
+server.port: 8080
+logging.level.com.xtuer: DEBUG
+logging.level.com.xtuer.mapper: INFO
+spring.datasource.password: ENC(fP3AUWTIs0pOKMh8vhUunV0K1E6vy1TCQ1KWuOLCkG5rO93vh2b7jb7zbiA72qyR)
+
+# 调整 Websocket 日志
+logging.level.org.tio.websocket.common.WsServerDecoder: ERROR
+
+# 调整 JetCache 日志
+logging.level.com.alicp.jetcache.support.StatInfoLogger: ERROR

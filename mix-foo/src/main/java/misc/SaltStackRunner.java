@@ -22,14 +22,14 @@ import static com.google.common.collect.ImmutableMap.of;
 import static org.apache.commons.text.StringSubstitutor.replace;
 
 /**
- * SaltStack 执行 shell 脚本、传输文件和目录。
+ * SaltStack 执行 shell 脚本、复制文件和目录。
  *
  * 最重要的方法有:
  * A. executeScript: 执行脚本
- * B. transferFile : 传输文件
- * C. transferDir  : 传输目录
+ * B. copyFile : 复制文件
+ * C. copyDir  : 复制目录
  *
- * 传输文件和目录的方向有:
+ * 复制文件和目录的方向有:
  * A. Master -> Minion
  * B. Minion -> Master
  * C. Minion -> Minion
@@ -57,49 +57,54 @@ public class SaltStackRunner {
     private static final String SALT_CMD_RUN = "salt '${minion}' cmd.run '${cmd}' --out=json";
 
     /**
-     * SaltMaster 传输文件到 SaltMinion 的命令模板，使用 salt:// 协议。
+     * SaltMaster 复制文件到 SaltMinion 的命令模板，使用 salt:// 协议。
      * 例如: salt '192.168.12.102' cp.get_file 'salt://a.txt' '/root/foo/bar/' makedirs=True --out=json
      */
-    private static final String SALT_TRANSFER_FILE = "salt '${minion}' cp.get_file '${srcSaltPath}' '${destDir}' makedirs=True --out=json";
+    private static final String SALT_COPY_FILE = "salt '${minion}' cp.get_file '${srcSaltPath}' '${destDir}' makedirs=True --out=json";
 
     /**
-     * SaltMaster 传输目录到 SaltMinion 的命令模板，使用 salt:// 协议。
+     * SaltMaster 复制目录到 SaltMinion 的命令模板，使用 salt:// 协议。
      * 例如: salt '192.168.12.102' cp.get_dir 'salt://scripts-encrypted' '/root/foo/bar' makedirs=True --out=json
      */
-    private static final String SALT_TRANSFER_DIR = "salt '${minion}' cp.get_dir '${srcSaltDir}' '${destDir}' makedirs=True --out=json";
+    private static final String SALT_COPY_DIR = "salt '${minion}' cp.get_dir '${srcSaltDir}' '${destDir}' makedirs=True --out=json";
 
     /**
-     * 从 Minion 到 Minion 传输文件时，把文件从 Minion 下载到 Master 的命令。
+     * 从 Minion 到 Minion 复制文件时，把文件从 Minion 下载到 Master 的命令。
      * 例如: salt '192.168.12.102' cp.push '/root/dmp/get_hostname.sh' --out=json
      */
     private static final String SALT_MINIONFS_FILE_MINION_TO_MASTER = "salt '${minion}' cp.push '${srcPath}' --out=json";
 
     /**
-     * 从 Minion 到 Minion 传输文件时，把文件从 Master 传输到 Minion。
+     * 从 Minion 到 Minion 复制文件时，把文件从 Master 复制到 Minion。
      * 例如: salt '192.168.12.101' cp.get_file 'salt://192.168.12.102/root/dmp/get_hostname.sh' '/dmp/temp/minion/' makedirs=True --out=json
      */
     private static final String SALT_MINIONFS_FILE_MASTER_TO_MINION = "salt '${destMinion}' cp.get_file 'salt://${srcMinion}${srcPath}' '${destDir}' makedirs=True --out=json";
 
     /**
-     * 从 Minion 到 Minion 传输目录时，把目录从 Minion 下载到 Master 的命令。
+     * 从 Minion 到 Minion 复制目录时，把目录从 Minion 下载到 Master 的命令。
      * 例如: salt '192.168.12.102' cp.push_dir '/root/dmp' --out=json
      */
     private static final String SALT_MINIONFS_DIR_MINION_TO_MASTER = "salt '${minion}' cp.push_dir '${srcDir}' --out=json";
 
     /**
-     * 从 Minion 到 Minion 传输文件时，把目录从 Master 传输到 Minion。
+     * 从 Minion 到 Minion 复制文件时，把目录从 Master 复制到 Minion。
      * 例如: salt '192.168.12.101' cp.get_dir 'salt://192.168.12.102/root/dmp' '/dmp/temp/minion' makedirs=True --out=json
      */
     private static final String SALT_MINIONFS_DIR_MASTER_TO_MINION = "salt '${destMinion}' cp.get_dir 'salt://${srcMinion}${srcDir}' '${destDir}' makedirs=True --out=json";
 
     /**
-     * 从 Minion 到 Minion 传输文件时，在 Master 上暂存文件的路径。
+     * 从 Minion 到 Minion 复制文件时，在 Master 上暂存文件的路径。
      * 格式: /var/cache/salt/master/minions/<minion>/files/<abs-path-at-minion>
      * 例如: /var/cache/salt/master/minions/192.168.12.102/files/dmp/temp/foo.sh
      *
      * 注意: 有的文档介绍的路径没有 files 部分，我测试的时候又有。需要以实际情况为准，如果不同版本有多种情况的话，此 pattern 变量需要放到配置文件中。
      */
     private static final String SALT_MINIONFS_MASTER_CACHE_PATH = "/var/cache/salt/master/minions/${minion}/files${srcPath}";
+
+    /**
+     * 目录不存在时创建目录的命令。
+     */
+    private static final String MKDIR_WHEN_NON_EXIST = "[ -d \"${dir}\" ] && echo '目录存在不需要创建' || mkdir -p ${dir}";
 
     /**
      * Salt 相关的错误码。
@@ -123,7 +128,7 @@ public class SaltStackRunner {
     }
 
     /**
-     * 使用 SaltStack 在 SaltMinion 上执行脚本。
+     * 使用 SaltStack 在 SaltMinion 上执行脚本。脚本被加密存储在 SaltMaster 的 {saltFileSystemBase}/scripts-encrypted 目录下。
      *
      * @param minionIp 执行脚本主机的 IP
      * @param scriptName 脚本名称
@@ -164,12 +169,12 @@ public class SaltStackRunner {
             Files.write(Paths.get(script.localTempPath), scriptContent.getBytes(StandardCharsets.UTF_8));
 
             // [3] 复制临时 shell 脚本到 SaltMaster
-            log.info("传输脚本: 脚本解密后传输到 SaltMaster 的临时目录");
+            log.info("复制脚本: 脚本解密后复制到 SaltMaster 的临时目录");
             ssh.sftpPut(script.localTempPath, script.masterTempScriptDir);
 
             // [4] 复制 SaltMaster 上的 shell 脚本到 SaltMinion
-            log.info("传输脚本: 从 SaltMaster 到 SaltMinion");
-            result = transferFileFromMasterToMinion(ssh, minionIp, script.masterTempScriptPath, script.minionTempScriptDir);
+            log.info("复制脚本: 从 SaltMaster 到 SaltMinion");
+            result = copyFileFromMasterToMinion(ssh, minionIp, script.masterTempScriptPath, script.minionTempScriptDir);
             if (!result.isSuccess()) {
                 return result;
             }
@@ -209,29 +214,29 @@ public class SaltStackRunner {
     }
 
     /**
-     * 在主机之间传输文件。当 sourceIp 为 null 时则表示 source 为 SaltMaster，当 destinationIp 为 null 时则表示 destination 为 SaltMaster。
+     * 在主机之间复制文件。当 sourceIp 为 null 时则表示 source 为 SaltMaster，当 destinationIp 为 null 时则表示 destination 为 SaltMaster。
      *
      * 当 sourceIp 为 null 时表示源主机为 Master。
      */
-    public SshResult transferFile(@Nullable String sourceIp, String destinationIp, String sourcePath, String destinationDir) throws Exception {
+    public SshResult copyFile(@Nullable String sourceIp, String destinationIp, String sourcePath, String destinationDir) throws Exception {
         try (SshHelper ssh = connectToSaltMaster()) {
-            return transfer(ssh, sourceIp, destinationIp, sourcePath, destinationDir, true);
+            return copy(ssh, sourceIp, destinationIp, sourcePath, destinationDir, true);
         }
     }
 
     /**
-     * 在主机之间传输目录。当 sourceIp 为 null 时则表示 source 为 SaltMaster，当 destinationIp 为 null 时则表示 destination 为 SaltMaster。
+     * 在主机之间复制目录。当 sourceIp 为 null 时则表示 source 为 SaltMaster，当 destinationIp 为 null 时则表示 destination 为 SaltMaster。
      *
      * 当 sourceIp 为 null 时表示源主机为 Master。
      */
-    public SshResult transferDir(@Nullable String sourceIp, String destinationIp, String sourceDir, String destinationDir) throws Exception {
+    public SshResult copyDir(@Nullable String sourceIp, String destinationIp, String sourceDir, String destinationDir) throws Exception {
         try (SshHelper ssh = connectToSaltMaster()) {
-            return transfer(ssh, sourceIp, destinationIp, sourceDir, destinationDir, false);
+            return copy(ssh, sourceIp, destinationIp, sourceDir, destinationDir, false);
         }
     }
 
     /**
-     * 在主机之间传输文件或者目录。当 sourceIp 为 null 时则表示 source 为 SaltMaster，当 destinationIp 为 null 时则表示 destination 为 SaltMaster。
+     * 在主机之间复制文件或者目录。当 sourceIp 为 null 时则表示 source 为 SaltMaster，当 destinationIp 为 null 时则表示 destination 为 SaltMaster。
      *
      * @param ssh 服务到 SaltMaster 的 ssh 连接
      * @param sourceIp 源文件所在主机 IP
@@ -242,15 +247,15 @@ public class SaltStackRunner {
      * @return 返回执行结果
      * @throws Exception 执行可能抛出 Exception
      */
-    private SshResult transfer(SshHelper ssh, String sourceIp, String destinationIp, String source, String destinationDir, boolean isFile) throws Exception {
+    private SshResult copy(SshHelper ssh, String sourceIp, String destinationIp, String source, String destinationDir, boolean isFile) throws Exception {
         /*
          逻辑:
          1. 获取 SaltMaster IP，如果 sourceIp 为 null 则表示文件在 SalterMaster 上
-         2. 根据 sourceIp 和 destinationIp 判断传输目录的方向:
+         2. 根据 sourceIp 和 destinationIp 判断复制目录的方向:
             A. Master 到 Minion
             B. Minion 到 Master
             C. Minion 到 Minion
-         3. 根据不同的传输方向调用对应的方法进行传输
+         3. 根据不同的复制方向调用对应的方法进行复制
          */
 
         // SaltStack Master IP
@@ -267,24 +272,24 @@ public class SaltStackRunner {
         } else if (masterIp.equals(sourceIp)) {
             // Master -> Minion
             return isFile
-                    ? transferFileFromMasterToMinion(ssh, destinationIp, source, destinationDir)
-                    : transferDirFromMasterToMinion(ssh, destinationIp, source, destinationDir);
+                    ? copyFileFromMasterToMinion(ssh, destinationIp, source, destinationDir)
+                    : copyDirFromMasterToMinion(ssh, destinationIp, source, destinationDir);
         } else if (masterIp.equals(destinationIp)) {
             // Minion -> Master
             // 传到 Master Cache 后再移动到 destinationDir 下
             return isFile
-                    ? transferFileFromMinionToMaster(ssh, sourceIp, source, destinationDir)
-                    : transferDirFromMinionToMaster(ssh, sourceIp, source, destinationDir);
+                    ? copyFileFromMinionToMaster(ssh, sourceIp, source, destinationDir)
+                    : copyDirFromMinionToMaster(ssh, sourceIp, source, destinationDir);
         } else {
             // Minion -> Minion
             return isFile
-                    ? transferFileFromMinionToMinion(ssh, sourceIp, destinationIp, source, destinationDir)
-                    : transferDirFromMinionToMinion(ssh, sourceIp, destinationIp, source, destinationDir);
+                    ? copyFileFromMinionToMinion(ssh, sourceIp, destinationIp, source, destinationDir)
+                    : copyDirFromMinionToMinion(ssh, sourceIp, destinationIp, source, destinationDir);
         }
     }
 
     /**
-     * 从 SaltMaster 传输文件到 SaltMinion，目标文件夹不存在会自动创建。
+     * 从 SaltMaster 复制文件到 SaltMinion，目标文件夹不存在会自动创建。
      *
      * @param ssh 服务到 SaltMaster 的 ssh 连接
      * @param minionIp SaltMinion 的 IP
@@ -292,16 +297,16 @@ public class SaltStackRunner {
      * @param destinationDir 文件保存到 SaltMinion 上的 destinationDir 目录下
      * @return 返回执行结果
      */
-    public SshResult transferFileFromMasterToMinion(SshHelper ssh, String minionIp, String sourcePath, String destinationDir) throws Exception {
+    public SshResult copyFileFromMasterToMinion(SshHelper ssh, String minionIp, String sourcePath, String destinationDir) throws Exception {
         /*
          逻辑:
          1. 把操作系统文件路径转为 Salt 文件系统的路径，以 salt:// 开头，如 salt://foo/bar.txt
          2. 确保 destinationDir 以 / 结尾，否则不会作为目录处理
-         3. 构造 Salt 传输文件命令，并执行
+         3. 构造 Salt 复制文件命令，并执行
          4. 处理 Salt 命令结果
 
-         Salt 传输文件示例: salt '192.168.12.102' cp.get_file 'salt://scripts-temp/x.sh' '/root/foo/bar/' makedirs=True --out=json
-         传输后得到 /root/foo/bar/x.sh
+         Salt 复制文件示例: salt '192.168.12.102' cp.get_file 'salt://scripts-temp/x.sh' '/root/foo/bar/' makedirs=True --out=json
+         复制后得到 /root/foo/bar/x.sh
          */
 
         // [1] 把操作系统文件路径转为 Salt 文件系统的路径，以 salt:// 开头，如 salt://a.txt
@@ -312,42 +317,42 @@ public class SaltStackRunner {
         }
 
         // [2] 确保 destinationDir 以 / 结尾，否则不会作为目录处理
-        destinationDir = SaltStackRunner.makeSureDirPattern(destinationDir);
+        destinationDir = SaltStackRunner.ensureDirPattern(destinationDir);
 
-        // [3] 构造 Salt 传输文件命令，并执行
+        // [3] 构造 Salt 复制文件命令，并执行
         // [4] 处理 Salt 命令结果
-        log.info("传输文件: Minion [{}], 系统路径 [{}], SaltSrcPath [{}], DestDir [{}]", minionIp, sourcePath, sourcePathInSaltFileSystem, destinationDir);
-        String cmd = replace(SALT_TRANSFER_FILE, of("minion", minionIp, "srcSaltPath", sourcePathInSaltFileSystem, "destDir", destinationDir));
+        log.info("复制文件: Minion [{}], 系统路径 [{}], SaltSrcPath [{}], DestDir [{}]", minionIp, sourcePath, sourcePathInSaltFileSystem, destinationDir);
+        String cmd = replace(SALT_COPY_FILE, of("minion", minionIp, "srcSaltPath", sourcePathInSaltFileSystem, "destDir", destinationDir));
         SshResult result = ssh.executeCommand(cmd);
         SaltStackRunner.handleSaltResult(minionIp, result);
-        SaltStackRunner.handleSaltTransferResult(result);
+        SaltStackRunner.handleSaltResultForCopy(result);
 
         if (!result.isSuccess()) {
-            log.warn("传输文件失败: Minion [{}], Src [{}], DestDir [{}]", minionIp, sourcePathInSaltFileSystem, destinationDir);
+            log.warn("复制文件失败: Minion [{}], Src [{}], DestDir [{}]", minionIp, sourcePathInSaltFileSystem, destinationDir);
         }
 
         return result;
     }
 
     /**
-     * SaltMaster 传输目录到 SaltMinion，目标文件夹不存在会自动创建，会把目录下的文件以及子目录等都传输过去 (递归)。
+     * SaltMaster 复制目录到 SaltMinion，目标文件夹不存在会自动创建，会把目录下的文件以及子目录等都复制过去 (递归)。
      *
      * @param ssh 服务到 SaltMaster 的 ssh 连接
      * @param minionIp SaltMinion 的 IP
      * @param sourceDir SaltMaster 上的源目录，目录需要在 SaltMaster 配置的 file_roots.base 目录下
      * @param destinationDir 源目录保存到 SaltMinion 上的 destinationDir 目录下
      * @return 返回执行结果
-     * @throws Exception 传输文件如网络错误等时抛出 Exception 异常
+     * @throws Exception 复制文件如网络错误等时抛出 Exception 异常
      */
-    public SshResult transferDirFromMasterToMinion(SshHelper ssh, String minionIp, String sourceDir, String destinationDir) throws Exception {
+    public SshResult copyDirFromMasterToMinion(SshHelper ssh, String minionIp, String sourceDir, String destinationDir) throws Exception {
         /*
          逻辑:
          1. 把操作系统文件路径转为 Salt 文件系统的路径，以 salt:// 开头，如 salt://a.txt
-         2. 构造 Salt 传输文件命令，并执行
+         2. 构造 Salt 复制文件命令，并执行
          3. 处理 Salt 命令结果
 
-         Salt 传输目录示例: salt '192.168.12.102' cp.get_dir 'salt://scripts-encrypted' '/root/foo/bar' makedirs=True --out=json
-         传输后得到 /root/foo/bar/scripts-encrypted
+         Salt 复制目录示例: salt '192.168.12.102' cp.get_dir 'salt://scripts-encrypted' '/root/foo/bar' makedirs=True --out=json
+         复制后得到 /root/foo/bar/scripts-encrypted
          */
 
         // [1] 把操作系统文件路径转为 Salt 文件系统的路径，以 salt:// 开头，如 salt://a.txt
@@ -357,157 +362,157 @@ public class SaltStackRunner {
             return new SshResult(ERROR_DIR_NOT_IN_SALT_BASE, String.format("目录不在 Salt 文件系统下: Salt 文件系统根目录 [%s]，目录 [%s]", saltBase, sourceDir));
         }
 
-        // [2] 构造 Salt 传输文件命令，并执行
+        // [2] 构造 Salt 复制文件命令，并执行
         // [3] 处理 Salt 命令结果
-        log.info("传输目录: Minion [{}], 系统路径 [{}], SaltSrcDir [{}], DestDir [{}]", minionIp, sourceDir, sourceDirInSaltFileSystem, destinationDir);
-        String cmd = replace(SALT_TRANSFER_DIR, of("minion", minionIp, "srcSaltDir", sourceDirInSaltFileSystem, "destDir", destinationDir));
+        log.info("复制目录: Minion [{}], 系统路径 [{}], SaltSrcDir [{}], DestDir [{}]", minionIp, sourceDir, sourceDirInSaltFileSystem, destinationDir);
+        String cmd = replace(SALT_COPY_DIR, of("minion", minionIp, "srcSaltDir", sourceDirInSaltFileSystem, "destDir", destinationDir));
         SshResult result = ssh.executeCommand(cmd);
         SaltStackRunner.handleSaltResult(minionIp, result);
-        SaltStackRunner.handleSaltTransferResult(result);
+        SaltStackRunner.handleSaltResultForCopy(result);
 
         if (!result.isSuccess()) {
-            log.warn("传输目录失败: Minion [{}], SrcDir [{}], DestDir [{}]", minionIp, sourceDirInSaltFileSystem, destinationDir);
+            log.warn("复制目录失败: Minion [{}], SrcDir [{}], DestDir [{}]", minionIp, sourceDirInSaltFileSystem, destinationDir);
         }
 
         return result;
     }
 
     /**
-     * 把文件从一个 SaltMinion fromMinion 传输到另一个 SaltMinion toMinion。
+     * 把文件从一个 SaltMinion fromMinion 复制到另一个 SaltMinion toMinion。
      * 提示: 需要 SaltMaster 开启 Minion FS。
      *
      * @param ssh 服务到 SaltMaster 的 ssh 连接
      * @param sourceMinionIp 文件所在的 SaltMinion IP
-     * @param destinationMinionIp 文件传输到的 SaltMinion IP
+     * @param destinationMinionIp 文件复制到的 SaltMinion IP
      * @param sourcePath 源文件路径
      * @param destinationDir 目标目录
      * @return 返回执行结果
-     * @throws Exception 传输文件如网络错误等时抛出 Exception 异常
+     * @throws Exception 复制文件如网络错误等时抛出 Exception 异常
      */
-    public SshResult transferFileFromMinionToMinion(SshHelper ssh, String sourceMinionIp, String destinationMinionIp, String sourcePath, String destinationDir) throws Exception {
+    public SshResult copyFileFromMinionToMinion(SshHelper ssh, String sourceMinionIp, String destinationMinionIp, String sourcePath, String destinationDir) throws Exception {
         /*
          逻辑:
          1. 确保 destinationDir 以 / 结尾，否则不会作为目录处理
          2. 把文件从 SourceMinion 下载到 SaltMaster
-         3. 把文件从 SaltMaster 传输到 DestinationMinion
+         3. 把文件从 SaltMaster 复制到 DestinationMinion
          */
 
-        log.info("传输文件: 源 Minion [{}]，目标 Minion [{}]，源文件路径 [{}]，目标目录 [{}]", sourceMinionIp, destinationMinionIp, sourcePath, destinationDir);
+        log.info("复制文件: 源 Minion [{}]，目标 Minion [{}]，源文件路径 [{}]，目标目录 [{}]", sourceMinionIp, destinationMinionIp, sourcePath, destinationDir);
 
         // [1] 确保 destinationDir 以 / 结尾，否则不会作为目录处理
-        destinationDir = SaltStackRunner.makeSureDirPattern(destinationDir);
+        destinationDir = SaltStackRunner.ensureDirPattern(destinationDir);
 
         // [2] 把文件从 SourceMinion 下载到 SaltMaster
-        SshResult result = transferFileFromMinionToMasterCache(ssh, sourceMinionIp, sourcePath);
+        SshResult result = copyFileFromMinionToMasterCache(ssh, sourceMinionIp, sourcePath);
         if (!result.isSuccess()) {
-            log.warn("{}: 不继续执行从 Master 传输文件到 Minion，源文件 [{}]", result.getContent(), sourcePath);
+            log.warn("{}: 不继续执行从 Master 复制文件到 Minion，源文件 [{}]", result.getContent(), sourcePath);
             return result;
         }
 
-        // [3] 把文件从 SaltMaster 传输到 DestinationMinion
-        log.info("传输文件: 使用 MinionFS 把文件从 Master 传输到 Minion，MinionIP [{}], 目标目录 [{}]", destinationMinionIp, destinationDir);
+        // [3] 把文件从 SaltMaster 复制到 DestinationMinion
+        log.info("复制文件: 使用 MinionFS 把文件从 Master 复制到 Minion，MinionIP [{}], 目标目录 [{}]", destinationMinionIp, destinationDir);
         String toCmd = replace(SALT_MINIONFS_FILE_MASTER_TO_MINION, of("srcMinion", sourceMinionIp, "destMinion", destinationMinionIp, "srcPath", sourcePath, "destDir", destinationDir));
         result = ssh.executeCommand(toCmd);
         SaltStackRunner.handleSaltResult(destinationMinionIp, result);
-        SaltStackRunner.handleSaltTransferResult(result);
+        SaltStackRunner.handleSaltResultForCopy(result);
 
         return result;
     }
 
     /**
-     * 从 Minion 传输文件到 Master，文件保存到 MinionFS 在 Master 的 cache 目录中。
+     * 从 Minion 复制文件到 Master，文件保存到 MinionFS 在 Master 的 cache 目录中。
      *
      * @param ssh 服务到 SaltMaster 的 ssh 连接
      * @param sourceMinionIp 源文件所在 Minion IP
      * @param sourcePath 源文件路径
      * @return 返回执行结果
      */
-    private SshResult transferFileFromMinionToMasterCache(SshHelper ssh, String sourceMinionIp, String sourcePath) throws Exception {
+    private SshResult copyFileFromMinionToMasterCache(SshHelper ssh, String sourceMinionIp, String sourcePath) throws Exception {
         /*
          逻辑:
-         1. 把文件从 Minion 传输到 Master
+         1. 把文件从 Minion 复制到 Master
          2. 处理命令结果
          */
-        log.info("传输文件: 使用 MinionFS 把文件从 Minion 传输到 Master Cache，MinionIP [{}], 源文件路径 [{}]", sourceMinionIp, sourcePath);
+        log.info("复制文件: 使用 MinionFS 把文件从 Minion 复制到 Master Cache，MinionIP [{}], 源文件路径 [{}]", sourceMinionIp, sourcePath);
 
-        // [1] 把文件从 Minion 传输到 Master
+        // [1] 把文件从 Minion 复制到 Master
         String cmd = replace(SALT_MINIONFS_FILE_MINION_TO_MASTER, of("minion", sourceMinionIp, "srcPath", sourcePath));
         SshResult result = ssh.executeCommand(cmd);
 
         // [2] 处理命令结果
         SaltStackRunner.handleSaltResult(sourceMinionIp, result);
-        SaltStackRunner.handleSaltTransferResult(result);
+        SaltStackRunner.handleSaltResultForCopy(result);
 
         return result;
     }
 
     /**
-     * 把目录从一个 SaltMinion fromMinion 传输到另一个 SaltMinion toMinion。
+     * 把目录从一个 SaltMinion fromMinion 复制到另一个 SaltMinion toMinion。
      * 提示: 需要 SaltMaster 开启 Minion FS。
      *
      * @param ssh 服务到 SaltMaster 的 ssh 连接
      * @param sourceMinionIp 目录所在的 SaltMinion IP
-     * @param destinationMinionIp 目录传输到的 SaltMinion IP
+     * @param destinationMinionIp 目录复制到的 SaltMinion IP
      * @param sourceDir 源目录
      * @param destinationDir 目标目录
      * @return 返回执行结果
-     * @throws Exception 传输文件如网络错误等时抛出 Exception 异常
+     * @throws Exception 复制文件如网络错误等时抛出 Exception 异常
      */
-    public SshResult transferDirFromMinionToMinion(SshHelper ssh, String sourceMinionIp, String destinationMinionIp, String sourceDir, String destinationDir) throws Exception {
+    public SshResult copyDirFromMinionToMinion(SshHelper ssh, String sourceMinionIp, String destinationMinionIp, String sourceDir, String destinationDir) throws Exception {
         /*
          逻辑:
          1. 把目录从 SourceMinion 下载到 SaltMaster
-         2. 把目录从 SaltMaster 传输到 DestinationMinion
+         2. 把目录从 SaltMaster 复制到 DestinationMinion
          */
 
-        log.info("传输目录: 源 Minion [{}]，目标 Minion [{}]，源目录 [{}]，目标目录 [{}]", sourceMinionIp, destinationMinionIp, sourceDir, destinationDir);
+        log.info("复制目录: 源 Minion [{}]，目标 Minion [{}]，源目录 [{}]，目标目录 [{}]", sourceMinionIp, destinationMinionIp, sourceDir, destinationDir);
 
         // [1] 把目录从 SourceMinion 下载到 SaltMaster
-        SshResult result = transferDirFromMinionToMasterCache(ssh, sourceMinionIp, sourceDir);
+        SshResult result = copyDirFromMinionToMasterCache(ssh, sourceMinionIp, sourceDir);
         if (!result.isSuccess()) {
-            log.warn("{}: 不继续执行从 Master 传输目录到 Minion，源目录 [{}]", result.getContent(), sourceDir);
+            log.warn("{}: 不继续执行从 Master 复制目录到 Minion，源目录 [{}]", result.getContent(), sourceDir);
             return result;
         }
 
-        // [2] 把目录从 SaltMaster 传输到 DestinationMinion
-        log.info("传输目录: 使用 MinionFS 把目录从 Master 传输到 Minion，MinionIP [{}], 目标目录 [{}]", destinationMinionIp, destinationDir);
+        // [2] 把目录从 SaltMaster 复制到 DestinationMinion
+        log.info("复制目录: 使用 MinionFS 把目录从 Master 复制到 Minion，MinionIP [{}], 目标目录 [{}]", destinationMinionIp, destinationDir);
         String toCmd = replace(SALT_MINIONFS_DIR_MASTER_TO_MINION, of("srcMinion", sourceMinionIp, "destMinion", destinationMinionIp, "srcDir", sourceDir, "destDir", destinationDir));
         result = ssh.executeCommand(toCmd);
         SaltStackRunner.handleSaltResult(destinationMinionIp, result);
-        SaltStackRunner.handleSaltTransferResult(result);
+        SaltStackRunner.handleSaltResultForCopy(result);
 
         return result;
     }
 
     /**
-     * 从 Minion 传输目录到 Master，文件保存到 MinionFS 在 Master 的 cache 目录中。
+     * 从 Minion 复制目录到 Master，文件保存到 MinionFS 在 Master 的 cache 目录中。
      *
      * @param ssh 服务到 SaltMaster 的 ssh 连接
      * @param sourceMinionIp 源文件所在 Minion IP
      * @param sourceDir 源目录
      * @return 返回执行结果
      */
-    private SshResult transferDirFromMinionToMasterCache(SshHelper ssh, String sourceMinionIp, String sourceDir) throws Exception {
+    private SshResult copyDirFromMinionToMasterCache(SshHelper ssh, String sourceMinionIp, String sourceDir) throws Exception {
         /*
          逻辑:
-         1. 把目录从 Minion 传输到 Master
+         1. 把目录从 Minion 复制到 Master
          2. 处理命令结果
          */
-        log.info("传输目录: 使用 MinionFS 把目录从 Minion 传输到 Master Cache，MinionIP [{}], 源目录 [{}]", sourceMinionIp, sourceDir);
+        log.info("复制目录: 使用 MinionFS 把目录从 Minion 复制到 Master Cache，MinionIP [{}], 源目录 [{}]", sourceMinionIp, sourceDir);
 
-        // [1] 把目录从 Minion 传输到 Master
+        // [1] 把目录从 Minion 复制到 Master
         String cmd = replace(SALT_MINIONFS_DIR_MINION_TO_MASTER, of("minion", sourceMinionIp, "srcDir", sourceDir));
         SshResult result = ssh.executeCommand(cmd);
 
         // [2] 处理命令结果
         SaltStackRunner.handleSaltResult(sourceMinionIp, result);
-        SaltStackRunner.handleSaltTransferResult(result);
+        SaltStackRunner.handleSaltResultForCopy(result);
 
         return result;
     }
 
     /**
-     * 从 Minion 传输文件到 Master。
+     * 从 Minion 复制文件到 Master。
      *
      * @param ssh 服务到 SaltMaster 的 ssh 连接
      * @param minionIp 源文件所在 Minion IP
@@ -515,7 +520,7 @@ public class SaltStackRunner {
      * @param destinationDir 目标目录
      * @return 返回执行结果
      */
-    public SshResult transferFileFromMinionToMaster(SshHelper ssh, String minionIp, String sourcePath, String destinationDir) throws Exception {
+    public SshResult copyFileFromMinionToMaster(SshHelper ssh, String minionIp, String sourcePath, String destinationDir) throws Exception {
         /*
          逻辑:
          1. 确保 destinationDir 以 / 结尾，否则不会作为目录处理
@@ -525,13 +530,13 @@ public class SaltStackRunner {
          5. 把文件从 Master Cache 复制到目标文件夹下 (因为 Salt Cache 中的文件是全局只读，如果使用移动的话 ssh user 有可能没有操作权限)
          */
 
-        log.info("传输文件: 把文件从 Minion 传输到 Master，源 Minion [{}]，源文件 [{}]，目标目录 [{}]", minionIp, sourcePath, destinationDir);
+        log.info("复制文件: 把文件从 Minion 复制到 Master，源 Minion [{}]，源文件 [{}]，目标目录 [{}]", minionIp, sourcePath, destinationDir);
 
         // [1] 确保 destinationDir 以 / 结尾，否则不会作为目录处理
-        destinationDir = SaltStackRunner.makeSureDirPattern(destinationDir);
+        destinationDir = SaltStackRunner.ensureDirPattern(destinationDir);
 
         // [2] 把文件从 Minion 下载到 Master Cache 目录
-        SshResult result = transferFileFromMinionToMasterCache(ssh, minionIp, sourcePath);
+        SshResult result = copyFileFromMinionToMasterCache(ssh, minionIp, sourcePath);
         if (!result.isSuccess()) {
             log.warn("{}: 不继续执行从 Master Cache 复制文件到目录 [{}]", result.getContent(), destinationDir);
             return result;
@@ -548,7 +553,7 @@ public class SaltStackRunner {
 
         // [4] 目标目录如果不存在则创建
         log.info("创建目录: 目标目录如果不存在则创建，避免复制文件失败，目录 [{}]", destinationDir);
-        result = makeSureDirInMaster(ssh, destinationDir);
+        result = ensureDirInMaster(ssh, destinationDir);
         if (!result.isSuccess()) {
             return result;
         }
@@ -561,7 +566,7 @@ public class SaltStackRunner {
     }
 
     /**
-     * 从 Minion 传输目录到 Master。
+     * 从 Minion 复制目录到 Master。
      *
      * @param ssh 服务到 SaltMaster 的 ssh 连接
      * @param minionIp 源目录所在 Minion IP
@@ -569,7 +574,7 @@ public class SaltStackRunner {
      * @param destinationDir 目标目录
      * @return 返回执行结果
      */
-    public SshResult transferDirFromMinionToMaster(SshHelper ssh, String minionIp, String sourceDir, String destinationDir) throws Exception {
+    public SshResult copyDirFromMinionToMaster(SshHelper ssh, String minionIp, String sourceDir, String destinationDir) throws Exception {
         /*
          逻辑:
          1. 确保 destinationDir 以 / 结尾，否则不会作为目录处理
@@ -579,13 +584,13 @@ public class SaltStackRunner {
          5. 把目录从 Master Cache 复制到目标目录下 (因为 Salt Cache 中的文件是全局只读，如果使用移动的话 ssh user 有可能没有操作权限)
          */
 
-        log.info("传输目录: 把目录从 Minion 传输到 Master，源 Minion [{}]，源目录 [{}]，目标目录 [{}]", minionIp, sourceDir, destinationDir);
+        log.info("复制目录: 把目录从 Minion 复制到 Master，源 Minion [{}]，源目录 [{}]，目标目录 [{}]", minionIp, sourceDir, destinationDir);
 
         // [1] 确保 destinationDir 以 / 结尾，否则不会作为目录处理
-        destinationDir = SaltStackRunner.makeSureDirPattern(destinationDir);
+        destinationDir = SaltStackRunner.ensureDirPattern(destinationDir);
 
         // [2] 把目录从 Minion 下载到 Master Cache 目录
-        SshResult result = transferDirFromMinionToMasterCache(ssh, minionIp, sourceDir);
+        SshResult result = copyDirFromMinionToMasterCache(ssh, minionIp, sourceDir);
         if (!result.isSuccess()) {
             log.warn("{}: 不继续执行从 Master Cache 复制目录到目录 [{}]", result.getContent(), destinationDir);
             return result;
@@ -596,13 +601,13 @@ public class SaltStackRunner {
         String destDir = destinationDir + fileName;
         String cacheDir = replace(SALT_MINIONFS_MASTER_CACHE_PATH, of("minion", minionIp, "srcPath", sourceDir));
 
-        // [3] 删除 Master 上对应位置原来可能存在的文件
-        log.info("删除文件: 删除 Master 上的文件 [{}]", destDir);
+        // [3] 删除 Master 上对应位置可能存在的目录
+        log.info("删除目录: 删除 Master 上的目录 [{}]", destDir);
         ssh.executeCommand("rm -rf " + destDir);
 
         // [4] 目标目录如果不存在则创建
         log.info("创建目录: 目标目录如果不存在则创建，避免复制目录失败，目录 [{}]", destinationDir);
-        result = makeSureDirInMaster(ssh, destinationDir);
+        result = ensureDirInMaster(ssh, destinationDir);
         if (!result.isSuccess()) {
             return result;
         }
@@ -620,7 +625,7 @@ public class SaltStackRunner {
      * @param dir 目录路径
      * @return 返回以 "/" 结尾的路径
      */
-    public static String makeSureDirPattern(String dir) {
+    public static String ensureDirPattern(String dir) {
         return dir.endsWith("/") ? dir : dir + "/";
     }
 
@@ -631,8 +636,8 @@ public class SaltStackRunner {
      * @param dir 要创建的目录
      * @return 返回执行结果
      */
-    public SshResult makeSureDirInMaster(SshHelper ssh, String dir) throws Exception {
-        SshResult result = ssh.executeCommand(String.format("[ -d \"%s\" ] && echo '目录存在不需要创建' || mkdir -p %s", dir, dir));
+    public SshResult ensureDirInMaster(SshHelper ssh, String dir) throws Exception {
+        SshResult result = ssh.executeCommand(replace(MKDIR_WHEN_NON_EXIST, of("dir", dir)));
 
         if (!result.isSuccess()) {
             log.warn("在 SaltMaster 创建目录失败: {}", result.getContent());
@@ -687,23 +692,23 @@ public class SaltStackRunner {
     }
 
     /**
-     * 处理 Salt 传输文件的结果 (即使命令执行成功，但是传输操作可能是失败的)。
+     * 处理 Salt 复制文件的结果 (即使命令执行成功，但是复制操作可能是失败的)。
      *
-     * @param result 已经调用 handleSaltResult 处理过的结果，在文件传输时进一步处理结果
+     * @param result 已经调用 handleSaltResult 处理过的结果，在文件复制时进一步处理结果
      */
-    private static void handleSaltTransferResult(SshResult result) {
+    private static void handleSaltResultForCopy(SshResult result) {
         /*
-         A. 传输文件:
+         A. 复制文件:
          成功:
          {
              "192.168.12.102": true
          }
-         失败: 源文件不存在
+         失败: 源文件不存在、文件大小超过了 file_recv_max_size
          {
              "192.168.12.102": false
          }
 
-         B. 传输目录:
+         B. 复制目录:
          成功:
          {
              "192.168.12.102": [
@@ -717,12 +722,12 @@ public class SaltStackRunner {
          }
          */
 
-        String transferResult = result.getContent();
+        String copyResult = result.getContent();
 
-        if ("false".equals(transferResult)) {
+        if ("false".equals(copyResult)) {
             result.setCode(ERROR_FILE_NOT_EXIST);
             result.setContent("源文件不存在，或者大小超过了 SaltMaster 中配置的 file_recv_max_size");
-        } else if ("[]".equals(transferResult)) {
+        } else if ("[]".equals(copyResult)) {
             result.setCode(ERROR_DIR_NOT_EXIST);
             result.setContent("源目录不存在或者源目录下没有文件，或者大小超过了 SaltMaster 中配置的 file_recv_max_size");
         }
@@ -811,7 +816,7 @@ public class SaltStackRunner {
             String tempFileName = tempFile.getFileName().toString();
             String date = today();
 
-            localTempPath = tempFile.toString();
+            localTempPath             = tempFile.toString();
             masterEncryptedScriptPath = String.format("%s/scripts-encrypted/%s", saltFileSystemBase, scriptFileName);
             masterTempScriptDir       = String.format("%s/scripts-temp/%s", saltFileSystemBase, date);
             masterTempScriptPath      = String.format("%s/%s", masterTempScriptDir, tempFileName);
