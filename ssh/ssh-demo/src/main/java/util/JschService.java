@@ -1,6 +1,7 @@
 package util;
 
 import com.jcraft.jsch.*;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
@@ -32,7 +33,19 @@ public class JschService implements AutoCloseable {
      * A. Session 打开的 Channel 不会建立新的 Socket 连接。
      * B. 一个 Session 只支持 10 个 channel 并发执行命令，可以使用 Semaphore(10) 进行优化控制并发量。
      */
-    private final Session session;
+    private Session session;
+
+    /**
+     * 访问的主机是 JscService 对象所在主机。
+     */
+    @Getter
+    private boolean runAtLocal;
+
+    /**
+     * 用户目录
+     */
+    @Getter
+    private String homeDir;
 
     /**
      * 建立连接的超时时间。
@@ -40,13 +53,26 @@ public class JschService implements AutoCloseable {
     private int timeout = 6000;
 
     public JschService(final String host, final String username, final String password) throws Exception {
-        JSch jsch = new JSch();
-        this.session = jsch.getSession(username, host, 22);
-        this.session.setPassword(password);
-        this.session.setConfig("PreferredAuthentications", "password");
-        this.session.setConfig("StrictHostKeyChecking", "no");
-        this.session.setTimeout(this.timeout);
-        this.session.connect();
+        this(null, host, username, password);
+    }
+
+    public JschService(final String localHost, final String host, final String username, final String password) throws Exception {
+        // 执行命令的主机为 127.0.0.1 或者等于 localHost，则表示在本机执行命令
+        if ("127.0.0.1".equals(host) || host.equals(localHost)) {
+            runAtLocal = true;
+        } else {
+            JSch jsch = new JSch();
+            this.session = jsch.getSession(username, host, 22);
+            this.session.setPassword(password);
+            this.session.setConfig("PreferredAuthentications", "password");
+            this.session.setConfig("StrictHostKeyChecking", "no");
+            this.session.setTimeout(this.timeout);
+            this.session.connect();
+        }
+
+        // 连接成功后获取用户目录
+        this.homeDir = executeCommand("echo $HOME");
+        log.info("建立连接时获取用户目录: {}", this.homeDir);
     }
 
     /**
@@ -57,6 +83,12 @@ public class JschService implements AutoCloseable {
      * @throws Exception 命令执行失败时抛出异常
      */
     public String executeCommand(String command) throws Exception {
+        // 本地执行命令。
+        if (isRunAtLocal()) {
+            return executeCommandAtLocal(command);
+        }
+
+        // 使用 ssh 远程执行命令。
         log.info("执行命令: 主机 [{}]，命令 [{}]", session.getHost(), command);
 
         ChannelExec channel = (ChannelExec) session.openChannel("exec");
@@ -84,6 +116,16 @@ public class JschService implements AutoCloseable {
         }
 
         return ok;
+    }
+
+    /**
+     * 本地执行命令。
+     *
+     * @param command 命令，但不支持管道等
+     * @return 返回命令的结果
+     */
+    private String executeCommandAtLocal(String command) {
+        return null;
     }
 
     /**

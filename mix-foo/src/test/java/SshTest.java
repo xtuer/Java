@@ -21,7 +21,7 @@ public class SshTest {
 
     @BeforeClass
     public static void setup() throws IOException {
-        conn = SshUtils.sshConnect("192.168.12.101", 22, "root", "Newdt@cn");
+        conn = SshUtils.sshConnect("192.168.1.164", 22, "foo", "*#Passw0rd#");
     }
 
     @AfterClass
@@ -34,7 +34,13 @@ public class SshTest {
      */
     @Test
     public void testHello() throws IOException {
-        SshResult result = runCommand(conn, "ls /root/");
+        SshResult result = runCommand(conn, "echo $HOME");
+        dumpResult(result);
+    }
+
+    @Test
+    public void testOkAndErrorCmd() throws IOException {
+        SshResult result = runCommand(conn, "salt '192.168.11.21' cmd.run 'sh /dmp/scripts-temp/2022-09-05/DB_MYSQL_start_stop.sh-2981533508231937652.sh  -HOST 192.168.11.21 -USER sys_admin -PASSWORD manager -PORT 3306 -INSPATH /opt -MODE stop' --out=json");
         dumpResult(result);
     }
 

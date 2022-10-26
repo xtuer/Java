@@ -74,13 +74,14 @@ public class SshHelper implements AutoCloseable {
         // 当 rc 为 -1 且错误输出不为空则说明命令执行错误。
         // 参考 SSH command in Java/JSch giving exit code -1:
         // https://stackoverflow.com/questions/40896820/ssh-command-in-java-jsch-giving-exit-code-1
+        // 注意: 错误发生的时候，不仅要 stderr 输出，也可能有 stdout 输出。
         int rc = channel.getExitStatus();
         if (rc == -1 && !"".equals(err)) {
-            log.warn("命令状态未知，return code [{}]，错误信息 [{}]", rc, err);
-            return new SshResult(-1, err);
+            log.warn("命令状态未知，return code [{}]，错误信息 [{}]", rc, err+ok);
+            return new SshResult(-1, err + ok);
         } else if (rc != 0) {
-            log.warn("命令执行错误，return code [{}]，错误信息 [{}]", rc, err);
-            return new SshResult(rc, err);
+            log.warn("命令执行错误，return code [{}]，错误信息 [{}]", rc, err+ok);
+            return new SshResult(rc, err + ok);
         }
 
         return new SshResult(0, ok);

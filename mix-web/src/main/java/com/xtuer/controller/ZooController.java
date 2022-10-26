@@ -1,18 +1,56 @@
 package com.xtuer.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import com.xtuer.bean.Page;
 import com.xtuer.bean.Result;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.xtuer.service.BaseService;
+import com.xtuer.util.Utils;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.List;
+import java.sql.Timestamp;
+import java.util.*;
 
+@Slf4j
 @RestController
 public class ZooController extends BaseController {
+    /**
+     * 自动注入在 Spring IoC 容器中类型为 BaseService 的对象 (instanceof)
+     */
+    @Autowired
+    private BaseService[] baseServices;
+
+    /**
+     * 获取所有继承自 BaseService 的服务类的对象名称。
+     *
+     * 网址: http://localhost:8080/api/demo/bean-array
+     * 参数: 无
+     *
+     * @return payload 为以逗号分隔的对象名称拼接的字符串。
+     */
+    @GetMapping("/api/demo/bean-array")
+    public String getAllBaseServiceNames() {
+        List<String> names = new LinkedList<>();
+
+        for (BaseService bs : baseServices) {
+            names.add(bs.getClass().getName());
+        }
+
+        return String.join("\n", names);
+    }
+
+    @GetMapping("/api/demo/jackson-date")
+    public String jacksonDate() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> map = new HashMap<>();
+        map.put("time", new Timestamp(new Date().getTime()));
+        return objectMapper.writeValueAsString(map);
+    }
+
     /**
      * 把字符串自动转为日期
      *
@@ -98,5 +136,23 @@ public class ZooController extends BaseController {
     public Result<String> getHeaders(HttpServletRequest request) {
         String token = request.getHeader("token");
         return Result.ok(token);
+    }
+
+    /**
+     * 测试 URL 和 URI 的区别 (都不带参数)
+     * 访问: http://localhost:8080/api/demo/url-uri?name=biao&password=P@ssw0rd
+     * URI: /api/demo/url-uri
+     * URL: http://localhost:8080/api/demo/url-uri
+     */
+    @RequestMapping("/api/demo/url-uri")
+    public Result<Map<String, Object>> differenceBetweenUrlAndUri(HttpServletRequest request) {
+        log.info("URI: {}", request.getRequestURI());
+        log.info("URL: {}", request.getRequestURL());
+        Utils.dump(request.getParameterMap());
+
+        return Result.ok(ImmutableMap.of(
+                "URI", request.getRequestURI(),
+                "URL", request.getRequestURL()
+        ));
     }
 }

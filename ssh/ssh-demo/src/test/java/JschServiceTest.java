@@ -5,13 +5,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class JschServiceTest {
-    private static final String HOST = "192.168.12.102";
-    private static final String USER = "root";
-    private static final String PASS = "Newdt@cn";
+    private static final String HOST = "192.168.12.101";
+    private static final String USER = "foo";
+    private static final String PASS = "*#Passw0rd#";
 
     // private static final String HOST = "118.195.181.149";
     // private static final String USER = "root";
     // private static final String PASS = "*#Passw0rd#";
+
+    @Test
+    public void testSimpleCommand() throws Exception {
+        JschService jschService = new JschService(HOST, USER, PASS);
+        String res = jschService.executeCommand("echo $HOME");
+        System.out.println(res);
+        jschService.close();
+    }
 
     @Test
     public void testRealtimeOutput() throws Exception {
