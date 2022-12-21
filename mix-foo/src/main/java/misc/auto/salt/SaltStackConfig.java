@@ -1,4 +1,4 @@
-package misc;
+package misc.auto.salt;
 
 import lombok.Data;
 

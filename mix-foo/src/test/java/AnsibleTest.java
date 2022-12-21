@@ -1,10 +1,13 @@
-import misc.AnsibleConfig;
-import misc.AnsibleRunner;
 import misc.SshHelper;
 import misc.SshHelper.SshResult;
+import misc.auto.ansible.AnsibleConfig;
+import misc.auto.ansible.AnsibleRunner;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * 数据准备: echo "noops-file" > /root/test-file.txt; mkdir -p /root/test-dir/x/y && echo "noops-dir" > /root/test-dir/x/y/nemo.txt
+ */
 public class AnsibleTest {
     private static AnsibleRunner ansible;
 
@@ -19,7 +22,17 @@ public class AnsibleTest {
         config.setAnsibleSshUsername("root");
         config.setAnsibleSshPassword("Newdt@cn");
         config.setAnsibleSshPort(22);
+        config.setAnsibleAutoBase("/etc/ansible/auto-base");
         ansible = new AnsibleRunner(config);
+    }
+
+    /**
+     * 测试执行脚本。
+     */
+    @Test
+    public void testExecuteScript() throws Exception {
+        SshResult result = ansible.executeScript(NODE_IP_1, "x.sh", "-username=Alice -password=P@ssw0rd");
+        dumpResult(result);
     }
 
     /**
@@ -27,7 +40,7 @@ public class AnsibleTest {
      */
     @Test
     public void testCopyFileFromAnsibleToNode() throws Exception {
-        SshResult result = ansible.copyFile(null, NODE_IP_1, "/root/test.txt", "/root/a/b/c");
+        SshResult result = ansible.copyFile(null, NODE_IP_1, "/root/test-file.txt", "/root/a/b/c");
         dumpResult(result);
     }
 
@@ -57,7 +70,7 @@ public class AnsibleTest {
     @Test
     public void testCopyFileFromNodeToAnsible() throws Exception {
         // 已测: 复制大文件也支持。
-        SshResult result = ansible.copyFile(NODE_IP_1, null, "/root/test.txt", "/root/a/b/c");
+        SshResult result = ansible.copyFile(NODE_IP_1, null, "/root/test-file.txt", "/root/a/b/c");
         dumpResult(result);
     }
 
@@ -76,7 +89,7 @@ public class AnsibleTest {
      */
     @Test
     public void testCopyFileFromNodeToNode() throws Exception {
-        SshResult result = ansible.copyFile(NODE_IP_1, NODE_IP_2, "/root/test.txt", "/root/a/b/c");
+        SshResult result = ansible.copyFile(NODE_IP_1, NODE_IP_2, "/root/test-file.txt", "/root/a/b/c");
         dumpResult(result);
     }
 
@@ -90,12 +103,20 @@ public class AnsibleTest {
     }
 
     /**
-     * 测试从 Node 复制目录到 Node。
+     * 测试从 Node 复制目录到 Ansible。
      */
     @Test
     public void testCopyDirFromNodeToNodeAsAnsible() throws Exception {
         SshResult result = ansible.copyDir(NODE_IP_1, ANSIBLE_IP, "/root/test-dir", "/root/a/b/c");
         dumpResult(result);
+    }
+
+    /**
+     * 测试生成 Ansible inventory 文件。
+     */
+    @Test
+    public void testCreateInventory() throws Exception {
+       ansible.buildInventory();
     }
 
     /**

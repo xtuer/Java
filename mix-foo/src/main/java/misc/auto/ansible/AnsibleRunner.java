@@ -1,12 +1,18 @@
-package misc;
+package misc.auto.ansible;
 
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
+import misc.SshHelper;
 import misc.SshHelper.SshResult;
+import misc.auto.AutoConst;
+import misc.auto.AutoScript;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Nullable;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static org.apache.commons.text.StringSubstitutor.replace;
@@ -41,9 +47,85 @@ public class AnsibleRunner {
     }
 
     /**
+     * 使用 Ansible 在目标主机 nodeIp 上执行脚本。
+     * 脚本的多个参数拼成一个字符串，参数以键值对的形式出现，每队参数以 - 开头，例如 "-username=Alice -password=P@ssw0rd" (不包含引号)。
+     * 脚本的执行命令如 "/root/foo.sh -username=Alice -password=P@ssw0rd" (不包含引号)。
+     *
+     * @param nodeIp 执行脚本主机的 IP
+     * @param scriptName 脚本名称
+     * @param args 脚本参数
+     * @return 返回执行结果
+     */
+    public SshResult executeScript(String nodeIp, String scriptName, String args) throws Exception {
+        /*
+         逻辑:
+         1. 创建临时认证的 inventory
+         2. 构建脚本的各种路径信息
+         3. Web 服务器从 Ansible 获取 shell 脚本
+         4. 解密 shell 脚本，并保存到本地临时文件
+         5. 复制本地临时 shell 脚本到 Ansible
+         6. 复制 Ansible 上的 shell 脚本到 Node
+         7. 给脚本增加可执行权限
+         8. 从 Ansible 执行 Node 上的脚本
+         */
+
+        log.info("执行脚本: NodeIP [{}], ScriptName: [{}], Args: [{}]", nodeIp, scriptName, args);
+
+        try (SshHelper ssh = connectToAnsible()) {
+            // [1] 创建临时认证的 inventory
+            buildInventory();
+
+            // [2] 构建脚本的各种路径信息
+            String nodeHome = AnsibleRunnerHelper.getHome(ssh, nodeIp);
+            AutoScript script = new AutoScript(config.getAnsibleAutoBase(), nodeHome, scriptName);
+
+            // [3] Web 服务器从 Ansible 获取 shell 脚本
+            log.info("获取脚本: {}", script.encryptedScriptPathInEngine);
+
+            String cmd = "cat " + script.encryptedScriptPathInEngine;
+            SshResult result = ssh.executeCommand(cmd);
+            if (!result.isSuccess()) {
+                return result;
+            }
+
+            String encryptedScriptContent = result.getContent();
+            log.debug("加密的脚本:\n{}", encryptedScriptContent);
+
+            // [4] 解密 shell 脚本，并保存到本地临时文件
+            String scriptContent = encryptedScriptContent; // TODO: 解密 shell 脚本 (自动化的脚本都是加密保存的，需要解密后才能使用)
+            log.debug("解密的脚本:\n{}", scriptContent);
+
+            // 保存到本地临时文件，文件名格式为 <scriptName>-<random>.sh，例如 init.sh-1058843542831845790.sh
+            Files.write(Paths.get(script.tempScriptPathInLocal), scriptContent.getBytes(StandardCharsets.UTF_8));
+
+            // [5] 复制本地临时 shell 脚本到 Ansible
+            log.info("复制脚本: 脚本解密后复制到 Ansible 的临时目录");
+            ssh.sftpPut(script.tempScriptPathInLocal, script.tempScriptDirInEngine);
+
+            // [6] 复制 Ansible 上的 shell 脚本到 Node
+            log.info("复制脚本: 从 Ansible 到 Node");
+            result = copyFileOrDirFromAnsibleToNode(ssh, nodeIp, script.tempScriptPathInEngine, script.tempScriptDirInTarget + "/");
+            if (!result.isSuccess()) {
+                return result;
+            }
+
+            // [7] 给脚本增加可执行权限
+            log.info("脚本增加可执行权限: 脚本 [{}]", script.tempScriptPathInTarget);
+            AnsibleRunnerHelper.addExecutablePermissionToFileViaAnsible(ssh, nodeIp, script.tempScriptPathInTarget);
+
+            // [8] 从 Ansible 执行 Node 上的脚本
+            log.info("执行脚本: 从 Ansible 上执行 Node 的脚本 [{}]", script.tempScriptPathInTarget);
+            result = AnsibleRunnerHelper.executeScriptViaAnsible(ssh, nodeIp, script.tempScriptPathInTarget, Objects.toString(args, ""));
+            log.info("脚本结果:\n{}", result.getContent());
+
+            return result;
+        }
+    }
+
+    /**
      * 在主机之间复制文件。当 sourceIp 为 null 时则表示 source 为 Ansible，当 destinationIp 为 null 时则表示 destination 为 Ansible。
      */
-    public SshResult copyFile(@Nullable String sourceIp, String destinationIp, String sourcePath, String destinationDir) throws Exception {
+    public SshResult copyFile(String sourceIp, String destinationIp, String sourcePath, String destinationDir) throws Exception {
         try (SshHelper ssh = connectToAnsible()) {
             buildInventory();
             return copy(ssh, sourceIp, destinationIp, sourcePath, destinationDir, true);
@@ -53,7 +135,7 @@ public class AnsibleRunner {
     /**
      * 在主机之间复制目录。当 sourceIp 为 null 时则表示 source 为 Ansible，当 destinationIp 为 null 时则表示 destination 为 Ansible。
      */
-    public SshResult copyDir(@Nullable String sourceIp, String destinationIp, String sourcePath, String destinationDir) throws Exception {
+    public SshResult copyDir(String sourceIp, String destinationIp, String sourcePath, String destinationDir) throws Exception {
         try (SshHelper ssh = connectToAnsible()) {
             buildInventory();
             return copy(ssh, sourceIp, destinationIp, sourcePath, destinationDir, false);
@@ -150,6 +232,9 @@ public class AnsibleRunner {
 
         log.info("复制文件或目录: Ansible -> Node, Node [{}], Src [{}], DestDir [{}]", nodeIp, sourcePath, destinationDir);
 
+        // 验证目录格式。
+        AnsibleRunnerHelper.checkDir(destinationDir);
+
         // [1] 构造 Ansible 复制文件命令，并执行
         // [2] 处理 Ansible 复制操作结果
         String cmd = replace(AnsibleRunnerConst.PLAYBOOK_COPY_FILE_OR_DIR_FROM_ANSIBLE_TO_NODE, of(
@@ -186,6 +271,9 @@ public class AnsibleRunner {
          */
 
         log.info("复制文件: Node -> Ansible, Node [{}], Src [{}], DestDir [{}]", nodeIp, sourcePath, destinationDir);
+
+        // 验证目录格式。
+        AnsibleRunnerHelper.checkDir(destinationDir);
 
         // [1] 构造 Ansible 复制文件命令，并执行
         // [2] 处理 Ansible 复制操作结果
@@ -231,6 +319,9 @@ public class AnsibleRunner {
 
         log.info("复制目录: Node -> Ansible, Node [{}], Src [{}], DestDir [{}]", nodeIp, sourcePath, destinationDir);
 
+        // 验证目录格式。
+        AnsibleRunnerHelper.checkDir(destinationDir);
+
         // [1] 从 Node 先复制目录到 Ansible 临时目录
         SshResult result = copyDirFromNodeToAnsibleTempDir(ssh, nodeIp, sourcePath);
         if (!result.isSuccess()) {
@@ -239,10 +330,10 @@ public class AnsibleRunner {
 
         // [2] 把 Ansible 临时目录下要刚刚复制得到的目录移动到 destinationDir 下
         String tempPath = result.getContent();
-        result = AnsibleRunnerHelper.moveFileOrDir(ssh, tempPath, destinationDir);
+        result = AnsibleRunnerHelper.moveFileOrDirInAnsible(ssh, tempPath, destinationDir);
 
         // [3] 删除复制产生的临时目录
-        AnsibleRunnerHelper.deleteCopyTaskTempDirectory(ssh, tempPath);
+        AnsibleRunnerHelper.deleteCopyGeneratedTempDirectoryInAnsible(ssh, tempPath);
 
         return result;
     }
@@ -268,6 +359,9 @@ public class AnsibleRunner {
         log.info("复制文件: Node -> Node, SourceIp [{}], DestinationIp [{}], SourcePath [{}], DestinationDir [{}]",
                 sourceIp, destinationIp, sourcePath, destinationDir);
 
+        // 验证目录格式。
+        AnsibleRunnerHelper.checkDir(destinationDir);
+
         // [1] 从 sourceNodeIp 复制文件到 Ansible 临时目录下
         String ansibleTempDir = AnsibleRunnerHelper.generateTempDirPathInAnsible(ssh) + "/";
         SshResult result = copyFileFromNodeToAnsible(ssh, sourceIp, sourcePath, ansibleTempDir);
@@ -286,7 +380,7 @@ public class AnsibleRunner {
         }
 
         // [3] 删除复制参数的临时目录
-        AnsibleRunnerHelper.deleteCopyTaskTempDirectory(ssh, ansibleTempDir);
+        AnsibleRunnerHelper.deleteCopyGeneratedTempDirectoryInAnsible(ssh, ansibleTempDir);
 
         return result;
     }
@@ -312,8 +406,10 @@ public class AnsibleRunner {
         log.info("复制目录: Node -> Node, SourceIp [{}], DestinationIp [{}], SourcePath [{}], DestinationDir [{}]",
                 sourceIp, destinationIp, sourcePath, destinationDir);
 
+        // 验证目录格式。
+        AnsibleRunnerHelper.checkDir(destinationDir);
+
         // [1] 从 SourceIp 复制目录到 Ansible 临时目录下
-        String ansibleTempDir = AnsibleRunnerHelper.generateTempDirPathInAnsible(ssh) + "/";
         SshResult result = copyDirFromNodeToAnsibleTempDir(ssh, sourceIp, sourcePath);
         if (!result.isSuccess()) {
             log.warn("目录复制失败: 从 Node 复制文件到 Ansible 临时目录错误, SourceIp [{}],SourcePath [{}], Cause [{}]", sourceIp, destinationIp, result.getContent());
@@ -321,11 +417,11 @@ public class AnsibleRunner {
         }
 
         // [2] 复制 Ansible 临时目录下的目录到 destinationIp 的 destinationDir 下
-        String sourceTempPath = result.getContent();
+        String sourceTempPath = result.getContent(); // 成功时 SshResult.content 为被复制目录在 Ansible 中的临时目录下的路径
         result = copyFileOrDirFromAnsibleToNode(ssh, destinationIp, sourceTempPath, destinationDir);
 
         // [3] 删除复制参数的临时目录
-        AnsibleRunnerHelper.deleteCopyTaskTempDirectory(ssh, sourceTempPath);
+        AnsibleRunnerHelper.deleteCopyGeneratedTempDirectoryInAnsible(ssh, sourceTempPath);
 
         return result;
     }
@@ -345,6 +441,7 @@ public class AnsibleRunner {
          2. 构建 Ansible 复制目录命令，并执行
          3. 返回被复制目录的临时路径，其模式为 ${ansibleTempDir}/${nodeIp}/${sourcePath}，
             例如 /root/shindata-temp-auto/1665737329979/192.168.12.101/root/test-dir
+         4. 因为源目录不存在时 playbook 复制不报错，需要检查 Ansible 上文件是否存在，不存在则报错
          */
 
         // [1] 生成 Ansible 主机上的临时目录路径
@@ -374,6 +471,12 @@ public class AnsibleRunner {
                 "srcPath", sourcePath
         ));
 
+        // [4] 因为源目录不存在时 playbook 复制不报错，需要检查 Ansible 上文件是否存在，不存在则报错
+        if (!AnsibleRunnerHelper.fileOrDirExists(ssh, null, finalDir)) {
+            log.warn("源目录不存在: NodeIp [{}], SourcePath [{}]", nodeIp, sourcePath);
+            return new SshResult(AnsibleRunnerConst.ERROR_FILE_NOT_FOUND, String.format("源目录不存在: NodeIp [%s], SourcePath [%s]", nodeIp, sourcePath));
+        }
+
         return new SshResult(0, finalDir);
     }
 
@@ -383,14 +486,58 @@ public class AnsibleRunner {
      * @return 返回 ssh 连接
      * @throws Exception 连接异常
      */
-    private SshHelper connectToAnsible() throws Exception {
+    public SshHelper connectToAnsible() throws Exception {
         return new SshHelper(config.getAnsibleIp(), config.getAnsibleSshUsername(), config.getAnsibleSshPassword(), config.getAnsibleSshPort());
     }
 
     /**
      * 构建 Ansible 用户信息的 inventory.
      */
-    private void buildInventory() {
+    public void buildInventory() throws Exception {
         AnsibleRunner.INVENTORY.set("");
+
+        /*
+        逻辑:
+        1. 生成 inventory item。
+        2. 把 inventory item 内容写入本地临时文件。
+        3. 把本地临时 inventory 文件复制到 Ansible 上自动化使用的 inventory 目录下。
+        */
+
+        // Inventory 文件内容。
+        StringBuilder inventory = new StringBuilder();
+
+        // [1] 生成 inventory item。
+        String inv1 = replace(AnsibleRunnerConst.INVENTORY_ITEM, of(
+                "ip", "192.168.12.101",
+                "port", 22,
+                "user", "root",
+                "password", "Newdt@cn"
+        ));
+        String inv2 = replace(AnsibleRunnerConst.INVENTORY_ITEM_SUDO, of(
+                "ip", "192.168.12.101",
+                "port", 22,
+                "user", "root",
+                "password", "Newdt@cn",
+                "becomeUser", "root",
+                "becomePassword", "Passw0rd"
+        ));
+
+        inventory.append(inv1).append("\n");
+        inventory.append(inv2).append("\n");
+
+        // [2] 把 inventory item 内容写入本地临时文件。
+        Path tempInventory = Files.createTempFile("inventory-", ".inv");
+        Files.write(tempInventory, inventory.toString().getBytes(StandardCharsets.UTF_8));
+
+        // [3] 把本地临时 inventory 文件复制到 Ansible 上自动化使用的 inventory 目录下。
+        try (SshHelper ssh = connectToAnsible()) {
+            String ansibleInventoryDir = config.getAnsibleAutoBase() + "/" + AutoConst.DIR_INVENTORY;
+            log.info("生成 Inventory 文件并复制到 Ansible: LocalPath [{}], AnsibleInventoryDir [{}]", tempInventory, ansibleInventoryDir);
+            ssh.sftpPut(tempInventory.toString(), ansibleInventoryDir);
+
+            String inventoryPath = ansibleInventoryDir + "/" + tempInventory.getFileName().toString();
+            AnsibleRunner.INVENTORY.set("-i " + inventoryPath);
+            log.info("Inventory: " + AnsibleRunner.INVENTORY.get());
+        }
     }
 }

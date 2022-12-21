@@ -1,5 +1,5 @@
-import misc.SaltStackConfig;
-import misc.SaltStackRunner;
+import misc.auto.salt.SaltStackConfig;
+import misc.auto.salt.SaltStackRunner;
 import misc.SshHelper;
 import static misc.SshHelper.SshResult;
 import org.junit.BeforeClass;

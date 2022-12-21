@@ -1,4 +1,4 @@
-package misc;
+package misc.auto.ansible;
 
 import lombok.Data;
 
@@ -26,4 +26,14 @@ public class AnsibleConfig {
      * 访问 Ansible 所在主机的 ssh 端口。
      */
     private int ansibleSshPort = 22;
+
+    /**
+     * 自动化放置脚本、安装文件、升级文件等的根目录。
+     * 加密脚本: ${autoBase}/scripts-encrypted
+     * 安装文件: ${autoBase}/installPackage
+     * 升级文件: ${autoBase}/patchPackage
+     * 临时认证: ${autoBase}/inventory
+     * 临时脚本: ${autoBase}/scripts-temp
+     */
+    private String ansibleAutoBase;
 }

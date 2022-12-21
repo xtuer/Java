@@ -1,9 +1,10 @@
-package misc;
+package misc.auto.salt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import misc.SshHelper;
 import misc.SshHelper.SshResult;
 import misc.SshHelper.SshResultType;
 

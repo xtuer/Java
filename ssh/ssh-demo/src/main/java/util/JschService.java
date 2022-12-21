@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 使用 Jsch 远程执行命令或者传文件。
@@ -26,6 +25,11 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class JschService implements AutoCloseable {
+    // 设置 Jsch Logger。
+    static {
+        new JschLogger();
+    }
+
     /**
      * Session 对应 TCP Socket，使用后需要关闭，否则会造成连接泄漏。
      *
