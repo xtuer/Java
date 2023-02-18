@@ -81,6 +81,13 @@ public class FileController extends BaseController {
         WebUtils.readFileToResponse(repoFile.getAbsolutePath(), originalName, request, response);
     }
 
+    @GetMapping("/api/agents/versions/{version}/download")
+    public void downloadFile(@PathVariable String version, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println(version);
+
+        WebUtils.readFileToResponse("/Users/biao/Desktop/newdt-agent", "newdt-agent", request, response);
+    }
+
     /**
      * 访问临时目录中的文件
      *
