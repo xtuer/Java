@@ -53,4 +53,6 @@
     <!-- 控制每一个包的日志级别: 可以配置 application.yml 中的 logging.level.com.xtuer=DEBUG 进行配置 -->
     <!-- <logger name="com.xtuer.mapper" level="${logLevel}"/>-->
     <!-- <logger name="com.xtuer"        level="${logLevel}"/>-->
+    <logger name="org.springframework.web.client.RestTemplate" level="info"/>
+    <logger name="org.springframework.web.HttpLogging" level="info"/>
 </configuration>

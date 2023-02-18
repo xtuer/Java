@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 非常重要：必须是 Mapper 类的全路径 -->
+<mapper namespace="com.xtuer.mapper.AgentManageMapper">
+    <!-- 插入或者更新 agent -->
+    <insert id="upsertAgent">
+        INSERT INTO ao_agent(agent_addr, watchdog_addr, running, version, start_time)
+            VALUES(#{agentAddr}, #{watchdogAddr}, #{running}, #{version}, #{startTime})
+        ON DUPLICATE KEY UPDATE
+            watchdog_addr=#{watchdogAddr}, running=#{running}, version=#{version}, start_time=#{startTime}
+    </insert>
+
+    <!-- 插入 agent 的状态 -->
+    <insert id="insertAgentStats">
+        INSERT INTO ao_agent_stats(agent_addr, json) VALUES(#{agentAddr}, #{json})
+    </insert>
+
+    <!-- 查询满足条件的 agents -->
+    <select id="findAgents" resultType="AgentStats">
+        SELECT agent_addr AS agentAddr,
+            watchdog_addr AS watchdogAddr,
+            running,
+            version,
+            start_time AS startTime
+        FROM ao_agent
+    </select>
+
+    <!-- 查询传入 agentAddr 的 agent 状态 -->
+    <select id="findAgentStatusJsonByAgentAddr" resultType="string">
+        SELECT json FROM ao_agent_stats WHERE agent_addr=#{agentAddr}
+    </select>
+</mapper>

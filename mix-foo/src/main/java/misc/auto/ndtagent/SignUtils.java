@@ -1,4 +1,4 @@
-package misc.auto.agent;
+package misc.auto.ndtagent;
 
 import org.springframework.util.DigestUtils;
 
@@ -28,7 +28,6 @@ public final class SignUtils {
      */
     public static String sign(String secret, long signAt) {
         String salt = "newdt";
-        System.out.println(md5(secret + salt));
         return md5(signAt + md5(secret + salt));
     }
 

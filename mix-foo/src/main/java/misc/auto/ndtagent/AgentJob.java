@@ -1,4 +1,4 @@
-package misc.auto.agent;
+package misc.auto.ndtagent;
 
 import lombok.Data;
 
@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * Job 为 Agent 执行 CMD 或 Script 时创建的对象，描述了任务和任务的进程的信息。
+ * Job 执行成功概率时 isSuccess() 返回 true，任务的输出结果调用 getStdout() 获取。
  */
 @Data
 public class AgentJob {
@@ -141,7 +142,7 @@ public class AgentJob {
      * @return 执行成功返回 true，需要注意的是返回 false 不代表任务执行失败，也有可能是仍然中执行中。
      */
     public boolean isSuccess() {
-        return STATE_RUNNING.equals(state);
+        return STATE_SUCCESS.equals(state);
     }
 
     public boolean isFinished() {

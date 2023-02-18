@@ -1,4 +1,4 @@
-package util;
+package misc.util;
 
 import com.trilead.ssh2.Connection;
 import com.trilead.ssh2.SCPClient;
