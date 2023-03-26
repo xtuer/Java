@@ -5,8 +5,10 @@ import com.alicp.jetcache.anno.config.EnableMethodCache;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
+@EnableTransactionManagement
 @EnableMethodCache(basePackages = "com.xtuer.service2")
 @EnableCreateCacheAnnotation
 @MapperScan({ "com.xtuer.mapper" })

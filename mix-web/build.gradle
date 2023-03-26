@@ -14,7 +14,7 @@ repositories {
 
 ext.versions = [
         lombok     : '1.18.22',
-        commonsIO  : '2.6',
+        commonsIO  : '2.11.0',
         commonsLang: '3.8',
         commonsText: '1.7',
         fastjson   : '1.2.70',

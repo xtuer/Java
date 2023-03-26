@@ -65,4 +65,8 @@ public interface Urls {
     String API_ORGS_BY_ID  = "/api/orgs/{orgId}";         // 指定 ID 的机构
     String API_ORGS_ENABLE = "/api/orgs/{orgId}/enabled"; // 指定 ID 的机构的启用禁用状态
 
+    // 大文件上传
+    String API_BIGFILE_UPLOADS             = "/api/bigfile/uploads";                 // 上传信息
+    String API_BIGFILE_UPLOADS_BY_FILE_UID = "/api/bigfile/uploads/{fileUid}";        // 根据文件 Uid 对应的上传信息
+    String API_BIGFILE_UPLOADS_CHUNK       = "/api/bigfile/uploads/{fileUid}/chunks"; // 文件上传的分片
 }

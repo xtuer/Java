@@ -1,13 +1,11 @@
-import misc.auto.ndtagent.upload.DirUploader;
-import misc.util.Utils;
 import org.junit.Test;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -15,6 +13,8 @@ import java.util.stream.Stream;
 public class CommonTest {
     @Test
     public void foo1() {
+        List<? super String> list = new LinkedList<Object>();
+        list.add("One");
     }
 
     @Test
@@ -78,7 +78,8 @@ public class CommonTest {
 
     @Test
     public void testFile() {
-        File file = new File("/Users/biao/Downloads/temp/arthas.zip2");
-        System.out.println(file.exists());
+        for (int i = 0; i < 1000; i++) {
+            System.out.printf("insert into test_1(id, name) values(%d, 'alice');\n", i);
+        }
     }
 }
