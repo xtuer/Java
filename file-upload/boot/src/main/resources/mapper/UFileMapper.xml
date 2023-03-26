@@ -18,7 +18,7 @@
         SELECT json FROM dsc_ufile_chunk WHERE file_uid=#{fileUid} AND sn=#{sn}
     </select>
 
-    <!-- 统计不成功的分片数量。 -->
+    <!-- 统计非成功状态的分片数量 -->
     <select id="countUnsuccessfulUFileChunk" resultType="int">
         SELECT count(1) FROM dsc_ufile_chunk WHERE file_uid=#{fileUid} AND state!=1
     </select>

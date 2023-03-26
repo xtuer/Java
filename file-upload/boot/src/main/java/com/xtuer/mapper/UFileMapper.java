@@ -36,7 +36,7 @@ public interface UFileMapper {
     String fileUFileChunkJsonByFileUidAndSn(@Param("fileUid") String fileUid, @Param("sn") int sn);
 
     /**
-     * 统计不成功的分片数量。
+     * 统计非成功状态的分片数量。
      *
      * @param fileUid 文件唯一 ID。
      * @return 返回不成功的分片数量。

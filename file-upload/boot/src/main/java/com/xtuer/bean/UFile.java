@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class UFile {
     /**
-     * 唯一 ID: <fileMd5>
+     * 唯一 ID: 文件的 MD5。
      */
     String fileUid;
 

@@ -26,7 +26,7 @@ public class UFileController {
     /**
      * 根据文件唯一 ID 获取上传信息。
      *
-     * 链接: http://localhost:8080/api/bigfile/uploads/:fileUid
+     * 链接: http://localhost:8080/api/bigfile/uploads/{fileUid}
      * 参数: 无
      * 测试: curl http://localhost:8080/api/bigfile/uploads/xyz
      *
