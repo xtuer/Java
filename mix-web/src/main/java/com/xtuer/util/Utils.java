@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xtuer.bean.Mime;
 import com.xtuer.bean.User;
@@ -271,6 +272,7 @@ public final class Utils {
      */
     public static <T> T fromJson(String json, Class<T> clazz) {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         try {
             return objectMapper.readValue(json, clazz);
@@ -288,6 +290,7 @@ public final class Utils {
      */
     public static <T> T fromJson(String json, TypeReference<T> ref) {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         try {
             return objectMapper.readValue(json, ref);

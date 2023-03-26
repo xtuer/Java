@@ -21,13 +21,13 @@ public class AgentManageController {
     /**
      * 接收 agent 状态上报。
      *
-     * 链接: http://localhost:8080/api/agents/stats
+     * 链接: http://localhost:8080/api/agents/statsInPartition
      * 参数: 无
      * 请求体: AgentStats 对象序列化为 Json 的字符串。
      *
      * @param stats Agent 状态。
      */
-    @PostMapping("/api/agents/stats")
+    @PostMapping("/api/agents/statsInPartition")
     public Result<Boolean> receiveAgentStats(@RequestBody AgentStats stats) {
         mapper.upsertAgent(stats);
         mapper.insertAgentStats(stats.getAgentAddr(), Utils.toJson(stats));
@@ -49,7 +49,7 @@ public class AgentManageController {
     }
 
     /**
-     * 查询传入 agentAddr 的 agent 状态。
+     * 查询传入 agentAddr 的 agent 的最新状态。
      *
      * 链接: http://localhost:8080/api/agents/{agentAddr}/stats
      * 参数: 无
@@ -57,8 +57,8 @@ public class AgentManageController {
      * @return payload 为 agent 状态对象。
      */
     @GetMapping("/api/agents/{agentAddr}/stats")
-    public Result<AgentStats> findAgentStatsByAgentAddr(@PathVariable String agentAddr) {
-        String json = mapper.findAgentStatusJsonByAgentAddr(agentAddr);
+    public Result<AgentStats> findLatestAgentStatusJsonByAgentAddr(@PathVariable String agentAddr) {
+        String json = mapper.findLatestAgentStatusJsonByAgentAddr(agentAddr);
 
         if (StringUtils.isBlank(json)) {
             return Result.fail();

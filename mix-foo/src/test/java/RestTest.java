@@ -114,6 +114,15 @@ public class RestTest {
         System.out.println(rsp);
     }
 
+    // 测试 string 的请求。
+    @Test
+    public void testString() {
+        String url = "http://192.168.12.101:12302/api/agents/logs/newdt-watchdog.log/content?startLine=1&endLine=10";
+        Response<String> rsp = AgentRequestUtils.doRequest(url, HttpMethod.GET, null, String.class);
+        System.out.println(rsp);
+        System.out.println(rsp.getData());
+    }
+
     // 测试获取 Object 数量。
     @Test
     public void testWaitForState() {

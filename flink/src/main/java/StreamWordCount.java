@@ -8,7 +8,7 @@ import org.apache.flink.util.Collector;
 
 /**
  * 无界流示例，与有界流的代码几乎一样，只是创建数据源 DataStreamSource 有点不一样。
- * 
+ *
  * 从 netcat 输入，socket stream 从 netcat 读取。
  * 1. 终端启动 netcat: nc -lk 7777
  * 2. 运行示例: gradle run -DmainClass=StreamWordCount

@@ -1,6 +1,7 @@
 package com.xtuer.mapper;
 
 import com.xtuer.bean.AgentStats;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public interface AgentManageMapper {
      * @param agentAddr Agent 的访问地址，Ip:Port。
      * @param json Agent 状态对象序列化的 Json 字符串。
      */
-    void insertAgentStats(String agentAddr, String json);
+    void insertAgentStats(@Param("agentAddr") String agentAddr, @Param("json") String json);
 
     /**
      * 查询满足条件的 agents。
@@ -33,10 +34,10 @@ public interface AgentManageMapper {
     List<AgentStats> findAgents();
 
     /**
-     * 查询传入 agentAddr 的 agent 状态。
+     * 查询传入 agentAddr 的 agent 的最新状态。
      *
      * @param agentAddr Agent 的访问地址。
      * @return 返回 agent 状态对象的 Json 字符串。
      */
-    String findAgentStatusJsonByAgentAddr(String agentAddr);
+    String findLatestAgentStatusJsonByAgentAddr(String agentAddr);
 }

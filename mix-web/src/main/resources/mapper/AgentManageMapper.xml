@@ -5,7 +5,7 @@
 <mapper namespace="com.xtuer.mapper.AgentManageMapper">
     <!-- 插入或者更新 agent -->
     <insert id="upsertAgent">
-        INSERT INTO ao_agent(agent_addr, watchdog_addr, running, version, start_time)
+        INSERT INTO cust1.ao_agent(agent_addr, watchdog_addr, running, version, start_time)
             VALUES(#{agentAddr}, #{watchdogAddr}, #{running}, #{version}, #{startTime})
         ON DUPLICATE KEY UPDATE
             watchdog_addr=#{watchdogAddr}, running=#{running}, version=#{version}, start_time=#{startTime}
@@ -13,7 +13,7 @@
 
     <!-- 插入 agent 的状态 -->
     <insert id="insertAgentStats">
-        INSERT INTO ao_agent_stats(agent_addr, json) VALUES(#{agentAddr}, #{json})
+        INSERT INTO cust1.ao_agent_stats(agent_addr, json) VALUES(#{agentAddr}, #{json})
     </insert>
 
     <!-- 查询满足条件的 agents -->
@@ -23,11 +23,11 @@
             running,
             version,
             start_time AS startTime
-        FROM ao_agent
+        FROM cust1.ao_agent
     </select>
 
     <!-- 查询传入 agentAddr 的 agent 状态 -->
-    <select id="findAgentStatusJsonByAgentAddr" resultType="string">
-        SELECT json FROM ao_agent_stats WHERE agent_addr=#{agentAddr}
+    <select id="findLatestAgentStatusJsonByAgentAddr" resultType="string">
+        SELECT json FROM cust1.ao_agent_stats WHERE agent_addr=#{agentAddr} ORDER BY create_time DESC LIMIT 1
     </select>
 </mapper>

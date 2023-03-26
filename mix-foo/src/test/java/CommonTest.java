@@ -1,6 +1,9 @@
+import misc.auto.ndtagent.upload.DirUploader;
+import misc.util.Utils;
 import org.junit.Test;
 
-import java.io.File;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +41,39 @@ public class CommonTest {
 
     public static boolean checkVersion(String version) {
         return version.matches("^v\\d+(\\.\\d+)*$");
+    }
+
+    @Test
+    public void bar() {
+        long start = System.currentTimeMillis();
+
+        File file = new File("/Users/biao/Documents/temp/log-error-2022-11-04.46.log1127740749091859.tmp");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            int startLine = 200000;
+            int lineCount = 10;
+            int endLine = startLine + lineCount;
+            String line;
+            StringBuilder buf = new StringBuilder();
+            int i = 0;
+            while ((line = reader.readLine()) != null) {
+                // i++;
+                //
+                // if (i >= startLine) {
+                //     buf.append(line).append("\n");
+                // }
+                // if (i >= endLine) {
+                //     break;
+                // }
+                i++;
+            }
+            System.out.println("line count: " + i);
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+
+        long end = System.currentTimeMillis();
+        System.out.println("Time used: " + (end - start));
     }
 
     @Test
