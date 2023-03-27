@@ -18,7 +18,7 @@ on-success: 上传成功时触发，参数为 { fileName, fileUid }
             <input ref="file" type="file" :disabled="fileInputDisabled">
 
             <!-- 进度条: style="width: 30%" 设置进度 -->
-            <div :class="{ active: state !== 1 }" class="progress">
+            <div :class="{ active: state === 3 || state === 4 }" class="progress">
                 <div :style="{ width: progress+'%' }" :class="progressBarClass" class="progress-bar progress-bar-striped"></div>
             </div>
 

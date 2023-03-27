@@ -34,7 +34,9 @@ export default {
                 totalBytes      : 0,  // 总要上传的字节数。
                 finishedBytes   : 0,  // 上传完成的字节数。
                 preFinishedBytes: 0,  // 曾经上传完的字节数 (断点续传)。
-                progressMap     : new Map(), // 上传进度，key 为 sn, value 为本分片已上传的字节数。
+                chunkProgress   : new Map(), // 上传进度，key 为 sn, value 为本分片已上传的字节数。
+                cancelSource    : null, // Axios 取消上传的 CancelToken Source。
+
             },
             md5FinishedBytes: 0, // 文件计算 MD5 处理完的字节数。
         };
@@ -98,6 +100,10 @@ export default {
             if (this.state === STATE_MD5) {
                 return this.md5FinishedBytes / this.file.size * 100;
             }
+            // 计算文件 MD5 时取消
+            if (this.canceledWhenMd5) {
+                return this.md5FinishedBytes / this.file.size * 100;
+            }
 
             // 上传成功。
             if (this.state === STATE_SUCCESS) {
@@ -122,7 +128,9 @@ export default {
         },
         // 进度条的类名。
         progressBarClass() {
-            if (this.state === STATE_MD5) {
+            if (this.canceledWhenMd5) {
+                return 'progress-bar-default';
+            } else if (this.state === STATE_MD5) {
                 return 'progress-bar-default';
             } else if (this.state === STATE_SUCCESS) {
                 return 'progress-bar-success';
@@ -131,7 +139,11 @@ export default {
             } else {
                 return 'progress-bar-info';
             }
-        }
+        },
+        // 计算文件 MD5 时点击取消
+        canceledWhenMd5() {
+            return (this.state === STATE_CANCELED && this.md5FinishedBytes !== 0 && this.uploadingJob.finishedBytes === 0);
+        },
     },
     methods: {
         // 点击操作按钮，不同情况时执行不同的操作。
@@ -153,8 +165,13 @@ export default {
         },
         // 取消上传。
         cancel() {
-            this.state = STATE_CANCELED;
             console.log(`[取消] 取消上传文件 [${this.file.name}]`);
+            this.state = STATE_CANCELED;
+
+            // 取消上传请求。
+            if (this.uploadingJob.cancelSource) {
+                this.uploadingJob.cancelSource.cancel('取消上传分片');
+            }
         },
         // 上传文件。
         upload() {
@@ -177,7 +194,8 @@ export default {
                 totalBytes      : 0,
                 finishedBytes   : 0,
                 preFinishedBytes: 0,
-                progressMap     : new Map(),
+                chunkProgress   : new Map(),
+                cancelSource    : null,
             };
 
             // [2] 计算文件 MD5。
@@ -243,6 +261,8 @@ export default {
                 totalBytes    : this.file.size,
                 finishedBytes : 0,
                 preFinishedBytes: preFinishedBytes,
+                chunkProgress   : new Map(),
+                cancelSource    : axios.CancelToken.source(),
             };
 
             // 如果不需要上传分片，则检查上传状态。
@@ -293,13 +313,13 @@ export default {
             calculateChunkMd5(this.file, chunk).then(md5 => {
                 // [B] 异步上传分片。
                 chunk.md5 = md5;
-                return Api.uploadChunk(this.file, this.fileUid, chunk, (progressEvent) => {
+                return Api.uploadChunk(this.file, this.fileUid, chunk, this.uploadingJob.cancelSource, (progressEvent) => {
                     // 分片上传进度 (每个分片上传时可能会有多次回调)。
                     // let complete = (progressEvent.loaded / progressEvent.total * 100 || 0) + '%';
                     // this.uploadingJob.finishedBytes += progressEvent.loaded;
-                    this.uploadingJob.progressMap.set(chunk.sn, progressEvent.loaded);
+                    this.uploadingJob.chunkProgress.set(chunk.sn, progressEvent.loaded);
                     this.uploadingJob.finishedBytes = this.uploadingJob.preFinishedBytes;
-                    for (let fb of this.uploadingJob.progressMap.values()) {
+                    for (let fb of this.uploadingJob.chunkProgress.values()) {
                         this.uploadingJob.finishedBytes += fb;
                     }
                 });

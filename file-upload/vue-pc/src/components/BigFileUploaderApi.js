@@ -58,10 +58,11 @@ export default class BigFileUploaderApi {
      * @param {File} file 上传的文件对象。
      * @param {String} fileUid 上传文件的唯一 ID。
      * @param {Json} chunk 分片对象。
+     * @param {Object} cancelSource Axios 取消上传的 CancelToken Source。
      * @param {Fn} onUploadProgress 上传进度回调函数
      * @returns 返回 Promise，resolve 参数无，reject 的参数为错误信息。
      */
-    static uploadChunk(file, fileUid, chunk, onUploadProgress) {
+    static uploadChunk(file, fileUid, chunk, cancelSource, onUploadProgress) {
         return new Promise((resolve, reject) => {
             let url  = API_BIGFILE_UPLOADS_CHUNK.replace('{fileUid}', fileUid);
             let start = parseInt(chunk.start);
@@ -76,6 +77,7 @@ export default class BigFileUploaderApi {
 
             axios.post(url, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
+                cancelToken: cancelSource.token,
                 onUploadProgress: onUploadProgress,
             }).then(response => {
                 if (response.data.success) {
