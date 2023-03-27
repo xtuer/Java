@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,18 +34,21 @@ public class UFileService {
      * 保存文件的目录。
      * 文件保格式为: {dstDir}/{fileMd5}，不保存为文件名是为了避免名字冲突，下载文件或者从 FTP 复制到本地的时候再修改本地得到的文件名为文件的真实名字。
      */
-    private String dstDir = "/Users/biao/Documents/temp/ufile";
+    @Value("${ufile.dstDir}")
+    private String dstDir;
 
     /**
      * 保存分片的临时目录。
      * 每个文件的分片保存格式为: {chunkBaseDir}/{fileUid}/0.tmp, 1.tmp, 2.tmp, 3.tmp, ...
      */
-    private String chunkBaseDir = "/Users/biao/Documents/temp/ufile-tmp";
+    @Value("${ufile.chunkBaseDir}")
+    private String chunkBaseDir;
 
     /**
      * 是否使用 FTP 保存文件。
      */
-    private boolean ftpEnabled = true;
+    @Value("${ufile.ftpEnabled}")
+    private boolean ftpEnabled;
 
     /**
      * 创建上传文件信息。

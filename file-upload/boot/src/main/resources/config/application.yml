@@ -20,6 +20,14 @@ app.dir.repo   : ${app.dir.base}/repo
 # 日志配置
 logging.file.path: ${app.dir.base}/logs
 
+ufile:
+  # 是否使用 FTP 保存文件。
+  ftpEnabled: false
+  # 保存文件的目录。
+  dstDir: /Users/biao/Documents/temp/ufile
+  # 保存分片的临时目录。
+  chunkBaseDir: /Users/biao/Documents/temp/ufile-tmp
+
 ###############################################################################
 #                                    Database                                 #
 ###############################################################################
@@ -40,6 +48,15 @@ spring.datasource.hikari.connectionTimeout: 30000
 mybatis.mapper-locations    : classpath:mapper/**/*.xml
 mybatis.type-aliases-package: com.xtuer.bean
 mybatis.configuration.map-underscore-to-camel-case: true
+
+###############################################################################
+#                                    Thymeleaf                                #
+###############################################################################
+spring.thymeleaf.mode        : HTML
+spring.thymeleaf.cache       : true
+spring.thymeleaf.suffix      : .html
+spring.thymeleaf.encoding    : UTF-8
+spring.thymeleaf.content-type: text/html
 
 ###############################################################################
 #                                     Tomcat                                  #

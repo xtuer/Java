@@ -1,4 +1,4 @@
 #!/bin/bash
-rm -rf ../template-web-boot/src/main/resources/page-p
+rm -rf ../boot/src/main/resources/page-p
 
 yarn build

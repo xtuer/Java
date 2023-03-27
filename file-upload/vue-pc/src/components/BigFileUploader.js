@@ -27,12 +27,14 @@ export default {
 
             // 上传任务。
             uploadingJob: {
-                chunkQueue    : [], // 需要上传的分片队列。
-                totalCount    : 0,  // 总共上传的分片数量。
-                uploadingCount: 0,  // 正在上传的分片数量
-                finishedCount : 0,  // 已完成的分片数量。
-                totalBytes    : 0,  // 总要上传的字节数。
-                finishedBytes : 0,  // 上传完成的字节数。
+                chunkQueue      : [], // 需要上传的分片队列。
+                totalCount      : 0,  // 总共上传的分片数量。
+                uploadingCount  : 0,  // 正在上传的分片数量
+                finishedCount   : 0,  // 已完成的分片数量。
+                totalBytes      : 0,  // 总要上传的字节数。
+                finishedBytes   : 0,  // 上传完成的字节数。
+                preFinishedBytes: 0,  // 曾经上传完的字节数 (断点续传)。
+                progressMap     : new Map(), // 上传进度，key 为 sn, value 为本分片已上传的字节数。
             },
             md5FinishedBytes: 0, // 文件计算 MD5 处理完的字节数。
         };
@@ -168,12 +170,14 @@ export default {
 
             // [1] 初始化上传任务状态。
             this.uploadingJob = {
-                chunkQueue    : [],
-                totalCount    : 0,
-                uploadingCount: 0,
-                finishedCount : 0,
-                totalBytes    : 0,
-                finishedBytes : 0,
+                chunkQueue      : [],
+                totalCount      : 0,
+                uploadingCount  : 0,
+                finishedCount   : 0,
+                totalBytes      : 0,
+                finishedBytes   : 0,
+                preFinishedBytes: 0,
+                progressMap     : new Map(),
             };
 
             // [2] 计算文件 MD5。
@@ -229,7 +233,7 @@ export default {
         // 上传分片。
         uploadChunks(chunks) {
             // 初始化上传任务: 队列中为未上传、重传失败的分片 (分片上传失败的原因例如没有权限创建分片的保存目录，磁盘空间不够了等)。
-            const finishedBytes = chunks.filter(c => c.state === STATE_SUCCESS).reduce((mem, chunk) => mem + (chunk.end-chunk.start), 0);
+            const preFinishedBytes = chunks.filter(c => c.state === STATE_SUCCESS).reduce((mem, chunk) => mem + (chunk.end-chunk.start), 0);
             const needUploadChunks = chunks.filter(c => c.state === STATE_INIT || c.state === STATE_FAILED);
             this.uploadingJob = {
                 chunkQueue    : needUploadChunks,
@@ -237,7 +241,8 @@ export default {
                 uploadingCount: 0,
                 finishedCount : 0,
                 totalBytes    : this.file.size,
-                finishedBytes : finishedBytes,
+                finishedBytes : 0,
+                preFinishedBytes: preFinishedBytes,
             };
 
             // 如果不需要上传分片，则检查上传状态。
@@ -246,7 +251,7 @@ export default {
                 return;
             }
 
-            console.log(`[开始] 上传文件的分片，共需上传 ${needUploadChunks.length} 个分片，最大并发数为 ${MAX_UPLOADING_CHUNK_COUNT}，状态检查时间间隔 ${CHECK_UPLOAD_INTERVAL} 毫秒`);
+            console.log(`[开始] 上传文件的分片，共有 ${chunks.length} 个分片，需上传 ${needUploadChunks.length} 个分片，最大并发数为 ${MAX_UPLOADING_CHUNK_COUNT}，状态检查时间间隔 ${CHECK_UPLOAD_INTERVAL} 毫秒`);
 
             // 开启最多 MAX_UPLOADING_CHUNK_COUNT 个任务并发上传分片。
             for (let i = 0; i < MAX_UPLOADING_CHUNK_COUNT; i++) {
@@ -289,9 +294,14 @@ export default {
                 // [B] 异步上传分片。
                 chunk.md5 = md5;
                 return Api.uploadChunk(this.file, this.fileUid, chunk, (progressEvent) => {
-                    // 分片上传进度。
+                    // 分片上传进度 (每个分片上传时可能会有多次回调)。
                     // let complete = (progressEvent.loaded / progressEvent.total * 100 || 0) + '%';
-                    this.uploadingJob.finishedBytes += progressEvent.loaded;
+                    // this.uploadingJob.finishedBytes += progressEvent.loaded;
+                    this.uploadingJob.progressMap.set(chunk.sn, progressEvent.loaded);
+                    this.uploadingJob.finishedBytes = this.uploadingJob.preFinishedBytes;
+                    for (let fb of this.uploadingJob.progressMap.values()) {
+                        this.uploadingJob.finishedBytes += fb;
+                    }
                 });
             }).then(() => {
                 // [C] 分片上传成功。
