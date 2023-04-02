@@ -2,7 +2,7 @@ import com.trilead.ssh2.Connection;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import misc.util.SshUtils;
+import util.SshUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -10,8 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static misc.util.SshUtils.SshResult;
-import static misc.util.SshUtils.runCommand;
+import static util.SshUtils.SshResult;
+import static util.SshUtils.runCommand;
 
 /**
  * 测试 ssh 远程执行命令

@@ -1,4 +1,4 @@
-package misc.util;
+package util;
 
 import misc.ByteHex;
 

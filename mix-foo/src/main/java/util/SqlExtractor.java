@@ -1,33 +1,29 @@
-import org.apache.commons.lang3.StringUtils;
+package util;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 /**
  * 从文件中提取 SQL 语句。
  */
 public class SqlExtractor {
-    public static void main(String[] args) throws Exception {
-        handleSqlsInBigFileVieChunk("/Users/biao/Downloads/big.sql", sqls -> {
-            System.out.println("---------------------------------------");
-            for (String sql : sqls) {
-                System.out.println("==> " + sql);
-            }
-        });
-    }
-
     /**
-     * 使用分片技术读取大文件中的 SQL 进行处理。
+     * 使用分片技术从 reader 中提取 SQL 进行处理。
      *
-     * @param sqlFilePath SQL 文件路径。
+     * @param reader 读取 SQL 的 reader。
+     * @param batchLineCount 每次读取文件的行数。
+     * @param stopped 是否结束的标记，例如在 sqlHandler 中发生异常的时候设置 stopped 为 true 不继续读取后面的 SQL。
      * @param sqlHandler SQL 语句处理对象。
      * @throws IOException 读取文件异常。
      */
-    public static void handleSqlsInBigFileVieChunk(String sqlFilePath, Consumer<List<String>> sqlHandler) throws IOException {
+    public static void extractSqls(BufferedReader reader,
+                                   int batchLineCount,
+                                   AtomicBoolean stopped,
+                                   Consumer<List<String>> sqlHandler) throws IOException {
         /*
          业务逻辑:
          1. 读取 lineCount 行字符串到 buffer。
@@ -36,33 +32,30 @@ public class SqlExtractor {
          4. 文件的内容读取完后，buffer 中剩下的部分为最后一个 SQL 语句的内容。
          5. 处理本次提取到的 SQL。
          */
-        try (BufferedReader reader = new BufferedReader(new FileReader(sqlFilePath))) {
-            int lineCount = 4;
-            boolean canRead = true;
-            StringBuilder buffer = new StringBuilder();
+        boolean canRead = true;
+        StringBuilder buffer = new StringBuilder();
 
-            while (canRead) {
-                // [1] 读取 lineCount 行字符串到 buffer。
-                canRead = readLines(reader, buffer, lineCount);
+        while (canRead && !stopped.get()) {
+            // [1] 读取 lineCount 行字符串到 buffer。
+            canRead = readLines(reader, buffer, batchLineCount);
 
-                // [2] 从 buffer 中提取 SQL 语句。
-                List<String> sqls = new LinkedList<>();
-                int pivot = extractSql(buffer, sqls); // buffer 中最后一个分号的下一个位置 (分号的位置 +1)。
+            // [2] 从 buffer 中提取 SQL 语句。
+            List<String> sqls = new LinkedList<>();
+            int pivot = extractSqls(buffer, sqls); // buffer 中最后一个分号的下一个位置 (分号的位置 +1)。
 
-                // [3] 从 buffer 中删除被提取过的 SQL 释放内存。
-                buffer.delete(0, pivot);
+            // [3] 从 buffer 中删除被提取过的 SQL 释放内存。
+            buffer.delete(0, pivot);
 
-                // [4] 文件的内容读取完后，buffer 中剩下的部分为最后一个 SQL 语句的内容。
-                if (!canRead) {
-                    String lastSql = buffer.toString().trim();
-                    if (!StringUtils.isBlank(lastSql)) {
-                        sqls.add(lastSql);
-                    }
+            // [4] 文件的内容读取完后，buffer 中剩下的部分为最后一个 SQL 语句的内容。
+            if (!canRead) {
+                String lastSql = buffer.toString().trim();
+                if (!lastSql.equals("")) {
+                    sqls.add(lastSql);
                 }
-
-                // [5] 处理本次提取到的 SQL。
-                sqlHandler.accept(sqls);
             }
+
+            // [5] 处理本次提取到的 SQL。
+            sqlHandler.accept(sqls);
         }
     }
 
@@ -98,13 +91,13 @@ public class SqlExtractor {
      *    返回 111
      * 2. insert into test(id, name) values(3, 'Biao''s ;Huang'); insert into test(id, name)
      *    得到 [insert into test(id, name) values(3, 'Biao''s ;Huang');]
-     *    返回 55 (55 后面是另一个 SQL 语句的部分内容，需要调用则进行处理，为的是分片读取文件内容追加处理)
+     *    返回 55 (55 后面是另一个 SQL 语句的部分内容，需要调用者进行处理，为的是分片读取文件内容追加处理)
      *
      * @param buffer SQL 内容。
      * @param sqls 保存提取到的 SQL 语句。
      * @return 返回最后一个分号的下一个位置 (分号的位置 +1)。
      */
-    public static int extractSql(StringBuilder buffer, List<String> sqls) {
+    private static int extractSqls(StringBuilder buffer, List<String> sqls) {
         /*
          业务逻辑:
          1. 单引号 ' 处理:

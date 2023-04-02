@@ -2,7 +2,7 @@ import misc.auto.ndtagent.upload.AgentFileTransfer;
 import misc.auto.ndtagent.upload.DirUploader;
 import misc.auto.ndtagent.upload.FileUploader;
 import misc.auto.ndtagent.upload.Md5Utils;
-import misc.util.Utils;
+import util.Utils;
 import org.junit.Test;
 
 import java.io.File;
