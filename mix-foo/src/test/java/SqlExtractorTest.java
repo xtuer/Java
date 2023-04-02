@@ -44,4 +44,9 @@ public class SqlExtractorTest {
             });
         }
     }
+
+    @Test
+    public void test() {
+        char c = (char) 0;
+    }
 }
