@@ -3,6 +3,11 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -12,9 +17,47 @@ import java.util.stream.Stream;
 
 public class CommonTest {
     @Test
-    public void foo1() {
-        List<? super String> list = new LinkedList<Object>();
-        list.add("One");
+    public void generateImageGallery() throws IOException {
+        String path = "/Users/biao/Documents/workspace/Books/笔记/img";
+        List<String> dirs = new LinkedList<>();
+
+        // 在此列表中的 title 都要转为大写
+        List<String> upperCases = Arrays.asList("db", "fe", "ds", "dp", "k8s");
+
+        // 获取 img 下的所有目录
+        try (Stream<Path> stream = Files.list(Paths.get(path))) {
+            stream.forEach(p -> {
+                if (Files.isDirectory(p)) {
+                    dirs.add(p.getFileName().toString());
+                }
+            });
+        }
+
+        dirs.sort(String::compareTo);
+        dirs.add(0, ".");
+
+        for (String dir : dirs) {
+            // title 首字母大写
+            String title = dir.substring(0, 1).toUpperCase() + dir.substring(1);
+
+            // title 全大写
+            if (upperCases.contains(title.toLowerCase())) {
+                title = title.toUpperCase();
+            }
+
+            if (".".equals(dir)) {
+                dir = "";
+            }
+
+            System.out.printf("## %s\n" +
+                            "```img-gallery\n" +
+                            "path: img/%s\n" +
+                            "type: vertical\n" +
+                            "radius: 6\n" +
+                            "columns: 4\n" +
+                            "```\n\n",
+                    title, dir);
+        }
     }
 
     @Test

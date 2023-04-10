@@ -66,6 +66,7 @@ dependencies {
     implementation 'com.alibaba:druid:1.2.11'
     implementation 'com.jcraft:jsch:0.1.55'
     implementation 'commons-cli:commons-cli:1.4'
+    implementation 'com.jayway.jsonpath:json-path:2.8.0'
 
     // BigQueue 的依赖
     implementation 'org.slf4j:slf4j-api:1.6.4'

@@ -22,4 +22,21 @@ public class JdbcTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testBatchWithSelect() {
+        try(Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            // conn.setAutoCommit(false);
+            Statement stmt = conn.createStatement();
+            String sql = "create table xyz(id int)";
+            stmt.addBatch(sql);
+            stmt.addBatch("insert into xyz(id) values(1)");
+            stmt.addBatch("insert into xyz(id) values(2)");
+            stmt.executeBatch();
+            stmt.clearBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

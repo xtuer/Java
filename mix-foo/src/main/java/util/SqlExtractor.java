@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
+import java.util.function.BiFunction;
 
 /**
  * 从文件中提取 SQL 语句。
@@ -17,13 +17,13 @@ public class SqlExtractor {
      * @param reader 读取 SQL 的 reader (源 reader 可以是文件的 FileReader 也可以是字符串的 StringReader)。
      * @param lineCount 每次从 reader 中读取的行数 (分批读取，而不是一次读取所有内容)。
      * @param stopped 是否结束的标记，例如在 sqlHandler 中发生异常的时候设置 stopped 为 true 不继续读取后面的 SQL。
-     * @param sqlHandler 处理提取到的 SQL 的 consumer，可能会被调用多次。
+     * @param sqlHandler 处理提取到的 SQL 的函数，第一个参数为 SQL 列表，第二个参数为是否所有 SQL 都提取完了 (可能会被调用多次)。
      * @throws IOException 读取文件异常。
      */
     public static void extractSqls(BufferedReader reader,
                                    int lineCount,
                                    AtomicBoolean stopped,
-                                   Consumer<List<String>> sqlHandler) throws IOException {
+                                   BiFunction<List<String>, Boolean, Void> sqlHandler) throws IOException {
         /*
          业务逻辑:
          1. 读取 lineCount 行字符串到 buffer。
@@ -55,7 +55,7 @@ public class SqlExtractor {
             }
 
             // [5] 处理本次提取到的 SQL。
-            sqlHandler.accept(sqls);
+            sqlHandler.apply(sqls, !canRead);
         }
     }
 
@@ -91,7 +91,7 @@ public class SqlExtractor {
             5.2. 第一个 -，如果后面是 "- " (不包含双引号) 则是单行注释开始
          6. 星号 * 处理: 在多行注释中，且下一个字符是 / 则说明是多行注释结束
          7. 回车 \r 处理:
-            7.1. 下一个字符是 \n 则 cur++，走 [8] 处理行结束
+            7.1. 下一个字符是 \n 则 curr++，走 [8] 处理行结束
             7.2. 下一个字符不是 \n 则是行结束，走 [8] 处理行结束
          8. 换行 \n 处理: 如果在单行注释中，则单行注释结束
          9. 分号 ; 处理: 不在字符串和注释中则是语句分隔符
@@ -121,10 +121,10 @@ public class SqlExtractor {
         int sqlStart = 0; // SQL 语句的开始位置
         final int len = buffer.length();
 
-        // cur 为当前处理的字符位置。
-        for (int cur = 0; cur < len; cur++) {
-            char c = buffer.charAt(cur); // 当前字符
-            char nextChar = (cur+1 < len ? buffer.charAt(cur+1) : (char) 0); // 当前字符的后面第 1 个字符
+        // curr 为当前处理的字符位置。
+        for (int curr = 0; curr < len; curr++) {
+            char c = buffer.charAt(curr); // 当前字符
+            char nextChar = (curr+1 < len ? buffer.charAt(curr+1) : (char) 0); // 当前字符的后面第 1 个字符
 
             switch (c) {
                 case '\'':
@@ -142,7 +142,7 @@ public class SqlExtractor {
 
                     // [1.3] 在单引号字符串中: 如果下一个字符是 ' 则说明是转义字符，否则是单引号字符串结束
                     if (nextChar == '\'') {
-                        cur++;
+                        curr++;
                     } else {
                         inSingleQuoteString = false;
                     }
@@ -163,7 +163,7 @@ public class SqlExtractor {
 
                     // [2.3] 在双引号字符串中: 如果下一个字符是 " 则说明是转义字符，否则是双引号字符串结束
                     if (nextChar == '\"') {
-                        cur++;
+                        curr++;
                     } else {
                         inDoubleQuoteString = false;
                     }
@@ -179,15 +179,15 @@ public class SqlExtractor {
                     // [3.2] 非多行注释中，且下一个字符是 * 则是多行注释开始
                     if (!inBlockComment && nextChar == '*') {
                         inBlockComment = true;
-                        cur++;
+                        curr++;
                     }
 
                     break;
                 case '\\':
-                    // [4] 反斜杠 \ 处理: 在单引号字符串或者双引号字符串中，且下一个字符是 ' 或者 " 则说明是转义字符
+                    // [4] 反斜杠 \ 处理: 在单引号字符串或者双引号字符串中，且下一个字符是 ', " 或者 \ 则说明是转义字符
                     if (inSingleQuoteString || inDoubleQuoteString) {
-                        if (nextChar == '\'' || nextChar == '"') {
-                            cur++;
+                        if (nextChar == '\'' || nextChar == '"' || nextChar == '\\') {
+                            curr++;
                         }
                     }
 
@@ -200,10 +200,10 @@ public class SqlExtractor {
                     }
 
                     // [5.2] 第一个 -，如果后面是 "- " (不包含双引号) 则是单行注释开始
-                    char nextNextChar = (cur+2 < len ? buffer.charAt(cur+2) : (char) 0); // 当前字符的后面第 2 个字符
+                    char nextNextChar = (curr+2 < len ? buffer.charAt(curr+2) : (char) 0); // 当前字符的后面第 2 个字符
                     if (nextChar == '-' && nextNextChar == ' ') {
                         inSingleComment = true;
-                        cur += 2;
+                        curr += 2;
                     }
 
                     break;
@@ -211,16 +211,16 @@ public class SqlExtractor {
                     // [6] 星号 * 处理: 在多行注释中，且下一个字符是 / 则说明是多行注释结束
                     if (inBlockComment && nextChar == '/') {
                         inBlockComment = false;
-                        cur++;
+                        curr++;
                     }
 
                     break;
                 case '\r':
                     // [7] 回车 \r 处理:
-                    // [7.1] 下一个字符是 \n 则 cur++，走 [8] 处理行结束
+                    // [7.1] 下一个字符是 \n 则 curr++，走 [8] 处理行结束
                     // [7.2] 下一个字符不是 \n 则是行结束，走 [8] 处理行结束
                     if (nextChar == '\n') {
-                        cur++;
+                        curr++;
                     }
                 case '\n':
                     // [8] 换行 \n 处理: 如果在单行注释中，则单行注释结束
@@ -232,7 +232,7 @@ public class SqlExtractor {
                 case ';':
                     // [9] 分号 ; 处理: 不在字符串和注释中则是语句分隔符
                     if (!inSingleComment && !inBlockComment && !inSingleQuoteString && !inDoubleQuoteString) {
-                        int sqlEnd = cur + 1;
+                        int sqlEnd = curr + 1;
                         String sql = buffer.substring(sqlStart, sqlEnd).trim();
                         sqls.add(sql);
 
