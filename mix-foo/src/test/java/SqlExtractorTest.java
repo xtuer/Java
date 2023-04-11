@@ -15,8 +15,8 @@ public class SqlExtractorTest {
     /**
      * SQL 文件的路径。
      */
-    // private static final String SQL_FILE_PATH = "/Users/biao/Downloads/big.sql";
-    private static final String SQL_FILE_PATH = "/Users/biao/Documents/temp/sqls/insert-sql-5000000.sql";
+    private static final String SQL_FILE_PATH = "/Users/biao/Downloads/big.sql";
+    // private static final String SQL_FILE_PATH = "/Users/biao/Documents/temp/sqls/insert-sql-5000000.sql";
 
     // 案例一: 从文件中读取。
     @Test

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 非常重要：必须是 Mapper 类的全路径 -->
+<mapper namespace="com.xtuer.mapper.SqlFileImportTaskMapper">
+    <!-- 创建 SQL 文件导入任务 -->
+    <insert id="createImportTask" parameterType="SqlFileImportTask">
+        INSERT INTO dsc_sql_file_import_task (task_id, file_uid, state, rollback_sql)
+        VALUES (#{taskId}, #{fileUid}, #{state}, #{rollbackSql})
+    </insert>
+
+    <!-- 开始 SQL 文件导入任务 -->
+    <update id="startImportTask" parameterType="SqlFileImportTask">
+        UPDATE dsc_sql_file_import_task
+        SET state = #{state}, start_time = #{startTime}
+        WHERE task_id = #{taskId}
+    </update>
+
+    <!-- 更新 SQL 文件导入进度 -->
+    <update id="updateImportProcess" parameterType="SqlFileImportTask">
+        UPDATE dsc_sql_file_import_task
+        SET committed_bytes = #{committedBytes}, total_bytes = #{totalBytes}
+        WHERE task_id = #{taskId}
+    </update>
+
+    <!-- 结束 SQL 文件导入任务 -->
+    <update id="endImportTask" parameterType="SqlFileImportTask">
+        UPDATE dsc_sql_file_import_task
+        SET committed_bytes = #{committedBytes}, total_bytes = #{totalBytes}, state = #{state}, end_time = #{endTime}, error = #{error}
+        WHERE task_id = #{taskId}
+    </update>
+</mapper>
+
