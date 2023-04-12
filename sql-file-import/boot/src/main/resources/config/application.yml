@@ -33,7 +33,7 @@ ufile:
 # SQL 文件导入的配置。
 sqlImport:
   lineCount: 100
-  batchSize: 200
+  batchSize: 100
 
 ###############################################################################
 #                                    Database                                 #

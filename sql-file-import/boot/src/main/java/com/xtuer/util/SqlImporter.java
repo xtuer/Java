@@ -40,7 +40,7 @@ public class SqlImporter {
     /**
      * 导入任务的 ID。
      */
-    private long taskId;
+    private String taskId;
 
     /**
      * SQL 文件路径。
@@ -74,7 +74,7 @@ public class SqlImporter {
      * @param batchSize 把 batchSize 个 SQL 语句作为一个事务进行提交。
      * @param lineCount 从文件中一次读取 SQL 语句的行数。
      */
-    public SqlImporter(String jdbcUrl, String dbUsername, String dbPassword, long taskId, String sqlFilePath, String rollbackSql, int batchSize, int lineCount) {
+    public SqlImporter(String jdbcUrl, String dbUsername, String dbPassword, String taskId, String sqlFilePath, String rollbackSql, int batchSize, int lineCount) {
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
@@ -95,7 +95,8 @@ public class SqlImporter {
          1. 接收到 SQL 语句后使用事务执行 (只支持变更语句，不支持查询语句)。
          2. 执行的 SQL 语句达到提交数量后提交事务。
          3. 当 SQL 提取完成后，如果还有没提交的 SQL 则提交事务。
-         4. 当 SQL 执行出错时，结束执行，如果用户输入了回滚 SQL 语句则执行回滚语句。
+         4. 导入完成时保存完成进度。
+         5. 当 SQL 执行出错时，结束执行，如果用户输入了回滚 SQL 语句则执行回滚语句。
          */
 
         log.info("[开始] 导入 SQL 文件，文件路径 [{}]，回滚语句 [{}]，事务的 SQL 语句数量 [{}]，一次读取 SQL 文件中的行数 [{}]", sqlFilePath, rollbackSql, batchSize, lineCount);
@@ -107,6 +108,7 @@ public class SqlImporter {
             AtomicBoolean stopped = new AtomicBoolean(false); // 执行 SQL 出错时停止继续读取 SQL，终止导入操作。
             ExecuteStatus status = new ExecuteStatus(); // 执行的状态数据。
             status.totalBytes = file.length();
+            status.startTime = System.currentTimeMillis();
 
             // 取消自动提交，使用事务执行变更语句。
             conn.setAutoCommit(false);
@@ -139,7 +141,13 @@ public class SqlImporter {
                     }
 
                     if (finished) {
-                        log.info("[结束] 导入 SQL 文件完成，文件路径 [{}]", sqlFilePath);
+                        // [4] 导入完成时保存完成进度。
+                        // 需要校正提交的数据量，因为提取 SQL 语句时可能会去掉一些空白字符。
+                        status.committedBytes = status.totalBytes;
+                        saveProcess(status);
+
+                        long elapsed = (System.currentTimeMillis() - status.startTime) / 1000;
+                        log.info("[结束] 导入 SQL 文件完成，耗时 [{}] 秒,文件路径 [{}]", elapsed, sqlFilePath);
                     }
                 } catch (SQLException e) {
                     // 报错情况:
@@ -159,7 +167,7 @@ public class SqlImporter {
                         log.warn(Utils.getStackTrace(ex));
                     }
 
-                    // [4] 当 SQL 执行出错时，结束执行，如果用户输入了回滚 SQL 语句则执行回滚语句。
+                    // [5] 当 SQL 执行出错时，结束执行，如果用户输入了回滚 SQL 语句则执行回滚语句。
                     stopped.set(true);
                     if (StringUtils.hasText(rollbackSql)) {
                         log.info("执行回滚语句: {}", rollbackSql);
@@ -171,6 +179,11 @@ public class SqlImporter {
             });
         } catch (SQLException | IOException e) {
             log.warn(Utils.getStackTrace(e));
+
+            // 连接数据库错误或者 SQL 文件不存在。
+            ExecuteStatus status = new ExecuteStatus();
+            status.error = Utils.getStackTrace(e);
+            saveProcess(status);
         }
     }
 
@@ -187,8 +200,11 @@ public class SqlImporter {
      * 处理进度。
      */
     private void saveProcess(ExecuteStatus status) {
-        int percent = (int) ((double) status.committedBytes / status.totalBytes * 100);
-        System.out.printf("完成 %d%%: %d / %d (Bytes)\n", percent, status.committedBytes, status.totalBytes);
+        // 避免除 0 错误。
+        if (status.totalBytes != 0) {
+            int percent = (int) ((double) status.committedBytes / status.totalBytes * 100);
+            log.debug("完成 {}%: {} / {} (Bytes)", percent, status.committedBytes, status.totalBytes);
+        }
 
         // TODO: 回调 DSC 保存进度。
         SqlFileImportTask task = new SqlFileImportTask();
@@ -197,7 +213,7 @@ public class SqlImporter {
         task.setTotalBytes(status.totalBytes);
         task.setError(status.error);
 
-        String url = String.format("http://localhost:8080/api/dsc/sql-file-imports/%d/process", taskId);
+        String url = String.format("http://localhost:8080/api/dsc/sql-file-imports/%s/process", taskId);
         RequestUtils.doRequest(url, HttpMethod.POST, task, SqlFileImportTask.class);
     }
 
@@ -243,6 +259,11 @@ public class SqlImporter {
          * 执行过的 SQL 语句数量。
          */
         public int executedSqlCount = 0;
+
+        /**
+         * 开始导入时间。
+         */
+        public long startTime = 0;
 
         /**
          * 发生错误的错误信息。

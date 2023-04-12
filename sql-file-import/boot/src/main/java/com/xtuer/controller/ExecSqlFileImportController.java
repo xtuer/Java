@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * SQL 执行服务 SQL 文件导入控制器。
  */
@@ -32,6 +35,11 @@ public class ExecSqlFileImportController {
     static final String DB_PASS   = "root";
 
     /**
+     * 异步导入 SQL 文件的线程池，避免同时导入太多导致执行服务崩溃。
+     */
+    ExecutorService importExecutor = Executors.newFixedThreadPool(3);
+
+    /**
      * 导入 SQL 文件。
      *
      * 网址: http://localhost:8080/api/exec/sql-file-imports
@@ -44,12 +52,12 @@ public class ExecSqlFileImportController {
      */
     @PostMapping(Urls.API_SQL_FILE_IMPORTS_EXEC)
     public Result<SqlFileImportTask> importSqlFile(@RequestBody SqlFileImportTask task) {
-        // 开启线程导入。
-        new Thread(() -> {
+        // 异步导入。
+        importExecutor.submit(() -> {
             String sqlFilePath = dstDir + "/" + task.getFileUid();
             SqlImporter importer = new SqlImporter(JDBC_URL, DB_USER, DB_PASS, task.getTaskId(), sqlFilePath, task.getRollbackSql(), batchSize, lineCount);
             importer.importSqlFile();
-        }).start();
+        });
 
         return Result.ok(task);
     }

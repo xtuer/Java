@@ -20,7 +20,7 @@ public interface Urls {
 
     // SQL 文件导入
     String API_SQL_FILE_IMPORTS         = "/api/dsc/sql-file-imports";  // DSC 文件导入
-    String API_SQL_FILE_IMPORTS_BY_ID   = "/api/dsc/sql-file-imports/{importId}"; // DSC 文件导入查询
+    String API_SQL_FILE_IMPORTS_BY_ID   = "/api/dsc/sql-file-imports/{importTaskId}"; // DSC 文件导入查询
     String API_SQL_FILE_IMPORTS_PROCESS = "/api/dsc/sql-file-imports/{importTaskId}/process"; // DSC 文件导入进度
     String API_SQL_FILE_IMPORTS_EXEC    = "/api/exec/sql-file-imports"; // SQL 执行文件导入
 }

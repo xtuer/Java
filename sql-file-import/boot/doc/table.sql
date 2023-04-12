@@ -18,7 +18,7 @@ create table dsc_ufile_chunk(
 
 -- SQL 文件导入任务。
 create table dsc_sql_file_import_task(
-    task_id bigint        comment '任务唯一 ID',
+    task_id varchar(64)   comment '任务唯一 ID',
     file_uid varchar(256) comment '唯一 ID: <fileMd5>',
     state int default 0   comment '导入状态: 0 (初始化)、1 (成功)、2 (失败)、3 (导入中)',
     start_time datetime   comment '导入开始时间',

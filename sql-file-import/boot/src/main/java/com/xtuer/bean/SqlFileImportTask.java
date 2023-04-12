@@ -12,7 +12,7 @@ public class SqlFileImportTask {
     /**
      * SQL 文件导入任务 ID。
      */
-    private long taskId;
+    private String taskId;
 
     /**
      * SQL 文件 UID。

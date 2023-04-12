@@ -3,6 +3,21 @@
 
 <!-- namespace 非常重要：必须是 Mapper 类的全路径 -->
 <mapper namespace="com.xtuer.mapper.SqlFileImportTaskMapper">
+    <!-- 查询导入任务 -->
+    <select id="findImportTaskById" parameterType="string" resultType="SqlFileImportTask">
+        SELECT task_id AS taskId,
+            file_uid   AS fileUid,
+            state,
+            start_time      AS startTime,
+            end_time        AS endTime,
+            total_bytes     AS totalBytes,
+            committed_bytes AS committedBytes,
+            rollback_sql    AS rollbackSql,
+            error
+        FROM dsc_sql_file_import_task
+        WHERE task_id = #{taskId}
+    </select>
+
     <!-- 创建 SQL 文件导入任务 -->
     <insert id="createImportTask" parameterType="SqlFileImportTask">
         INSERT INTO dsc_sql_file_import_task (task_id, file_uid, state, rollback_sql)

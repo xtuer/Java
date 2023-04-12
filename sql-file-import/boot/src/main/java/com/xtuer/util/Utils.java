@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,6 +50,16 @@ public final class Utils {
         }
 
         return null;
+    }
+
+    /**
+     * 生成 UUID。
+     *
+     * @return 返回 UUID 的字符串。
+     */
+    public static String uuid() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString();
     }
 
     /**

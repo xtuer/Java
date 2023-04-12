@@ -9,6 +9,14 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SqlFileImportTaskMapper {
     /**
+     * 查询传入的导入任务 ID 的导入任务。
+     *
+     * @param importTaskId 导入任务的 ID。
+     * @return 返回查询到的导入任务。
+     */
+    SqlFileImportTask findImportTaskById(String importTaskId);
+
+    /**
      * 创建 SQL 文件导入任务。
      *
      * @param task 导入任务。
