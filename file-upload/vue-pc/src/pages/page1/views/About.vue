@@ -12,6 +12,7 @@ export default {
     methods: {
         fileUploaded(file) {
             this.$Message.success(`上传成功: ${file.fileName}`);
+            console.log(file);
         }
     }
 };

@@ -10,7 +10,7 @@ create table dsc_ufile(
 create table dsc_ufile_chunk(
 	file_uid varchar(256) comment '唯一 ID: <fileMd5>',
     sn int                comment '分片序号',
-    state int default 0   comment '分片上传状态: 0 (初始化)、1 (上传成功)、2 (上传失败)、3 (上传中)',
+    state int default 0   comment '分片上传状态: 0 (初始化)、1 (导入成功)、2 (导入失败)、3 (导入中)、4 (排队等待)',
     json text             comment '分片的 Json',
 
     primary key (file_uid, sn)

@@ -9,13 +9,13 @@ export default new Router({
             path: '/',
             name: 'home',
             component: () => import(/* webpackChunkName: "common" */ './views/Home.vue'),
-            redirect: { name: 'about' },
+            redirect: { name: 'upload-import' },
 
             children: [
                 {
-                    path: '/about',
-                    name: 'about',
-                    component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
+                    path: '/upload-import',
+                    name: 'upload-import',
+                    component: () => import(/* webpackChunkName: "about" */ './views/UploadAndImportSqlFile.vue'),
                 },
             ]
         },

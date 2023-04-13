@@ -2,7 +2,7 @@ package com.xtuer.controller;
 
 import com.xtuer.bean.Result;
 import com.xtuer.bean.SqlFileImportTask;
-import com.xtuer.bean.UFileConst;
+import com.xtuer.bean.SqlImportConst;
 import com.xtuer.bean.Urls;
 import com.xtuer.mapper.SqlFileImportTaskMapper;
 import com.xtuer.util.RequestUtils;
@@ -59,7 +59,7 @@ public class DscSqlFileImportController {
      * 请求体: {"fileUid": "xxx"}
      * 测试: curl -X POST http://localhost:8080/api/dsc/sql-file-imports -d '{"fileUid": "xxx"}' -H 'Content-Type: application/json'
      *
-     * @param paramTask 上传文件得到的唯一 ID。
+     * @param paramTask 导入任务对象，其中需要属性 fileUid (上传文件得到的唯一 ID) 和 rollbackSql。
      * @return payload 为导入任务对象。
      */
     @PostMapping(Urls.API_SQL_FILE_IMPORTS)
@@ -82,7 +82,7 @@ public class DscSqlFileImportController {
         SqlFileImportTask task = new SqlFileImportTask();
         task.setTaskId(Utils.uuid());
         task.setFileUid(fileUid);
-        task.setState(UFileConst.INIT);
+        task.setState(SqlImportConst.INIT);
         task.setRollbackSql(paramTask.getRollbackSql());
 
         // [2] 保存导入任务到数据库。
@@ -98,7 +98,7 @@ public class DscSqlFileImportController {
             log.warn(error);
 
             // 调用 SQL 执行出错，结束导入任务。
-            task.setState(UFileConst.FAILED);
+            task.setState(SqlImportConst.FAILED);
             task.setError(error);
             taskMapper.endImportTask(task);
 
@@ -108,7 +108,7 @@ public class DscSqlFileImportController {
 
         // [4] 更新导入任务到数据库: 更新 startTime, totalBytes, state 为导入中。
         task.setStartTime(new Date());
-        task.setState(UFileConst.DOING);
+        task.setState(SqlImportConst.WAIT);
         taskMapper.startImportTask(task);
 
         return Result.ok(task);
@@ -121,16 +121,18 @@ public class DscSqlFileImportController {
          执行结束的情况: error 不为空或者 committedBytes == totalBytes
          */
 
+        task.setState(SqlImportConst.DOING);
+
         if (task.getCommittedBytes() == task.getTotalBytes() && task.getCommittedBytes() != 0) {
-            task.setState(UFileConst.SUCCESS);
+            task.setState(SqlImportConst.SUCCESS);
         }
 
         if (StringUtils.hasText(task.getError())) {
-            task.setState(UFileConst.FAILED);
+            task.setState(SqlImportConst.FAILED);
         }
 
         // 保存进度到数据库。
-        if (task.getState() == UFileConst.SUCCESS || task.getState() == UFileConst.FAILED) {
+        if (task.getState() == SqlImportConst.SUCCESS || task.getState() == SqlImportConst.FAILED) {
             task.setEndTime(new Date()); // 完成时间。
             taskMapper.endImportTask(task);
         } else {

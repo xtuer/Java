@@ -3,5 +3,5 @@
 
 app.dir.base: /usr/local/temp/xtuer
 logging.level.com.xtuer: debug
-logging.level.com.xtuer.mapper: off
+logging.level.com.xtuer.mapper: debug
 spring.thymeleaf.cache : false

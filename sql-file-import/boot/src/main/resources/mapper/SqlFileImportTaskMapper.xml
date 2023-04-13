@@ -34,7 +34,7 @@
     <!-- 更新 SQL 文件导入进度 -->
     <update id="updateImportProcess" parameterType="SqlFileImportTask">
         UPDATE dsc_sql_file_import_task
-        SET committed_bytes = #{committedBytes}, total_bytes = #{totalBytes}
+        SET committed_bytes = #{committedBytes}, total_bytes = #{totalBytes}, state = #{state}
         WHERE task_id = #{taskId}
     </update>
 
