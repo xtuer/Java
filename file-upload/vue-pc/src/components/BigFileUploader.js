@@ -286,7 +286,8 @@ export default {
              2. 如果分片队列为空则不开启新的上传任务。
              3. 从分片队列里获取一个分片进行上传:
                 3.1 正在上传的分片数 +1。
-                3.2 使用 Promise 执行异步耗时上传任务。
+                3.2 上传前先检查分片状态，判断是否有必要上传。
+                3.3 使用 Promise 执行异步耗时上传任务。
              4. 每个分片上传结束后调用 onUploadChunkFinish()，在其中决定继续上传新的分片还是所有分片都上传结束。
                 提示: 上传成功和上传失败都是上传完成。
              */
@@ -308,20 +309,35 @@ export default {
             this.uploadingJob.uploadingCount += 1;
             const chunk = this.uploadingJob.chunkQueue.shift();
 
-            // [3.2] 使用 Promise 执行异步耗时上传任务。
-            // [A] 计算分片的 MD5。
-            calculateChunkMd5(this.file, chunk).then(md5 => {
-                // [B] 异步上传分片。
-                chunk.md5 = md5;
-                return Api.uploadChunk(this.file, this.fileUid, chunk, this.uploadingJob.cancelSource, (progressEvent) => {
-                    // 分片上传进度 (每个分片上传时可能会有多次回调)。
-                    // let complete = (progressEvent.loaded / progressEvent.total * 100 || 0) + '%';
-                    // this.uploadingJob.finishedBytes += progressEvent.loaded;
-                    this.uploadingJob.chunkProgress.set(chunk.sn, progressEvent.loaded);
-                    this.uploadingJob.finishedBytes = this.uploadingJob.preFinishedBytes;
-                    for (let fb of this.uploadingJob.chunkProgress.values()) {
-                        this.uploadingJob.finishedBytes += fb;
-                    }
+
+            // [3.2] 上传前先检查分片状态，判断是否有必要上传。
+            Api.findChunk(this.fileUid, chunk.sn).then(ck => {
+                // 已经上传成功或者正在上传中则不需要重复上传。
+                if (ck.state === STATE_SUCCESS || ck.state === STATE_DOING) {
+                    return Promise.resolve();
+                }
+
+                // [3.3] 使用 Promise 执行异步耗时上传任务。
+                return new Promise((resolve, reject) => {
+                    // [A] 计算分片的 MD5。
+                    calculateChunkMd5(this.file, chunk).then(md5 => {
+                        // [B] 异步上传分片。
+                        chunk.md5 = md5;
+                        return Api.uploadChunk(this.file, this.fileUid, chunk, this.uploadingJob.cancelSource, (progressEvent) => {
+                            // 分片上传进度 (每个分片上传时可能会有多次回调)。
+                            // let complete = (progressEvent.loaded / progressEvent.total * 100 || 0) + '%';
+                            // this.uploadingJob.finishedBytes += progressEvent.loaded;
+                            this.uploadingJob.chunkProgress.set(chunk.sn, progressEvent.loaded);
+                            this.uploadingJob.finishedBytes = this.uploadingJob.preFinishedBytes;
+                            for (let fb of this.uploadingJob.chunkProgress.values()) {
+                                this.uploadingJob.finishedBytes += fb;
+                            }
+                        });
+                    }).then(() => {
+                        resolve();
+                    }).catch(err => {
+                        reject(err);
+                    });
                 });
             }).then(() => {
                 // [C] 分片上传成功。

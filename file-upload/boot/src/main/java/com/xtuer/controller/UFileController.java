@@ -74,4 +74,19 @@ public class UFileController {
     public Result<UFileChunk> uploadChunk(@PathVariable String fileUid, @RequestParam int chunkSn, @RequestParam String chunkMd5, MultipartFile file) throws IOException {
         return Result.single(ufileService.uploadChunk(fileUid, chunkSn, chunkMd5, file));
     }
+
+    /**
+     * 查询上传文件的第 chunkSn 个分片。
+     * 链接: http://localhost:8080/api/bigfile/uploads/{fileUid}/chunks/{chunkSn}
+     * 参数: 无
+     * 测试: curl http://localhost:8080/api/bigfile/uploads/fb9e041c2037a794cd8b1a44949f023e/chunks/2
+     *
+     * @param fileUid 文件唯一 ID。
+     * @param chunkSn 分片序号。
+     * @return payload 为分片对象。
+     */
+    @GetMapping(Urls.API_BIGFILE_UPLOADS_CHUNK_BY_ID)
+    public Result<UFileChunk> findChunk(@PathVariable String fileUid, @PathVariable int chunkSn) {
+        return Result.single(ufileRepo.findUFileChunk(fileUid, chunkSn));
+    }
 }

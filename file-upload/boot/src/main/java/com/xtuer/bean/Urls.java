@@ -17,4 +17,5 @@ public interface Urls {
     String API_BIGFILE_UPLOADS             = "/api/bigfile/uploads";                 // 上传信息
     String API_BIGFILE_UPLOADS_BY_FILE_UID = "/api/bigfile/uploads/{fileUid}";        // 根据文件 Uid 对应的上传信息
     String API_BIGFILE_UPLOADS_CHUNK       = "/api/bigfile/uploads/{fileUid}/chunks"; // 文件上传的分片
+    String API_BIGFILE_UPLOADS_CHUNK_BY_ID = "/api/bigfile/uploads/{fileUid}/chunks/{chunkSn}"; // 指定分片
 }

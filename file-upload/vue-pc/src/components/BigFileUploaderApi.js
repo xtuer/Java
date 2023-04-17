@@ -1,6 +1,7 @@
 const API_BIGFILE_UPLOADS             = '/api/bigfile/uploads';                  // 上传信息
 const API_BIGFILE_UPLOADS_BY_FILE_UID = '/api/bigfile/uploads/{fileUid}';        // 根据文件 Uid 对应的上传信息
 const API_BIGFILE_UPLOADS_CHUNK       = '/api/bigfile/uploads/{fileUid}/chunks'; // 文件上传的分片
+const API_BIGFILE_UPLOADS_CHUNK_BY_ID = '/api/bigfile/uploads/{fileUid}/chunks/{chunkSn}'; // 指定分片
 
 /**
  * 大文件上传请求的 Api。
@@ -54,6 +55,7 @@ export default class BigFileUploaderApi {
     }
 
     /**
+     * 上传分片。
      *
      * @param {File} file 上传的文件对象。
      * @param {String} fileUid 上传文件的唯一 ID。
@@ -90,6 +92,33 @@ export default class BigFileUploaderApi {
             }).catch(response => {
                 // 上传失败
                 reject(response);
+            });
+        });
+    }
+
+    /**
+     * 查询上传文件的第 chunkSn 个分片。
+     * 链接: http://localhost:8080/api/bigfile/uploads/{fileUid}/chunks/{chunkSn}
+     * 参数: 无
+     * 测试: curl http://localhost:8080/api/bigfile/uploads/fb9e041c2037a794cd8b1a44949f023e/chunks/2
+     *
+     * @param {String} fileUid 文件唯一 ID。
+     * @param {Int} chunkSn 分片序号。
+     * @returns 返回 Promise，resolve 参数分片对象，reject 的参数为错误信息。
+     */
+    static findChunk(fileUid, chunkSn) {
+        return new Promise((resolve, reject) => {
+            let url = API_BIGFILE_UPLOADS_CHUNK_BY_ID.replace('{fileUid}', fileUid).replace('{chunkSn}', chunkSn);
+
+            axios.get(url).then(({ data: rsp }) => {
+                if (rsp.success) {
+                    let chunk = rsp.data;
+                    resolve(chunk);
+                } else {
+                    reject(rsp.message);
+                }
+            }).catch(err => {
+                reject(err);
             });
         });
     }
