@@ -278,8 +278,8 @@ export default {
                 this.uploadChunk();
             }
         },
-        // 上传单个分片。
-        uploadChunk() {
+        // 异步上传单个分片。
+        async uploadChunk() {
             /*
              逻辑:
              1. 如果达到允许的最大并数则不上传新的分片。
@@ -287,7 +287,11 @@ export default {
              3. 从分片队列里获取一个分片进行上传:
                 3.1 正在上传的分片数 +1。
                 3.2 上传前先检查分片状态，判断是否有必要上传。
-                3.3 使用 Promise 执行异步耗时上传任务。
+                3.3 上传分片。
+                    A. 计算分片的 MD5。
+                    B. 上传分片。
+                    C. 分片上传成功。
+                    D. 分片上传失败。
              4. 每个分片上传结束后调用 onUploadChunkFinish()，在其中决定继续上传新的分片还是所有分片都上传结束。
                 提示: 上传成功和上传失败都是上传完成。
              */
@@ -309,45 +313,39 @@ export default {
             this.uploadingJob.uploadingCount += 1;
             const chunk = this.uploadingJob.chunkQueue.shift();
 
+            try {
+                // [3.2] 上传前先检查分片状态，判断是否有必要上传。
+                const rspChunk = await Api.findChunk(this.fileUid, chunk.sn);
 
-            // [3.2] 上传前先检查分片状态，判断是否有必要上传。
-            Api.findChunk(this.fileUid, chunk.sn).then(ck => {
-                // 已经上传成功或者正在上传中则不需要重复上传。
-                if (ck.state === STATE_SUCCESS || ck.state === STATE_DOING) {
-                    return Promise.resolve();
+                // [*] 已经上传成功或者正在上传中则不需要重复上传。
+                if (rspChunk.state === STATE_SUCCESS || rspChunk.state === STATE_DOING) {
+                    console.log(`[提示] 分片 [${chunk.sn}] 不需要重复上传，状态 [${rspChunk.state}]`);
+                    return;
                 }
 
-                // [3.3] 使用 Promise 执行异步耗时上传任务。
-                return new Promise((resolve, reject) => {
-                    // [A] 计算分片的 MD5。
-                    calculateChunkMd5(this.file, chunk).then(md5 => {
-                        // [B] 异步上传分片。
-                        chunk.md5 = md5;
-                        return Api.uploadChunk(this.file, this.fileUid, chunk, this.uploadingJob.cancelSource, (progressEvent) => {
-                            // 分片上传进度 (每个分片上传时可能会有多次回调)。
-                            // let complete = (progressEvent.loaded / progressEvent.total * 100 || 0) + '%';
-                            // this.uploadingJob.finishedBytes += progressEvent.loaded;
-                            this.uploadingJob.chunkProgress.set(chunk.sn, progressEvent.loaded);
-                            this.uploadingJob.finishedBytes = this.uploadingJob.preFinishedBytes;
-                            for (let fb of this.uploadingJob.chunkProgress.values()) {
-                                this.uploadingJob.finishedBytes += fb;
-                            }
-                        });
-                    }).then(() => {
-                        resolve();
-                    }).catch(err => {
-                        reject(err);
-                    });
+                // [3.3] 上传分片。
+                // [A] 计算分片的 MD5。
+                chunk.md5 = await calculateChunkMd5(this.file, chunk);
+
+                // [B] 上传分片。
+                await Api.uploadChunk(this.file, this.fileUid, chunk, this.uploadingJob.cancelSource, (progressEvent) => {
+                    // 分片上传进度 (每个分片上传时可能会有多次回调，在网速慢一点的时候才能观察到)。
+                    // let complete = (progressEvent.loaded / progressEvent.total * 100 || 0) + '%';
+                    this.uploadingJob.chunkProgress.set(chunk.sn, progressEvent.loaded);
+                    this.uploadingJob.finishedBytes = this.uploadingJob.preFinishedBytes;
+                    for (let fb of this.uploadingJob.chunkProgress.values()) {
+                        this.uploadingJob.finishedBytes += fb;
+                    }
                 });
-            }).then(() => {
+
                 // [C] 分片上传成功。
+            } catch (err) {
+                // [D] 分片上传失败。
+                console.error(err);
+            } finally {
                 // [4] 每个分片上传结束后调用 onUploadChunkFinish()，在其中决定继续上传新的分片还是所有分片都上传结束。
                 this.onUploadChunkFinish(chunk);
-            }).catch(err => {
-                // [D] 分片上传失败。
-                this.onUploadChunkFinish(chunk);
-                console.error(err);
-            });
+            }
         },
         // 分片上传完成。
         onUploadChunkFinish(chunk) {
