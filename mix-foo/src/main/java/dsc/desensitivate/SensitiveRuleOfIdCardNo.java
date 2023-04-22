@@ -1,4 +1,4 @@
-package dsc;
+package dsc.desensitivate;
 
 import org.springframework.util.StringUtils;
 

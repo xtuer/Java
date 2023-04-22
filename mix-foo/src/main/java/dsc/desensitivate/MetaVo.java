@@ -1,4 +1,4 @@
-package dsc;
+package dsc.desensitivate;
 
 import lombok.Data;
 

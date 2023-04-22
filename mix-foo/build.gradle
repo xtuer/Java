@@ -11,7 +11,7 @@ plugins {
 // [1.1] 从命令行运行默认类: gradle run
 // [1.2] 从命令行运行某个类: gradle run -DmainClass=Foo
 ext {
-    project.mainClassName = System.getProperty("mainClass", "misc.auto.ndtagent.upload.UploadFileDemo")
+    project.mainClassName = System.getProperty("mainClass", "dsc.webterminal.WebTerminalService")
 }
 
 // [2] 打包: gradle clean shadowJar [-DmainClass=Foo]
@@ -67,6 +67,8 @@ dependencies {
     implementation 'com.jcraft:jsch:0.1.55'
     implementation 'commons-cli:commons-cli:1.4'
     implementation 'com.jayway.jsonpath:json-path:2.8.0'
+    implementation group: 'org.thymeleaf', name: 'thymeleaf', version: '3.1.1.RELEASE'
+    implementation 'org.freemarker:freemarker:2.3.31'
 
     // BigQueue 的依赖
     implementation 'org.slf4j:slf4j-api:1.6.4'

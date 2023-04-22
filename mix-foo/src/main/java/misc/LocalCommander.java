@@ -44,13 +44,14 @@ public class LocalCommander {
         Files.write(shPath, command.getBytes(StandardCharsets.UTF_8));
 
         // [2] 执行 sh 脚本，获取结果
-        log.info("执行命令 [{}]，把命令写入脚本进行执行 [{}]", command, shPath);
-        String result = LocalCommander.execSh(shPath.toString());
-
-        // [3] 删除生成的临时文件
-        Files.delete(shPath);
-
-        return result;
+        try {
+            log.info("执行命令 [{}]，把命令写入脚本进行执行 [{}]", command, shPath);
+            String result = LocalCommander.execSh(shPath.toString());
+            return result;
+        } finally {
+            // [3] 删除生成的临时文件
+            Files.delete(shPath);
+        }
     }
 
     /**
@@ -152,10 +153,10 @@ public class LocalCommander {
     }
 
     public static void main(String[] args) throws Exception {
-        // String result = LocalCommander.executeCommand("ls /");
-        // System.out.println(result);
+        String result = LocalCommander.executeCommand("ls /");
+        System.out.println(result);
 
-        System.out.println("==> " + System.getProperty("user.home"));
-        LocalCommander.copyFile("~/Desktop/mongo-test.js", "~/Desktop/a/b/c");
+        // System.out.println("==> " + System.getProperty("user.home"));
+        // LocalCommander.copyFile("~/Desktop/mongo-test.js", "~/Desktop/a/b/c");
     }
 }

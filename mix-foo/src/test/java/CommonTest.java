@@ -1,3 +1,5 @@
+import com.google.common.collect.ImmutableMap;
+import org.apache.commons.text.StringSubstitutor;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -7,10 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -124,5 +123,27 @@ public class CommonTest {
         for (int i = 0; i < 1000; i++) {
             System.out.printf("insert into test_1(id, name) values(%d, 'alice');\n", i);
         }
+    }
+
+    @Test
+    public void bar2() throws Exception {
+        String template = "Hello ${name}, your age is ${age}";
+
+        // 使用常用 Map。
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", "Alice");
+        map.put("age", 12);
+        String result = StringSubstitutor.replace(template, map);
+
+        System.out.println(result); // 输出: Hello Alice, your age is 12
+
+        // 如果只有一个值，可以使用 Collections.singletonMap() 创建 Map。
+        System.out.println(StringSubstitutor.replace(template, Collections.singletonMap("name", "Alice")));
+
+        // 还可以使用 Guava 的 ImmutableMap.of("k1", "v1", "k2", "v2") 创建 Map。
+        System.out.println(StringSubstitutor.replace(template, ImmutableMap.of(
+                "name", "Alice",
+                "age", 20
+        )));
     }
 }

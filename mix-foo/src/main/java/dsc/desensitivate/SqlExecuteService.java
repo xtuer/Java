@@ -1,4 +1,4 @@
-package dsc;
+package dsc.desensitivate;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbutils.QueryRunner;

@@ -1,4 +1,4 @@
-package dsc;
+package dsc.desensitivate;
 
 /**
  * 敏感数据规则
