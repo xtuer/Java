@@ -29,7 +29,7 @@ public class ProcedureFetcher {
             int    argDataTypeValue = rs.getInt("DATA_TYPE");      // 参数的数据类型值: SQL type from java.sql.Types
             String argDataTypeName  = rs.getString("TYPE_NAME");   // 参数的数据类型名: SQL type name, for a UDT type the type name is fully qualified
 
-            procedure.getArgs().add(new Procedure.Arg(argName, argTypeValue, argDataTypeName, argDataTypeValue));
+            procedure.addArg(new Procedure.Arg(argName, argTypeValue, argDataTypeName, argDataTypeValue));
         }
 
         return procedure;

@@ -34,9 +34,8 @@ public class ProcedureExecutor {
         CallableStatement stmt = conn.prepareCall(procedure.getCallableSql());
 
         // [2] 设置存储过程的参数: 入参、出参、入出参。
-        int index = 0;
         for (Procedure.Arg arg : procedure.getArgs()) {
-            index++;
+            int index = arg.getIndex();
 
             switch (arg.getTypeValue()) {
                 case ARG_TYPE_IN:
@@ -61,12 +60,9 @@ public class ProcedureExecutor {
         Procedure.Result result = new Procedure.Result();
 
         // [4] 获取存储过程执行后的输出参数，如果有。
-        index = 0;
         for (Procedure.Arg arg : procedure.getArgs()) {
-            index++;
-
             if (arg.getTypeValue() == ARG_TYPE_OUT || arg.getTypeValue() == ARG_TYPE_INOUT) {
-                Object out = stmt.getObject(index);
+                Object out = stmt.getObject(arg.getIndex());
                 result.getOutResult().put(arg.getName(), out.toString());
             }
         }

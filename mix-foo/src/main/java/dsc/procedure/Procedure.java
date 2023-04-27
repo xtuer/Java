@@ -51,6 +51,16 @@ public class Procedure {
     }
 
     /**
+     * 添加参数。
+     *
+     * @param arg 存储过程的参数。
+     */
+    public void addArg(Arg arg) {
+        arg.setIndex(this.args.size() + 1);
+        this.args.add(arg);
+    }
+
+    /**
      * 获取存储过程的签名。
      *
      * @return 返回存储过程的签名。
@@ -113,6 +123,11 @@ public class Procedure {
          * 参数名称。
          */
         String name;
+
+        /**
+         * 参数位置，从 1 开始。
+         */
+        int index;
 
         /**
          * 参数类型值: 1 (IN), 4 (OUT), 2 (INOUT)。
