@@ -1,33 +1,14 @@
-import java.lang.annotation.*;
-import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.Random;
 
 public class Test {
-    // 数组属性只有一个值时不需要 {}
-    @Lock(1) // 或者 @Lock(value = 1)
-    public void foo() {
+    public static void main(String[] args) {
+        Random rand = new Random();
+        StringBuilder buf = new StringBuilder("SELECT * FROM test_performance WHERE id in (");
+        for (int i = 0; i < 500; i++) {
+            buf.append(rand.nextInt(5000000)).append(",");
+        }
+        buf.deleteCharAt(buf.length()-1);
+        buf.append(");");
+        System.out.println(buf);
     }
-
-    @Lock(value = {1, 2})
-    public void bar() {
-    }
-
-    // 打印方法的注解。
-    public static void printMethodAnnotation(String methodName) throws Exception {
-        Method method = Test.class.getMethod(methodName);
-        Annotation anno = method.getAnnotations()[0];
-        Lock lock = (Lock) anno;
-        System.out.printf("NS: %s\n", Arrays.toString(lock.value()));
-    }
-
-    public static void main(String[] args) throws Exception {
-        printMethodAnnotation("foo"); // NS: [1]
-        printMethodAnnotation("bar"); // NS: [1, 2]
-    }
-}
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-@interface Lock {
-    int[] value() default {};
 }

@@ -1,8 +1,10 @@
 package util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.util.DigestUtils;
 
@@ -85,6 +87,43 @@ public class Utils {
             return objectMapper.writer(printer).writeValueAsString(object);
         } catch (JsonProcessingException e) {
             return "{}";
+        }
+    }
+
+    /**
+     * 把 JSON 字符串转为对象
+     *
+     * @param json  JSON 字符串
+     * @param clazz 目标类
+     * @return 返回得到的对象，转换失败时返回 null
+     */
+    public static <T> T fromJson(String json, Class<T> clazz) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        try {
+            return objectMapper.readValue(json, clazz);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 把 JSON 字符串转为对象
+     *
+     * @param json JSON 字符串
+     * @param ref  类型引用，用于集合类型
+     * @return 返回得到的对象，转换失败时返回 null
+     */
+    public static <T> T fromJson(String json, TypeReference<T> ref) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        try {
+            return objectMapper.readValue(json, ref);
+        } catch (JsonProcessingException e) {
+            return null;
         }
     }
 
