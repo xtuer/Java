@@ -32,6 +32,9 @@ public class ProcedureFetcher {
             procedure.addArg(new Procedure.Arg(argName, argTypeValue, argDataTypeName, argDataTypeValue));
         }
 
+        // 关闭结果集释放资源。
+        rs.close();
+
         return procedure;
     }
 }

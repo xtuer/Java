@@ -28,6 +28,7 @@ public class ProcedureExecutor {
          4. 获取存储过程执行后的输出参数，如果有。
          5. 获取更新的影响行数。
          6. 获取存储过程执行后的结果集，如果有。
+         7. 关闭释放资源。
          */
 
         // [1] 创建 CallableStatement。
@@ -63,7 +64,7 @@ public class ProcedureExecutor {
         for (Procedure.Arg arg : procedure.getArgs()) {
             if (arg.getTypeValue() == ARG_TYPE_OUT || arg.getTypeValue() == ARG_TYPE_INOUT) {
                 Object out = stmt.getObject(arg.getIndex());
-                result.getOutResult().put(arg.getName(), out.toString());
+                result.getOutResult().put(arg.getName(), out);
             }
         }
 
@@ -77,7 +78,11 @@ public class ProcedureExecutor {
             while (rs.next()) {
                 result.getRows().add(rowProcessor.toMap(rs));
             }
+            rs.close();
         }
+
+        // [7] 关闭释放资源。
+        stmt.close();
 
         return result;
     }
