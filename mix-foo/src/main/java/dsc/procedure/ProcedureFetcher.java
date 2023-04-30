@@ -32,7 +32,7 @@ public class ProcedureFetcher {
             int    precision        = rs.getInt("PRECISION");      // 精度
             short  scale            = rs.getShort("SCALE");        // 标度
 
-            procedure.addArg(new Procedure.Arg(argName, argTypeValue, argDataTypeName, argDataTypeValue, length, precision, scale));
+            procedure.addArg(new ProcedureArg(argName, argTypeValue, argDataTypeName, argDataTypeValue, length, precision, scale));
             // Utils.dump(new BasicRowProcessor().toMap(rs));
         }
 

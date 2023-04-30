@@ -17,7 +17,7 @@ public class ProcedureExecuteTest {
         Procedure procedure = Utils.fromJson(json, Procedure.class);
 
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Procedure.Result result = ProcedureExecutor.execute(conn, procedure);
+            ProcedureResult result = ProcedureExecutor.execute(conn, procedure);
             Utils.dump(result);
         }
     }
