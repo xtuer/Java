@@ -21,24 +21,22 @@ public class ProcedureFetcher {
     public static Procedure fetch(Connection conn, String catalog, String schema, String procedureName) throws SQLException {
         Procedure procedure = new Procedure(catalog, schema, procedureName);
         DatabaseMetaData meta = conn.getMetaData();
-        ResultSet rs = meta.getProcedureColumns(procedure.getCatalog(), procedure.getSchema(), procedure.getName(), null);
 
-        while (rs.next()) {
-            String argName          = rs.getString("COLUMN_NAME"); // 参数名称
-            int    argTypeValue     = rs.getInt("COLUMN_TYPE");    // 入参出参:  1 (IN), 4 (OUT), 2 (INOUT)
-            int    argDataTypeValue = rs.getInt("DATA_TYPE");      // 参数的数据类型值: SQL type from java.sql.Types
-            String argDataTypeName  = rs.getString("TYPE_NAME");   // 参数的数据类型名: SQL type name, for a UDT type the type name is fully qualified
-            int    length           = rs.getInt("LENGTH");         // 长度
-            int    precision        = rs.getInt("PRECISION");      // 精度
-            short  scale            = rs.getShort("SCALE");        // 标度
+        try (ResultSet rs = meta.getProcedureColumns(procedure.getCatalog(), procedure.getSchema(), procedure.getName(), null)) {
+            while (rs.next()) {
+                String argName          = rs.getString("COLUMN_NAME"); // 参数名称
+                int    argTypeValue     = rs.getInt("COLUMN_TYPE");    // 入参出参:  1 (IN), 4 (OUT), 2 (INOUT)
+                int    argDataTypeValue = rs.getInt("DATA_TYPE");      // 参数的数据类型值: SQL type from java.sql.Types
+                String argDataTypeName  = rs.getString("TYPE_NAME");   // 参数的数据类型名: SQL type name, for a UDT type the type name is fully qualified
+                int    length           = rs.getInt("LENGTH");         // 长度
+                int    precision        = rs.getInt("PRECISION");      // 精度
+                short  scale            = rs.getShort("SCALE");        // 标度
 
-            procedure.addArg(new ProcedureArg(argName, argTypeValue, argDataTypeName, argDataTypeValue, length, precision, scale));
-            // Utils.dump(new BasicRowProcessor().toMap(rs));
+                procedure.addArg(new ProcedureArg(argName, argTypeValue, argDataTypeName, argDataTypeValue, length, precision, scale));
+                // Utils.dump(new BasicRowProcessor().toMap(rs));
+            }
+
+            return procedure;
         }
-
-        // 关闭结果集释放资源。
-        rs.close();
-
-        return procedure;
     }
 }

@@ -31,27 +31,27 @@ public class ProcedureExecutor {
          */
 
         // [1] 创建 CallableStatement。
-        CallableStatement stmt = conn.prepareCall(procedure.getCallableSql());
+        try (CallableStatement stmt = conn.prepareCall(procedure.getCallableSql())) {
+            // [2] 设置存储过程的参数: 入参、出参、入出参。
+            setupProcedureParameters(stmt, procedure);
 
-        // [2] 设置存储过程的参数: 入参、出参、入出参。
-        setupParameters(stmt, procedure);
+            // [3] 执行存储过程。
+            stmt.execute();
 
-        // [3] 执行存储过程。
-        stmt.execute();
+            // [4] 获取存储过程执行的结果。
+            ProcedureResult result = getProcedureResult(stmt, procedure);
 
-        // [4] 获取存储过程执行的结果。
-        ProcedureResult result = getProcedureResult(stmt, procedure);
+            // [5] 关闭释放资源。
+            stmt.close();
 
-        // [5] 关闭释放资源。
-        stmt.close();
-
-        return result;
+            return result;
+        }
     }
 
     /**
      * 设置存储过程的参数: 入参、出参、入出参。
      */
-    private static void setupParameters(CallableStatement stmt, Procedure procedure) throws SQLException {
+    private static void setupProcedureParameters(CallableStatement stmt, Procedure procedure) throws SQLException {
         for (ProcedureArg arg : procedure.getArgs()) {
             int index = arg.getIndex();
 
