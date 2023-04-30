@@ -26,16 +26,32 @@ public class ProcedureExecutor {
          1. 创建 CallableStatement。
          2. 设置存储过程的参数: 入参、出参、入出参。
          3. 执行存储过程。
-         4. 获取存储过程执行后的输出参数，如果有。
-         5. 获取更新的影响行数。
-         6. 获取存储过程执行后的结果集，如果有。
-         7. 关闭释放资源。
+         4. 获取存储过程执行的结果。
+         5. 关闭释放资源。
          */
 
         // [1] 创建 CallableStatement。
         CallableStatement stmt = conn.prepareCall(procedure.getCallableSql());
 
         // [2] 设置存储过程的参数: 入参、出参、入出参。
+        setupParameters(stmt, procedure);
+
+        // [3] 执行存储过程。
+        stmt.execute();
+
+        // [4] 获取存储过程执行的结果。
+        ProcedureResult result = getProcedureResult(stmt, procedure);
+
+        // [5] 关闭释放资源。
+        stmt.close();
+
+        return result;
+    }
+
+    /**
+     * 设置存储过程的参数: 入参、出参、入出参。
+     */
+    private static void setupParameters(CallableStatement stmt, Procedure procedure) throws SQLException {
         for (ProcedureArg arg : procedure.getArgs()) {
             int index = arg.getIndex();
 
@@ -63,14 +79,24 @@ public class ProcedureExecutor {
                     System.out.println("UNKNOWN Arg Type: " + arg.getTypeValue());
             }
         }
+    }
 
-        // [3] 执行存储过程。
-        stmt.execute();
-
-        // 保存结果。
+    /**
+     * 获取存储过程执行后的结果。
+     */
+    private static ProcedureResult getProcedureResult(CallableStatement stmt, Procedure procedure) throws SQLException {
+        /*
+         逻辑:
+         1. 获取更新的影响行数 (即使是更新语句，也有可能返回 -1)。
+         2. 获取存储过程执行的输出参数。
+         3. 获取存储过程执行的结果集。
+         */
         ProcedureResult result = new ProcedureResult();
 
-        // [4] 获取存储过程执行后的输出参数，如果有。
+        // [1] 获取更新的影响行数。
+        result.setUpdateCount(stmt.getUpdateCount());
+
+        // [2] 获取存储过程执行的输出参数。
         for (ProcedureArg arg : procedure.getArgs()) {
             if (arg.useOracleCursor()) {
                 // Oracle: 获取游标类型的输出参数。
@@ -83,15 +109,8 @@ public class ProcedureExecutor {
             }
         }
 
-        // [5] 获取更新的影响行数。
-        result.setUpdateCount(stmt.getUpdateCount());
-
-        // [6] 获取存储过程执行后的结果集，如果有。
-        ResultSet rs = stmt.getResultSet();
-        handleResultSet(rs, result);
-
-        // [7] 关闭释放资源。
-        stmt.close();
+        // [3] 获取存储过程执行的结果集。
+        handleResultSet(stmt.getResultSet(), result);
 
         return result;
     }
