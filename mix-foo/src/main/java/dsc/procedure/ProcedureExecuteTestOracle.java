@@ -16,6 +16,7 @@ public class ProcedureExecuteTestOracle {
             conn.setSchema("TEST");
 
             // testGet(conn);
+            // testUpdate(conn);
             testMix(conn);
         }
     }
@@ -37,6 +38,16 @@ public class ProcedureExecuteTestOracle {
         procedure.getArgs().get(0).setValue(5);
         procedure.getArgs().get(1).setValue(10);
         procedure.getArgs().get(3).setValue(3);
+
+        ProcedureResult result = ProcedureExecutor.execute(conn, procedure);
+        Utils.dump(result);
+    }
+
+    public static void testUpdate(Connection conn) throws SQLException {
+        Procedure procedure = ProcedureFetcher.fetch(conn, null, "TEST", "PROC_UPDATE");
+        Utils.dump(procedure);
+
+        procedure.getArgs().get(0).setValue(88);
 
         ProcedureResult result = ProcedureExecutor.execute(conn, procedure);
         Utils.dump(result);

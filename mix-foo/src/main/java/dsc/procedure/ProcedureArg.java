@@ -119,7 +119,7 @@ public class ProcedureArg {
      * @return 是返回 true，否则返回 false。
      */
     public boolean useOracleCursor() {
-        return DATA_TYPE_NAME_OF_ORACLE_CURSOR.equals(this.dataTypeName);
+        return TYPE_OUT == this.typeValue && DATA_TYPE_NAME_OF_ORACLE_CURSOR.equals(this.dataTypeName);
     }
 
     /**
