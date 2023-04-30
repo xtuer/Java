@@ -1,5 +1,8 @@
 package dsc.procedure;
 
+import org.apache.commons.dbutils.BasicRowProcessor;
+import util.Utils;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -28,8 +31,12 @@ public class ProcedureFetcher {
             int    argTypeValue     = rs.getInt("COLUMN_TYPE");    // 入参出参:  1 (IN), 4 (OUT), 2 (INOUT)
             int    argDataTypeValue = rs.getInt("DATA_TYPE");      // 参数的数据类型值: SQL type from java.sql.Types
             String argDataTypeName  = rs.getString("TYPE_NAME");   // 参数的数据类型名: SQL type name, for a UDT type the type name is fully qualified
+            int    length           = rs.getInt("LENGTH");         // 长度
+            int    precision        = rs.getInt("PRECISION");      // 精度
+            short  scale            = rs.getShort("SCALE");        // 标度
 
-            procedure.addArg(new Procedure.Arg(argName, argTypeValue, argDataTypeName, argDataTypeValue));
+            procedure.addArg(new Procedure.Arg(argName, argTypeValue, argDataTypeName, argDataTypeValue, length, precision, scale));
+            // Utils.dump(new BasicRowProcessor().toMap(rs));
         }
 
         // 关闭结果集释放资源。

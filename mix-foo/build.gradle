@@ -69,6 +69,8 @@ dependencies {
     implementation 'com.jayway.jsonpath:json-path:2.8.0'
     implementation group: 'org.thymeleaf', name: 'thymeleaf', version: '3.1.1.RELEASE'
     implementation 'org.freemarker:freemarker:2.3.31'
+    implementation files('/Users/biao/Documents/temp/java/ojdbc8-12.2.0.1.jar')
+//    implementation 'com.oracle.database.jdbc:ojdbc10:19.18.0.0'
 
     // BigQueue 的依赖
     implementation 'org.slf4j:slf4j-api:1.6.4'

@@ -2,6 +2,8 @@ import com.alibaba.fastjson.JSON;
 import com.xtuer.bean.Result;
 import com.xtuer.bean.Role;
 import com.xtuer.bean.User;
+import org.apache.ibatis.type.BooleanTypeHandler;
+import org.apache.ibatis.type.MappedTypes;
 import org.junit.jupiter.api.Test;
 
 public class ResultTest {

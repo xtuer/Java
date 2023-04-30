@@ -2,10 +2,14 @@ package com.xtuer.config;
 
 import com.xtuer.converter.DateConverter;
 import com.xtuer.converter.JacksonHttpMessageConverter;
+import org.apache.ibatis.mapping.DatabaseIdProvider;
+import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
+
+import java.util.Properties;
 
 @Configuration
 public class WebConfig {
@@ -36,5 +40,17 @@ public class WebConfig {
     @Bean
     public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
         return new HiddenHttpMethodFilter();
+    }
+
+    @Bean
+    public DatabaseIdProvider databaseIdProvider() {
+        Properties prop = new Properties();
+        prop.setProperty("MySQL", "mysql");
+        prop.setProperty("Oracle", "oracle");
+        prop.setProperty("PostgreSQL", "pg");
+
+        VendorDatabaseIdProvider provider = new VendorDatabaseIdProvider();
+        provider.setProperties(prop);
+        return provider;
     }
 }
