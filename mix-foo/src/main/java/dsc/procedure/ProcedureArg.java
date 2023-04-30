@@ -21,8 +21,9 @@ public class ProcedureArg {
 
     /**
      * Oracle 游标的数据类型值: OracleTypes.CURSOR = -10
+     * 提示: 在这里写死而不是引用 Oracle 的类中的值是为了先不依赖 Oracle 驱动。
      */
-    private static final int DATA_TYPE_VALUE_OF_ORACLE_CURSOR = -10;
+    public static final int DATA_TYPE_VALUE_OF_ORACLE_CURSOR = -10;
 
     /**
      * 参数名称。
@@ -120,14 +121,5 @@ public class ProcedureArg {
      */
     public boolean useOracleCursor() {
         return TYPE_OUT == this.typeValue && DATA_TYPE_NAME_OF_ORACLE_CURSOR.equals(this.dataTypeName);
-    }
-
-    /**
-     * 获取 Oracle 游标的数据类型 (在这里写死而不是引用 Oracle 的类中的值是为了先不引用 Oracle 驱动)。
-     *
-     * @return 返回游标的类型值。
-     */
-    public int getDataTypeValueOfOracleCursor() {
-        return DATA_TYPE_VALUE_OF_ORACLE_CURSOR;
     }
 }

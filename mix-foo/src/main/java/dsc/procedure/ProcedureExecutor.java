@@ -50,7 +50,7 @@ public class ProcedureExecutor {
                 case ProcedureArg.TYPE_OUT:
                     if (arg.useOracleCursor()) {
                         // Oracle 查询结果集需要使用游标获取。
-                        stmt.registerOutParameter(index, arg.getDataTypeValueOfOracleCursor());
+                        stmt.registerOutParameter(index, ProcedureArg.DATA_TYPE_VALUE_OF_ORACLE_CURSOR);
                     } else {
                         stmt.registerOutParameter(index, arg.getDataTypeValue());
                     }
