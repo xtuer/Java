@@ -1,5 +1,8 @@
-package dsc.procedure;
+package dsc.procedure.test;
 
+import dsc.procedure.Procedure;
+import dsc.procedure.ProcedureExecutor;
+import dsc.procedure.ProcedureResult;
 import util.Utils;
 
 import java.nio.file.Files;

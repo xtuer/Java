@@ -1,6 +1,6 @@
-package dsc.procedure;
+package xtuer.procedure;
 
-import util.Utils;
+import xtuer.util.Utils;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

@@ -1,4 +1,4 @@
-package dsc.procedure;
+package xtuer.procedure;
 
 import lombok.Data;
 

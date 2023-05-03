@@ -1,4 +1,4 @@
-package dsc.procedure;
+package xtuer.procedure;
 
 import org.apache.commons.dbutils.BasicRowProcessor;
 
@@ -64,7 +64,7 @@ public class ProcedureExecutor {
                     stmt.setObject(index, arg.getValue());
                     break;
                 case ProcedureArg.TYPE_OUT:
-                    if (arg.useOracleCursor()) {
+                    if (arg.useOracleCursorInProcedure()) {
                         // [*] Oracle 查询结果集需要使用游标获取。
                         stmt.registerOutParameter(index, ProcedureArg.DATA_TYPE_VALUE_OF_ORACLE_CURSOR);
                     } else {
@@ -98,7 +98,7 @@ public class ProcedureExecutor {
 
         // [2] 获取存储过程执行的输出参数。
         for (ProcedureArg arg : procedure.getArgs()) {
-            if (arg.useOracleCursor()) {
+            if (arg.useOracleCursorInProcedure()) {
                 // Oracle: 获取游标类型的输出参数。
                 ResultSet rs = (ResultSet) stmt.getObject(arg.getIndex());
                 handleResultSet(rs, result);

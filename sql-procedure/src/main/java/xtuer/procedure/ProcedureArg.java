@@ -1,4 +1,4 @@
-package dsc.procedure;
+package xtuer.procedure;
 
 /**
  * 存储过程的参数。
@@ -54,7 +54,7 @@ public class ProcedureArg extends FunctionOrProcedureArg {
      *
      * @return 是返回 true，否则返回 false。
      */
-    public boolean useOracleCursor() {
+    public boolean useOracleCursorInProcedure() {
         return TYPE_OUT == this.argTypeValue && DATA_TYPE_NAME_OF_ORACLE_CURSOR.equals(this.dataTypeName);
     }
 }

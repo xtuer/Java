@@ -1,6 +1,8 @@
-package dsc.procedure;
+package xtuer.procedure.test;
 
-import util.Utils;
+import xtuer.procedure.Procedure;
+import xtuer.procedure.ProcedureFetcher;
+import xtuer.util.Utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
