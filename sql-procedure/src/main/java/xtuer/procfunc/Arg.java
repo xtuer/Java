@@ -1,0 +1,104 @@
+package xtuer.procfunc;
+
+import lombok.Data;
+
+@Data
+public abstract class Arg {
+    /**
+     * 参数类型名称。
+     */
+    public static final String ARG_TYPE_NAME_IN      = "IN";
+    public static final String ARG_TYPE_NAME_INOUT   = "INOUT";
+    public static final String ARG_TYPE_NAME_OUT     = "OUT";
+    public static final String ARG_TYPE_NAME_RETURN  = "RETURN";
+    public static final String ARG_TYPE_NAME_UNKNOWN = "UNKNOWN";
+
+    /**
+     * 参数名称。
+     */
+    String name;
+
+    /**
+     * 参数位置，从 1 开始。
+     */
+    int index;
+
+    /**
+     * 参数的原始位置，有返回值时从 0 开始。
+     */
+    int originalPosition;
+
+    /**
+     * 参数类型值: 1 (IN), 4 (OUT), 2 (INOUT)。
+     */
+    int argTypeValue;
+
+    /**
+     * 参数类型名: IN, OUT, INOUT, RETURN。
+     */
+    String argTypeName;
+
+    /**
+     * 参数的数据类型值: SQL type name, for a UDT type the type name is fully qualified。
+     */
+    int dataTypeValue;
+
+    /**
+     * 参数的数据类型名: SQL type from java.sql.Types，例如 INT。
+     */
+    String dataTypeName;
+
+    /**
+     * 长度。
+     */
+    int length;
+
+    /**
+     * 精度: 是指数值数据类型的总位数，包括整数和小数部分的位数，例如整数的显示长度，varchar 的长度。
+     * 对于 DECIMAL(10,2) 类型的列，它的 precision 是 10，scale 是 2。这意味着该列可以存储 10 位数，其中小数部分占 2 位。
+     */
+    int precision;
+
+    /**
+     * 标度: 是指数值数据类型中小数部分的位数。
+     */
+    short scale;
+
+    /**
+     * 参数值: 执行存储过程，前端传给后端时保存用户输入的值。
+     */
+    Object value;
+
+    public Arg() {}
+
+    /**
+     * 创建参数对象。
+     *
+     * @param name          参数名称。
+     * @param originalPosition 参数的原始位置。
+     * @param argTypeValue  参数类型值: 1 (IN), 4 (OUT), 2 (INOUT)。
+     * @param dataTypeName  参数的数据类型名: 例如 NCHAR。
+     * @param dataTypeValue 参数的数据类型值: 例如 -15。
+     * @param length        长度。
+     * @param precision     精度。
+     * @param scale         标度。
+     */
+    public Arg(String name, int originalPosition, int argTypeValue, String dataTypeName, int dataTypeValue, int length, int precision, short scale) {
+        this.name = name;
+        this.originalPosition = originalPosition;
+        this.argTypeValue = argTypeValue;
+        this.dataTypeName = dataTypeName;
+        this.dataTypeValue = dataTypeValue;
+        this.length = length;
+        this.precision = precision;
+        this.scale = scale;
+
+        // 计算参数类型名字。
+        this.calculateArgTypeName();
+    }
+
+    /**
+     * 计算参数的类型名: IN, INOUT, OUT, RETURN 等。
+     */
+    protected abstract void calculateArgTypeName();
+}

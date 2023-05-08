@@ -36,6 +36,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.3'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
     implementation 'commons-dbutils:commons-dbutils:1.7'
+    implementation "org.apache.commons:commons-lang3:3.8"
     implementation 'mysql:mysql-connector-java:5.1.46'
     implementation 'com.oracle.database.jdbc:ojdbc10:19.18.0.0'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'

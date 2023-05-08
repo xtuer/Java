@@ -8,6 +8,7 @@ public class FunctionArg extends FunctionOrProcedureArg {
     public static final int TYPE_INOUT  = 2; // TODO: 待确定。
     public static final int TYPE_OUT    = 3;
     public static final int TYPE_RETURN = 4;
+    // TODO: returns 为表名: "COLUMN_TYPE" : 5, "ORDINAL_POSITION" : 0,
 
     /**
      * Postgre 函数返回类型名:
