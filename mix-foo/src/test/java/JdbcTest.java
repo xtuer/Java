@@ -2,21 +2,20 @@ import java.sql.*;
 import org.junit.Test;
 
 public class JdbcTest {
-    static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/mm_table?useSSL=false";
-    static final String USER   = "root";
-    static final String PASS   = "root";
+    static final String DB_URL = "jdbc:mysql://192.168.1.163:3306/ndtmdb?useSSL=false";
+    static final String USER   = "sys_admin";
+    static final String PASS   = "manager";
 
     @Test
     public void test() {
         try(Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
             // conn.setAutoCommit(false);
             Statement stmt = conn.createStatement();
-            stmt.setQueryTimeout(5); // 设置语句执行的超时时间
-            String sql = "-- Comments\n"
-                    + "insert into test(id, name) values(5, /* comments */'Biao''s Huang');";
-            // sql = "sleep 1";
-            sql += "SET NAMES utf8mb4;";
-            stmt.execute(sql);
+            String sql = "select * from db_monconf_interactive where funcname='ORA_DATA_TBSPTABLE'";
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                System.out.println(rs.getObject(1));
+            }
             // System.out.println(ar);
         } catch (SQLException e) {
             e.printStackTrace();

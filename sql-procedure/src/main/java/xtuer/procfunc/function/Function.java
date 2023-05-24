@@ -24,6 +24,11 @@ public class Function {
     private String name;
 
     /**
+     * 是否支持。
+     */
+    private boolean supported = true;
+
+    /**
      * 函数的参数列表，参数顺序不能乱。
      */
     private List<FunctionArg> args = new ArrayList<>();

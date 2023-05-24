@@ -15,17 +15,17 @@ on-success: 上传成功时触发，参数为 { fileName, fileUid }
     <div class="big-file-uploader">
         <div class="file-chooser">
             <!-- MD5 计算中、上传中不可点击 -->
-            <input ref="file" type="file" :disabled="fileInputDisabled">
+            <input ref="file" type="file" :disabled="stateObject.fileInputDisabled">
 
             <!-- 进度条: style="width: 30%" 设置进度 -->
-            <div :class="{ active: state === 3 || state === 4 }" class="progress">
-                <div :style="{ width: progress+'%' }" :class="progressBarClass" class="progress-bar progress-bar-striped"></div>
+            <div :class="{ active: state === 3 || state === 13 }" class="progress">
+                <div :style="{ width: progress+'%' }" :class="stateObject.progressBarClass" class="progress-bar progress-bar-striped"></div>
             </div>
 
             <!-- 文件名 -->
             <div class="file-name">{{ fileName }}</div>
         </div>
-        <Icon :type="actionButton.icon" :color="actionButton.color" size="16" class="action-button" @click="doAction"/>
+        <Icon :type="stateObject.icon" :color="stateObject.color" size="16" class="action-button" @click="onActionButtonClicked"/>
     </div>
 </template>
 

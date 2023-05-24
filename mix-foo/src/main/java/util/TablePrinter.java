@@ -13,36 +13,20 @@ public class TablePrinter {
         List<User> users = new LinkedList<>();
         users.add(new User(1, "Alice"));
         users.add(new User(2, "Bob"));
-        TablePrinter.print(users, User.class);
+        TablePrinter.print(users);
 
         // [2] 打印 List<List>
-        // 表头。
         List<String> headers = new LinkedList<>(Arrays.asList("Name", "OriginalPosition", "ArgTyeValue", "ArgTypeName", "DataTypeName"));
         List<List<String>> rows = new ArrayList<>();
-
-        List<String> row1 = new ArrayList<>();
-        row1.add("id");
-        row1.add("1");
-        row1.add("1");
-        row1.add("IN");
-        row1.add("int4");
-        rows.add(row1);
-
-        List<String> row2 = new LinkedList<>();
-        row2.add("returnValue");
-        row2.add("0");
-        row2.add("4");
-        row2.add("RETURN");
-        row2.add("int4");
-        rows.add(row2);
-
+        rows.add(Arrays.asList("id", "1", "1", "IN", "int4"));
+        rows.add(Arrays.asList("returnValue", "0", "4", "RETURN", null));
         TablePrinter.print(headers, rows);
     }
 
     /**
      * 把对象数组打印成表格格式，表头为属性名。
      */
-    public static void print(List<?> data, Class<?> clazz, String... ignoredFields) {
+    public static void print(List<?> data, String... ignoredFields) {
         /*
          逻辑:
          1. 反射获取属性名，作为表头。
@@ -56,6 +40,7 @@ public class TablePrinter {
 
         try {
             // [1] 反射获取属性名，作为表头。
+            Class<?> clazz = data.get(0).getClass();
             for (Field field : TablePrinter.getAllFields(clazz)) {
                 String fieldName = field.getName();
 
@@ -71,13 +56,13 @@ public class TablePrinter {
             for (Object obj : data) {
                 List<String> row = new LinkedList<>();
                 for (Field field : fields) {
-                    row.add(Objects.toString(field.get(obj), ""));
+                    row.add(String.valueOf(field.get(obj)));
                 }
                 rows.add(row);
             }
 
             // [3] 打印为表格。
-            print(headers, rows);
+            TablePrinter.print(headers, rows);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -89,55 +74,49 @@ public class TablePrinter {
     public static void print(List<String> headers, List<List<String>> rows) {
         /*
          逻辑:
-         1. 克隆数据，避免影传入的 headers 和 rows。
-         2. 每个元素前后加一个空格，方便格式化。
-         3. 计算每一列的最大长度。
+         1. 克隆数据，避免影响传入的 headers 和 rows。
+         2. 每个元素前后加一个空格，输出结果更好看。
+         3. 计算每一列的最大宽度。
          4. 表头下加入分割行。
          5. 按行格式化输出。
          */
 
         List<List<String>> table = new ArrayList<>();
 
-        // [1] 克隆数据，避免影传入的 headers 和 rows。
+        // [1] 克隆数据，避免影响传入的 headers 和 rows。
         table.add(new ArrayList<>(headers));
-        for (List<String> row : rows) {
-            table.add(new ArrayList<>(row));
-        }
+        rows.forEach(row -> table.add(new ArrayList<>(row)));
 
-        // [2] 每个元素前后加一个空格，方便格式化。
+        // [2] 每个元素前后加一个空格，输出结果更好看。
         for (List<String> row : table) {
             row.replaceAll(s -> " " + s + " ");
         }
 
-        // [3] 计算每一列的最大长度。
-        final int columnCount = table.get(0).size();
-        List<Integer> columnLengthList = new ArrayList<>();
+        // [3] 计算每一列的最大宽度。
+        final int columnCount = headers.size();
+        final int[] columnWidths = new int[columnCount];
 
         for (int col = 0; col < columnCount; col++) {
-            // 所有行的第 col 列的长度的最大值。
-            int maxLength = 0;
             for (List<String> row : table) {
-                maxLength = Math.max(row.get(col).length(), maxLength);
+                columnWidths[col] = Math.max(row.get(col).length(), columnWidths[col]);
             }
-            columnLengthList.add(maxLength);
         }
 
         // [4] 表头下加入分割行。
         List<String> separatorRow = new ArrayList<>();
         for (int col = 0; col < columnCount; col++) {
-            separatorRow.add(StringUtils.repeat('-', columnLengthList.get(col)));
+            separatorRow.add(StringUtils.repeat('-', columnWidths[col]));
         }
         table.add(1, separatorRow);
 
         // [5] 按行格式化输出。
         StringBuilder buf = new StringBuilder();
         for (List<String> row : table) {
-            buf.append("|");
             for (int col = 0; col < columnCount; col++) {
-                String temp = StringUtils.rightPad(row.get(col), columnLengthList.get(col));
-                buf.append(temp).append("|");
+                String cell = String.format("|%-" + columnWidths[col] + "s", row.get(col));
+                buf.append(cell);
             }
-            buf.append("\n");
+            buf.append("|\n");
         }
 
         System.out.println(buf);

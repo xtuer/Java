@@ -2,6 +2,9 @@ package xtuer.procfunc;
 
 import lombok.Data;
 
+/**
+ * 存储过程或者函数的参数，它们既有相似之处，又有不同之处。
+ */
 @Data
 public abstract class Arg {
     /**
@@ -12,6 +15,7 @@ public abstract class Arg {
     public static final String ARG_TYPE_NAME_OUT     = "OUT";
     public static final String ARG_TYPE_NAME_RETURN  = "RETURN";
     public static final String ARG_TYPE_NAME_UNKNOWN = "UNKNOWN";
+    public static final String ARG_TYPE_NAME_RETURN_POST = "RETURN_POST";
 
     /**
      * 参数名称。
@@ -19,7 +23,7 @@ public abstract class Arg {
     String name;
 
     /**
-     * 参数位置，从 1 开始。
+     * 参数位置，执行时使用，从 1 开始。
      */
     int index;
 
@@ -83,7 +87,8 @@ public abstract class Arg {
      * @param precision     精度。
      * @param scale         标度。
      */
-    public Arg(String name, int originalPosition, int argTypeValue, String dataTypeName, int dataTypeValue, int length, int precision, short scale) {
+    public Arg(String name, int originalPosition, int argTypeValue, String dataTypeName,
+               int dataTypeValue, int length, int precision, short scale) {
         this.name = name;
         this.originalPosition = originalPosition;
         this.argTypeValue = argTypeValue;
@@ -99,6 +104,16 @@ public abstract class Arg {
 
     /**
      * 计算参数的类型名: IN, INOUT, OUT, RETURN 等。
+     * 函数或者存储过程的入参出参等的值不一样。
      */
     protected abstract void calculateArgTypeName();
+
+    /**
+     * 获取参数的签名，例如 IN name varchar。
+     *
+     * @return 返回参数的签名字符串。
+     */
+    public String getSignature() {
+        return String.format("%s %s %s", argTypeName, name, dataTypeName);
+    }
 }
