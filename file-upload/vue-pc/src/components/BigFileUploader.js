@@ -47,7 +47,7 @@ export default {
                 [STATE_UNKNOWN]        : { fileInputDisabled: false, progressBarClass: 'progress-bar-info',    icon: 'ios-play',       color: 'lightgray', action: null },
                 [STATE_FILE_READY]     : { fileInputDisabled: false, progressBarClass: 'progress-bar-info',    icon: 'ios-play',       color: 'black',     action: null },
                 [STATE_MD5_DOING]      : { fileInputDisabled: true,  progressBarClass: 'progress-bar-default', icon: 'md-close',       color: 'red',       action: this.calculateFileMd5 },
-                [STATE_MD5_SUCCESS]    : { fileInputDisabled: false, progressBarClass: 'progress-bar-default', icon: 'md-close',       color: 'red',       action: this.requestUpload },
+                [STATE_MD5_SUCCESS]    : { fileInputDisabled: false, progressBarClass: 'progress-bar-default', icon: 'md-close',       color: 'red',       action: this.createUploadedFile },
                 [STATE_MD5_FAILED]     : { fileInputDisabled: false, progressBarClass: 'progress-bar-danger',  icon: 'md-close',       color: 'red',       action: null },
                 [STATE_MD5_CANCELED]   : { fileInputDisabled: false, progressBarClass: 'progress-bar-default', icon: 'ios-play',       color: 'lightgray', action: null },
                 [STATE_UPLOAD_READY]   : { fileInputDisabled: false, progressBarClass: 'progress-bar-default', icon: 'md-close',       color: 'red',       action: this.uploadFile },
@@ -149,9 +149,9 @@ export default {
                 console.error(err);
             }
         },
-        // 请求文件上传。
-        async requestUpload() {
-            // [1] 初始化上传任务状态。
+        // 请求创建文件上传。
+        async createUploadedFile() {
+            // 初始化上传任务状态。
             this.uploadingJob = this.newUploadingJob();
 
             try {
