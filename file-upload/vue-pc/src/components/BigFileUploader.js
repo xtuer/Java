@@ -38,11 +38,11 @@ export default {
             md5FinishedBytes: 0, // 文件计算 MD5 处理完的字节数。
 
             // 统一状态管理，定义每个状态的按钮状态、图标、要执行的函数 (变量值作为对象的 key 需要使用 [] 把变量包裹起来]。
-            //   fileInputDisabled 为文件选择器是否可用。
-            //   progressBarClass 为进度条的类名。
-            //   icon 为操作按钮的图标。
-            //   color 为操作按钮的颜色。
-            //   action 为此状态下要支持的函数。
+            // - fileInputDisabled 为文件选择器是否可用。
+            // - progressBarClass 为进度条的类名。
+            // - icon 为操作按钮的图标。
+            // - color 为操作按钮的颜色。
+            // - action 为此状态下要支持的函数。
             stateManager: {
                 [STATE_UNKNOWN]        : { fileInputDisabled: false, progressBarClass: 'progress-bar-info',    icon: 'ios-play',       color: 'lightgray', action: null },
                 [STATE_FILE_READY]     : { fileInputDisabled: false, progressBarClass: 'progress-bar-info',    icon: 'ios-play',       color: 'black',     action: null },
@@ -57,6 +57,15 @@ export default {
                 [STATE_UPLOAD_CANCELED]: { fileInputDisabled: false, progressBarClass: 'progress-bar-info',    icon: 'ios-play',       color: 'lightgray', action: null },
             }
         };
+    },
+    watch: {
+        // 监听状态变化，执行状态相应的操作。
+        state(newState, oldState) {
+            // 状态的操作存在则调用。
+            if (this.stateObject.action) {
+                this.stateObject.action();
+            }
+        }
     },
     mounted() {
         // 选择文件的事件处理。
@@ -75,15 +84,6 @@ export default {
             }
         });
     },
-    watch: {
-        // 监听状态变化，执行状态相应的操作。
-        state(newState, oldState) {
-            // 状态的操作存在则调用。
-            if (this.stateObject.action) {
-                this.stateObject.action();
-            }
-        }
-    },
     computed: {
         // 上传的文件名。
         fileName() {
@@ -93,7 +93,7 @@ export default {
         stateObject() {
             return this.stateManager[this.state];
         },
-        // 上传进度，返回值在 [0, 100] 之间。
+        // 处理进度，返回值在 [0, 100] 之间。
         progress() {
             // 未选择文件，选择文件未上传时。
             if (this.state === STATE_UNKNOWN || this.state === STATE_FILE_READY) {
@@ -149,7 +149,7 @@ export default {
                 console.error(err);
             }
         },
-        // 请求上传文件。
+        // 请求文件上传。
         async requestUpload() {
             // [1] 初始化上传任务状态。
             this.uploadingJob = this.newUploadingJob();
@@ -162,7 +162,7 @@ export default {
                 console.error(err);
             }
         },
-        // 取消上传。
+        // 取消文件上传。
         cancelUpload() {
             console.log(`[取消] 取消上传文件 [${this.file.name}]`);
             this.state = STATE_UPLOAD_CANCELED;
@@ -276,8 +276,8 @@ export default {
 
             // [3] 从分片队列里获取一个分片进行上传:
             // [3.1] 正在上传的分片数 +1。
-            this.uploadingJob.uploadingCount += 1;
             const chunk = this.uploadingJob.chunkQueue.shift();
+            this.uploadingJob.uploadingCount += 1;
 
             try {
                 // [3.2] 上传前先检查分片状态，判断是否有必要上传。
