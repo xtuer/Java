@@ -43,7 +43,8 @@ export default {
             // - icon 为操作按钮的图标。
             // - color 为操作按钮的颜色。
             // - action 为此状态下要支持的函数。
-            stateManager: {
+            // 正常流程的状态转移: STATE_FILE_READY -> STATE_MD5_DOING -> STATE_MD5_SUCCESS -> STATE_UPLOAD_READY -> STATE_UPLOAD_DOING -> STATE_UPLOAD_SUCCESS
+            states: {
                 [STATE_UNKNOWN]        : { fileInputDisabled: false, progressBarClass: 'progress-bar-default', icon: 'ios-play',       color: 'lightgray', action: null },
                 [STATE_FILE_READY]     : { fileInputDisabled: false, progressBarClass: 'progress-bar-default', icon: 'ios-play',       color: 'black',     action: null },
                 [STATE_MD5_DOING]      : { fileInputDisabled: true,  progressBarClass: 'progress-bar-default', icon: 'md-close',       color: 'red',       action: this.calculateFileMd5 },
@@ -91,7 +92,7 @@ export default {
         },
         // 获取状态对象。
         stateObject() {
-            return this.stateManager[this.state];
+            return this.states[this.state];
         },
         // 处理进度，返回值在 [0, 100] 之间。
         progress() {
