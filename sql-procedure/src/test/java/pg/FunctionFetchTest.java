@@ -22,11 +22,11 @@ public class FunctionFetchTest {
     @Test
     public void fetch() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Function func = FunctionFetcher.fetch(conn, CATALOG, SCHEMA, "func_has_arg_return_base_type");
+            Function func = FunctionFetcher.fetch(conn, CATALOG, SCHEMA, "func_no_arg_return_base_type");
             Function pgFunc = Function.fromFunction(func, PostgresFunction.class);
             print(pgFunc);
 
-            Result result = new PostgresFunctionExecutor().execute(conn, pgFunc, Arrays.asList(1, 2));
+            Result result = new PostgresFunctionExecutor().execute(conn, pgFunc, Arrays.asList(1, 2, 3));
             Utils.dump(result);
         }
     }
@@ -66,5 +66,6 @@ public class FunctionFetchTest {
         System.out.println(func.getCallableSql());
         System.out.println("Signature:");
         System.out.println(func.getSignature());
+        System.out.println();
     }
 }

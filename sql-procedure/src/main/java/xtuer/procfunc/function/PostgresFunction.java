@@ -32,13 +32,21 @@ public class PostgresFunction extends Function {
             }
         }
 
+        // 同时有 OUT 和 return，把 return 删掉。
+        for (FunctionArg arg : inoutArgs) {
+            if (arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_INOUT || arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_OUT) {
+                returnArgs.clear();
+                break;
+            }
+        }
+
         return this;
     }
 
     @Override
     public String getSignature() {
         // func_name() return (void)
-        // func_name(IN id int, OUT count int) return (int id)
+        // func_name(IN id int, OUT count int) return (id int)
         String inoutArgsString = super.inoutArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
         String returnArgsString = super.returnArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
 

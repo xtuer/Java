@@ -35,7 +35,7 @@ public class FunctionFetcher {
                 int length             = rs.getInt("LENGTH");           // 长度
                 int precision          = rs.getInt("PRECISION");        // 精度
                 short scale            = rs.getShort("SCALE");          // 标度
-// Utils.dump(rs);
+
                 function.addArg(new FunctionArg(argName, originalPosition, argTypeValue, argDataTypeName, argDataTypeValue, length, precision, scale));
             }
 

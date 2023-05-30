@@ -23,6 +23,15 @@ public class PostgresFunctionExecutor extends FunctionExecutor {
     protected void setParameters() throws SQLException {
         int index = 0;
 
+        // 设置游标参数。
+        PostgresFunction pgFunc = (PostgresFunction) super.func;
+        if (pgFunc.isRefCursorReturned()) {
+            log.debug("注册游标 Types.REF_CURSOR");
+            index = 1;
+            super.cstmt.registerOutParameter(index, Types.REF_CURSOR);
+        }
+
+        // 设置输入参数。
         for (FunctionArg arg : super.func.getInoutArgs()) {
             // 只设置 IN, INOUT 入参，OUT 出参 OUT 不需要设置。
             if (FunctionArg.ARG_TYPE_VALUE_IN == arg.getArgTypeValue() || FunctionArg.ARG_TYPE_VALUE_INOUT == arg.getArgTypeValue()) {
@@ -31,13 +40,6 @@ public class PostgresFunctionExecutor extends FunctionExecutor {
                 log.debug("输入参数: 下标 [{}], 参数值 [{}]", index, super.funcArguments.get(index - 1));
                 super.cstmt.setObject(index, super.funcArguments.get(index - 1));
             }
-        }
-
-        // 设置游标参数。
-        PostgresFunction pgFunc = (PostgresFunction) super.func;
-        if (pgFunc.isRefCursorReturned()) {
-            log.debug("注册游标");
-            super.cstmt.registerOutParameter(1, Types.REF_CURSOR);
         }
     }
 
