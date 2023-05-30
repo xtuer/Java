@@ -7,7 +7,7 @@ import xtuer.procfunc.Arg;
  */
 public class FunctionArg extends Arg {
     /**
-     * 函数参数类型: 1 (IN), 2 (INOUT), 3 (OUT), 4 (RETURN), 5 (RETURN_TABLE)。
+     * 函数参数类型: 1 (IN), 2 (INOUT), 3 (OUT), 4 (RETURN), 5 (RETURN_OTHER，例如 PG 的 SQL 返回 Table)。
      */
     public static final int ARG_TYPE_VALUE_IN     = 1;
     public static final int ARG_TYPE_VALUE_INOUT  = 2;
@@ -22,6 +22,9 @@ public class FunctionArg extends Arg {
         super(name, originalPosition, argTypeValue, dataTypeName, dataTypeValue, length, precision, scale);
     }
 
+    /**
+     * 计算参数的类型名称。
+     */
     @Override
     protected void calculateArgTypeName() {
         switch (super.getArgTypeValue()) {

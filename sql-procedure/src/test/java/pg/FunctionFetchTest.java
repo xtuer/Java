@@ -1,15 +1,16 @@
 package pg;
 
 import org.junit.Test;
+import xtuer.procfunc.Result;
 import xtuer.procfunc.function.Function;
 import xtuer.procfunc.function.FunctionFetcher;
 import xtuer.procfunc.function.PostgresFunction;
+import xtuer.procfunc.function.PostgresFunctionExecutor;
 import xtuer.util.TablePrinter;
 import xtuer.util.Utils;
-import java.nio.file.Paths;
 
-import java.nio.file.Files;
 import java.sql.*;
+import java.util.Arrays;
 
 public class FunctionFetchTest {
     static final String DB_URL  = "jdbc:postgresql://192.168.12.19:33005/postgres";
@@ -21,8 +22,12 @@ public class FunctionFetchTest {
     @Test
     public void fetch() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            PostgresFunction function = PostgresFunction.fromFunction(FunctionFetcher.fetch(conn, CATALOG, SCHEMA, "reffunc"));
-            print(function);
+            Function func = FunctionFetcher.fetch(conn, CATALOG, SCHEMA, "func_has_arg_return_base_type");
+            Function pgFunc = Function.fromFunction(func, PostgresFunction.class);
+            print(pgFunc);
+
+            Result result = new PostgresFunctionExecutor().execute(conn, pgFunc, Arrays.asList(1, 2));
+            Utils.dump(result);
         }
     }
 
@@ -35,12 +40,13 @@ public class FunctionFetchTest {
             conn.setSchema(SCHEMA);
             conn.setAutoCommit(false);
 
-            CallableStatement cstmt = conn.prepareCall("{ ? = call func_has_return_cursor(?) }");
-            cstmt.setObject(2, 1);
-            cstmt.registerOutParameter(1, Types.REF_CURSOR);
+            CallableStatement cstmt = conn.prepareCall("{ call func_has_arg_return_base_type(?, ?) } ");
+            cstmt.setObject(1, 1);
+            cstmt.setObject(2, 2);
+            // cstmt.registerOutParameter(1, Types.REF_CURSOR);
             cstmt.execute();
 
-            ResultSet rs = (ResultSet) cstmt.getObject(1);
+            ResultSet rs = cstmt.getResultSet();
             while (rs != null && rs.next()) {
                 Utils.dump(rs);
             }
@@ -50,6 +56,15 @@ public class FunctionFetchTest {
     }
 
     public static void print(Function func) {
+        System.out.println("OriginalArgs:");
         TablePrinter.print(func.getOriginalArgs(), "scale", "value", "length", "precision", "dataTypeValue");
+        System.out.println("InoutArgs:");
+        TablePrinter.print(func.getInoutArgs(), "scale", "value", "length", "precision", "dataTypeValue");
+        System.out.println("ReturnArgs:");
+        TablePrinter.print(func.getReturnArgs(), "scale", "value", "length", "precision", "dataTypeValue");
+        System.out.println("CallableSQL:");
+        System.out.println(func.getCallableSql());
+        System.out.println("Signature:");
+        System.out.println(func.getSignature());
     }
 }

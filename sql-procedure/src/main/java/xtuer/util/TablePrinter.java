@@ -25,7 +25,7 @@ public class TablePrinter {
     /**
      * 把对象数组打印成表格格式，表头为属性名。
      */
-    public static void print(List<?> data, String... ignoredFields) {
+    public static <T> void print(List<T> data, String... ignoredFields) {
         /*
          逻辑:
          1. 反射获取属性名，作为表头。

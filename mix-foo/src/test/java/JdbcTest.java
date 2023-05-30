@@ -40,20 +40,31 @@ public class JdbcTest {
 
     @Test
     public void testCreateTables() {
-        String url = "jdbc:oracle:thin:@//192.168.11.49:1521/orcl";
-        String user = "system";
-        String pass = "sys";
+        // String url = "jdbc:oracle:thin:@//192.168.11.49:1521/orcl";
+        // String user = "system";
+        // String pass = "sys";
+
+        String url = "jdbc:mysql://192.168.12.21:35004/test?useSSL=false";
+        String user = "root";
+        String pass = "mypass";
 
         try (Connection conn = DriverManager.getConnection(url, user, pass)) {
-            conn.setSchema("ANONYMOUS");
+            // conn.setSchema("ANONYMOUS");
             String sql = "create table mm_table%d(id int, name varchar(128))";
 
-            for (int i = 1; i < 1000; i++) {
+            conn.setAutoCommit(false);
+            for (int i = 1; i < 3000; i++) {
                 System.out.println(i);
                 Statement stmt = conn.createStatement();
                 stmt.executeUpdate(String.format(sql, i));
                 stmt.close();
+
+                if (i % 300 == 0) {
+                    conn.commit();
+                }
             }
+
+            conn.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }

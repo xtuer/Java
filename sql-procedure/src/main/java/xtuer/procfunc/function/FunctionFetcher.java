@@ -1,7 +1,5 @@
 package xtuer.procfunc.function;
 
-import xtuer.util.Utils;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;

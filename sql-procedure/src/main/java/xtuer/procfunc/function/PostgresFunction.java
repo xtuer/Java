@@ -1,6 +1,10 @@
 package xtuer.procfunc.function;
 
-import org.springframework.beans.BeanUtils;
+import xtuer.procfunc.Arg;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Postgres 使用的函数类。
@@ -16,33 +20,51 @@ public class PostgresFunction extends Function {
      */
     private boolean refCursorReturned;
 
-    /**
-     * 传入 Function 构造一个 Postgres 特有的 Function。
-     *
-     * @param func 普通的 Function 对象。
-     * @return 返回 Postgres 的 Function 对象。
-     */
-    public static PostgresFunction fromFunction(Function func) {
-        PostgresFunction pgFunc = new PostgresFunction();
-        BeanUtils.copyProperties(func, pgFunc);
-        pgFunc.build();
-
-        return pgFunc;
-    }
-
     @Override
     public Function build() {
+        super.build();
+
+        // 判断是否返回游标 cursor。
+        for (FunctionArg arg : returnArgs) {
+            if (REF_CURSOR_NAME.equals(arg.getDataTypeName())) {
+                this.refCursorReturned = true;
+                break;
+            }
+        }
+
         return this;
     }
 
     @Override
     public String getSignature() {
-        return null;
+        // func_name() return (void)
+        // func_name(IN id int, OUT count int) return (int id)
+        String inoutArgsString = super.inoutArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
+        String returnArgsString = super.returnArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
+
+        if ("".equals(returnArgsString)) {
+            returnArgsString = "void";
+        }
+
+        return String.format("%s(%s) return (%s)", super.name, inoutArgsString, returnArgsString);
     }
 
     @Override
     public String getCallableSql() {
-        return null;
+        // 普通: { call func_name(?, ?, ?) }
+        // 游标: { ? = call func_name(?) }
+
+        // 问号 ? 的数量为输入参数的个数。
+        List<String> questionMarks = new LinkedList<>();
+        for (int i = 0; i < super.inArgsCount; i++) {
+            questionMarks.add("?");
+        }
+
+        if (this.refCursorReturned) {
+            return String.format("{ ? = call %s(%s) }", super.name, String.join(", ", questionMarks));
+        } else {
+            return String.format("{ call %s(%s) }", super.name, String.join(", ", questionMarks));
+        }
     }
 
     /**
