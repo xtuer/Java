@@ -73,7 +73,7 @@ public class Function {
      * @param <T> 目标函数类型，例如 PostgresFunction
      * @throws RuntimeException 使用反射创建对象出错时抛出异常。
      */
-    public static <T> T fromFunction(Function src, Class<T> dstFunctionClass) {
+    public static <T> T newFunction(Function src, Class<T> dstFunctionClass) {
         if (!Function.class.isAssignableFrom(dstFunctionClass.getSuperclass())) {
             throw new RuntimeException("类型 dstFunctionClass 必须是 Function 的子类");
         }

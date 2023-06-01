@@ -56,6 +56,6 @@ public class PostgresFunctionExecutor extends FunctionExecutor {
     @Override
     protected Function convertFunction(Function func) {
         // Postgres 执行的函数需要使用自定义的 PostgresFunction。
-        return Function.fromFunction(func, PostgresFunction.class);
+        return Function.newFunction(func, PostgresFunction.class);
     }
 }

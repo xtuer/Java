@@ -25,7 +25,7 @@ public class FunctionExecutorRegistry {
     }
 
     /**
-     * 查询数据库的函数执行器。
+     * 获取数据库的函数执行器。
      *
      * @param type 数据库类型。
      * @return 返回找到的函数执行器。

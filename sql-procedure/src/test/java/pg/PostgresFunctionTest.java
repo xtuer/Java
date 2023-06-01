@@ -23,7 +23,7 @@ public class PostgresFunctionTest {
     public void execute() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
             Function func = FunctionFetcher.fetch(conn, CATALOG, SCHEMA, "func_has_arg_return_setof_record");
-            print(Function.fromFunction(func, PostgresFunction.class));
+            print(Function.newFunction(func, PostgresFunction.class));
 
             Result result = FunctionExecutorRegistry.findExecutor(DB_TYPE).execute(conn, func, 1, 2, 3);
             Utils.dump(result);

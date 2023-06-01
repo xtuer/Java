@@ -30,7 +30,8 @@ public class PostgresFunction extends Function {
         super.build();
 
         // 判断是否返回游标 cursor。
-        for (FunctionArg arg : returnArgs) {
+        this.refCursorReturned = false;
+        for (FunctionArg arg : super.returnArgs) {
             if (REF_CURSOR_NAME.equals(arg.getDataTypeName())) {
                 this.refCursorReturned = true;
                 break;
@@ -38,19 +39,19 @@ public class PostgresFunction extends Function {
         }
 
         // 同时有 OUT 和 return，把 return 删掉。
-        for (FunctionArg arg : inoutArgs) {
+        for (FunctionArg arg : super.inoutArgs) {
             if (arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_INOUT || arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_OUT) {
-                returnArgs.clear();
+                super.returnArgs.clear();
                 break;
             }
         }
 
         // 计算输入参数的个数
-        inArgsCount = 0;
-        for (FunctionArg arg : inoutArgs) {
+        this.inArgsCount = 0;
+        for (FunctionArg arg : super.inoutArgs) {
             // 输入参数个数。
             if (arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_IN || arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_INOUT) {
-                inArgsCount++;
+                this.inArgsCount++;
             }
         }
 
