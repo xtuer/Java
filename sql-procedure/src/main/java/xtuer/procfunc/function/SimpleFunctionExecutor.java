@@ -9,6 +9,8 @@ import java.sql.Types;
 
 /**
  * 简单函数执行器，只支持像 MySQL 这样的简单函数: 多个 IN 入参，单个返回值，函数参数没有 OUT 参数。
+ *
+ * MySQL 官方文档: https://dev.mysql.com/doc/refman/8.0/en/create-procedure.html
  */
 @Slf4j
 public class SimpleFunctionExecutor extends FunctionExecutor {
@@ -50,6 +52,6 @@ public class SimpleFunctionExecutor extends FunctionExecutor {
 
     @Override
     protected Function convertFunction(Function func) {
-        return func;
+        return Function.newFunction(func, SimpleFunction.class);
     }
 }

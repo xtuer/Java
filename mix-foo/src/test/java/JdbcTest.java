@@ -1,4 +1,9 @@
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import org.junit.Test;
 
 public class JdbcTest {
@@ -91,6 +96,23 @@ public class JdbcTest {
             }
             System.out.println(count);
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 测试创建存储函数 (不能带 DELIMITER)。
+    @Test
+    public void testCreateFunction1() {
+        String url = "jdbc:mysql://127.0.0.1:3306/test?useSSL=false";
+        String user = "root";
+        String pass = "root";
+
+        try (Connection conn = DriverManager.getConnection(url, user, pass)) {
+            String sql = Files.asCharSource(new File("/Users/biao/Documents/temp/sqls/mysql_func_2.sql"), StandardCharsets.UTF_8).read();
+            System.out.println(sql);
+            Statement stmt = conn.createStatement();
+            stmt.execute(sql);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

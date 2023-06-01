@@ -31,6 +31,25 @@ public class PostgresFunctionTest {
     }
 
     @Test
+    public void executeJson() throws Exception {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            Function func = FunctionFetcher.fetch(conn, CATALOG, SCHEMA, "func_has_arg_return_setof_record");
+            PostgresFunction pFunc = Function.newFunction(func, PostgresFunction.class);
+
+            // 传给前端。
+            String json = Utils.toJson(pFunc);
+            System.out.println(json);
+
+            // 前端处理完后提交给后端。
+            pFunc = Utils.fromJson(json, PostgresFunction.class);
+            print(pFunc);
+
+            Result result = FunctionExecutorRegistry.findExecutor(DB_TYPE).execute(conn, pFunc, 1, 2, 3);
+            Utils.dump(result);
+        }
+    }
+
+    @Test
     public void executeFunction() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
             // 获取 cursor 需要关闭自动提交，否则报错 cursor "<unnamed portal 1>" does not exist，

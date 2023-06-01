@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Postgres 使用的函数类。
+ * Postgres 使用的函数类，函数的类型有近 20 种类型，支持 SQL 和 PL/pgSQL 模式。
+ *
+ * 官方文档: https://www.postgresql.org/docs/current/xfunc-sql.html
  */
 public class PostgresFunction extends Function {
     /**
@@ -38,7 +40,7 @@ public class PostgresFunction extends Function {
             }
         }
 
-        // 同时有 OUT 和 return，把 return 删掉。
+        // 有输出参数时不能使用 RETURN。
         for (FunctionArg arg : super.inoutArgs) {
             if (arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_INOUT || arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_OUT) {
                 super.returnArgs.clear();
@@ -46,10 +48,9 @@ public class PostgresFunction extends Function {
             }
         }
 
-        // 计算输入参数的个数
+        // 计算输入参数的个数。
         this.inArgsCount = 0;
         for (FunctionArg arg : super.inoutArgs) {
-            // 输入参数个数。
             if (arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_IN || arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_INOUT) {
                 this.inArgsCount++;
             }
@@ -60,6 +61,7 @@ public class PostgresFunction extends Function {
 
     @Override
     public String getSignature() {
+        // 函数签名需要显示输入参数、输出参数、返回值。
         // func_name() return (void)
         // func_name(IN id int, OUT count int) return (id int)
         String inoutArgsString = super.inoutArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
@@ -74,6 +76,7 @@ public class PostgresFunction extends Function {
 
     @Override
     public String getCallableSql() {
+        // 函数调用的 SQL 只和输入参数有关，输出参数在结果集中获取。
         // 普通: { call func_name(?, ?, ?) }
         // 游标: { ? = call func_name(?) }
 

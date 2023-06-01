@@ -23,11 +23,6 @@ public abstract class Arg {
     String name;
 
     /**
-     * 参数位置，执行时使用，从 1 开始。
-     */
-    int index;
-
-    /**
      * 参数的原始位置，有返回值时从 0 开始。
      */
     int originalPosition;
@@ -68,11 +63,6 @@ public abstract class Arg {
      */
     short scale;
 
-    /**
-     * 参数值: 执行存储过程，前端传给后端时保存用户输入的值。
-     */
-    Object value;
-
     public Arg() {}
 
     /**
@@ -89,14 +79,14 @@ public abstract class Arg {
      */
     public Arg(String name, int originalPosition, int argTypeValue, String dataTypeName,
                int dataTypeValue, int length, int precision, short scale) {
-        this.name = name;
+        this.name             = name;
         this.originalPosition = originalPosition;
-        this.argTypeValue = argTypeValue;
-        this.dataTypeName = dataTypeName;
-        this.dataTypeValue = dataTypeValue;
-        this.length = length;
-        this.precision = precision;
-        this.scale = scale;
+        this.argTypeValue     = argTypeValue;
+        this.dataTypeName     = dataTypeName;
+        this.dataTypeValue    = dataTypeValue;
+        this.length           = length;
+        this.precision        = precision;
+        this.scale            = scale;
 
         // 计算参数类型名字。
         this.calculateArgTypeName();

@@ -2,12 +2,10 @@ package xtuer.procfunc.function;
 
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
-import xtuer.procfunc.Arg;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 函数。
@@ -45,7 +43,7 @@ public class Function {
     protected List<FunctionArg> returnArgs = new LinkedList<>();
 
     /**
-     * 输入输出参数。
+     * 输入输出参数，包括 IN, OUT, INOUT 参数。
      */
     protected List<FunctionArg> inoutArgs = new LinkedList<>();
 
@@ -101,7 +99,7 @@ public class Function {
     }
 
     /**
-     * 构建，把原始参数处理处理成可用的。
+     * 构建，把原始参数处理成可用的。
      */
     public Function build() {
         // 把返回参数和输入输出参数分别提取出来。
@@ -135,27 +133,15 @@ public class Function {
      * @return 返回函数的签名。
      */
     public String getSignature() {
-        // func_name(IN id int, IN count int) return int
-        String inArgsString = inoutArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
-        String returnArgsString = returnArgs.get(0).getDataTypeName();
-
-        return String.format("%s(%s) return %s", name, inArgsString, returnArgsString);
+        return null; // 推迟到子类实现。
     }
 
     /**
-     * 获取 JDBC 执行的存储过程语句，例如 {? = call func_sum(?, ?, ?)}
+     * 获取 JDBC 执行函数的语句，例如 {? = call func_sum(?, ?, ?)}
      *
      * @return 返回 JDBC call 的 SQL 语句。
      */
     public String getCallableSql() {
-        //  { ? = call func_name(?, ?, ?) }
-
-        // 问号 ? 的数量为输入参数的个数。
-        List<String> questionMarks = new LinkedList<>();
-        for (int i = 0; i < inoutArgs.size(); i++) {
-            questionMarks.add("?");
-        }
-
-        return String.format("{ ? = call %s(%s) }", name, String.join(", ", questionMarks));
+        return null; // 推迟到子类实现。
     }
 }

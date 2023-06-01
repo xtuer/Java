@@ -27,7 +27,7 @@ public abstract class FunctionExecutor {
      * 1. 获取函数: Function func = FunctionFetcher.fetch(conn, CATALOG, SCHEMA, "func_no_arg_return_base_type");
      * 2. 执行函数:
      *    Function pgFunc = Function.fromFunction(func, PostgresFunction.class); // 把普通的函数转为 Postgres 等特殊数据库的函数对象。
-     *    Result result = new PostgresFunctionExecutor().execute(conn, pgFunc, Arrays.asList(1, 2, 3));
+     *    Result result = new PostgresFunctionExecutor().execute(conn, pgFunc, 1, 2, 3);
      *
      * @param conn 数据库连接。
      * @param func 函数对象。需要注意的是对于 Postgres 等有特殊函数实现的类此 func 必须是其对应的对象如 PostgresFunction 的。
