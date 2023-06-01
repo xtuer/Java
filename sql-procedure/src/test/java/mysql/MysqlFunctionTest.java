@@ -1,32 +1,29 @@
-package pg;
+package mysql;
 
 import org.junit.Test;
 import xtuer.procfunc.Result;
 import xtuer.procfunc.function.Function;
 import xtuer.procfunc.function.FunctionFetcher;
-import xtuer.procfunc.function.PostgresFunction;
-import xtuer.procfunc.function.PostgresFunctionExecutor;
+import xtuer.procfunc.function.SimpleFunctionExecutor;
 import xtuer.util.TablePrinter;
 import xtuer.util.Utils;
 
 import java.sql.*;
-import java.util.Arrays;
 
-public class FunctionFetchTest {
-    static final String DB_URL  = "jdbc:postgresql://192.168.12.19:33005/postgres";
-    static final String USER    = "postgres";
-    static final String PASS    = "123456";
-    static final String CATALOG = "postgres";
-    static final String SCHEMA  = "biao";
+public class MysqlFunctionTest {
+    static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/test?useSSL=false";
+    static final String USER   = "root";
+    static final String PASS   = "root";
+    static final String CATALOG = "test";
+    static final String SCHEMA  = "test";
 
     @Test
-    public void fetch() throws Exception {
+    public void execute() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Function func = FunctionFetcher.fetch(conn, CATALOG, SCHEMA, "func_no_arg_return_base_type");
-            Function pgFunc = Function.fromFunction(func, PostgresFunction.class);
-            print(pgFunc);
+            Function func = FunctionFetcher.fetch(conn, CATALOG, SCHEMA, "fun_dateToStr");
+            print(func);
 
-            Result result = new PostgresFunctionExecutor().execute(conn, pgFunc, Arrays.asList(1, 2, 3));
+            Result result = new SimpleFunctionExecutor().execute(conn, func, "2023-06-02");
             Utils.dump(result);
         }
     }
@@ -40,11 +37,13 @@ public class FunctionFetchTest {
             conn.setSchema(SCHEMA);
             conn.setAutoCommit(false);
 
-            CallableStatement cstmt = conn.prepareCall("{ call func_has_arg_return_base_type(?, ?) } ");
-            cstmt.setObject(1, 1);
-            cstmt.setObject(2, 2);
-            // cstmt.registerOutParameter(1, Types.REF_CURSOR);
+            CallableStatement cstmt = conn.prepareCall("{ ? = call fun_dateToStr(?) }");
+            cstmt.setObject(2, "2023-06-02");
+            cstmt.registerOutParameter(1, Types.OTHER);
             cstmt.execute();
+
+            // 获取返回结果
+            System.out.println(cstmt.getObject(1));
 
             ResultSet rs = cstmt.getResultSet();
             while (rs != null && rs.next()) {

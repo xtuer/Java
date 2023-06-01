@@ -1,3 +1,4 @@
+import java.nio.charset.Charset;
 import java.sql.*;
 
 public class Test {
@@ -6,15 +7,7 @@ public class Test {
     static final String PASS   = "mypass";
 
     public static void main(String[] args) {
-        try(Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select sleep(1)");
-
-            while (rs.next()) {
-                System.out.println(rs.getInt(1));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Charset defaultCharset = Charset.defaultCharset();
+        System.out.println("Default Charset: " + defaultCharset);
     }
 }

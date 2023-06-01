@@ -13,17 +13,10 @@ import java.sql.Types;
 @Slf4j
 public class PostgresFunctionExecutor extends FunctionExecutor {
     @Override
-    protected void preCheck() {
-        if (!(super.func instanceof PostgresFunction)) {
-            throw new RuntimeException("参数 func 必须是 PostgresFunction 的对象");
-        }
-    }
-
-    @Override
     protected void setParameters() throws SQLException {
         int index = 0;
 
-        // 设置游标参数。
+        // 注册游标参数。
         PostgresFunction pgFunc = (PostgresFunction) super.func;
         if (pgFunc.isRefCursorReturned()) {
             log.debug("注册游标 Types.REF_CURSOR");
@@ -33,7 +26,7 @@ public class PostgresFunctionExecutor extends FunctionExecutor {
 
         // 设置输入参数。
         for (FunctionArg arg : super.func.getInoutArgs()) {
-            // 只设置 IN, INOUT 入参，OUT 出参 OUT 不需要设置。
+            // 只设置 IN, INOUT 入参，OUT 出参 OUT 不需要设置 (纯 OUT 在最后面)。
             if (FunctionArg.ARG_TYPE_VALUE_IN == arg.getArgTypeValue() || FunctionArg.ARG_TYPE_VALUE_INOUT == arg.getArgTypeValue()) {
                 index++;
 
@@ -58,5 +51,11 @@ public class PostgresFunctionExecutor extends FunctionExecutor {
         } else {
             return super.cstmt.getResultSet();
         }
+    }
+
+    @Override
+    protected Function convertFunction(Function func) {
+        // Postgres 执行的函数需要使用自定义的 PostgresFunction。
+        return Function.fromFunction(func, PostgresFunction.class);
     }
 }

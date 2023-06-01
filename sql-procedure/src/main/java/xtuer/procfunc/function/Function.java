@@ -2,10 +2,12 @@ package xtuer.procfunc.function;
 
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
+import xtuer.procfunc.Arg;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 函数。
@@ -47,11 +49,6 @@ public class Function {
      */
     protected List<FunctionArg> inoutArgs = new LinkedList<>();
 
-    /**
-     * 输入参数个数。
-     */
-    protected int inArgsCount = 0;
-
     public Function() {}
 
     /**
@@ -74,18 +71,24 @@ public class Function {
      * @param dstFunctionClass 目标函数的类。
      * @return 返回目标函数的对象。
      * @param <T> 目标函数类型，例如 PostgresFunction
-     * @throws Exception 使用反射创建对象出错时抛出异常。
+     * @throws RuntimeException 使用反射创建对象出错时抛出异常。
      */
-    public static <T> T fromFunction(Function src, Class<T> dstFunctionClass) throws Exception {
+    public static <T> T fromFunction(Function src, Class<T> dstFunctionClass) {
         if (!Function.class.isAssignableFrom(dstFunctionClass.getSuperclass())) {
             throw new RuntimeException("类型 dstFunctionClass 必须是 Function 的子类");
         }
 
-        T dst = dstFunctionClass.getConstructor().newInstance();
-        BeanUtils.copyProperties(src, dst);
-        ((Function) dst).build();
+        try {
+            T dst = dstFunctionClass.getConstructor().newInstance();
+            BeanUtils.copyProperties(src, dst);
 
-        return dst;
+            // 构建函数。
+            ((Function) dst).build();
+
+            return dst;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -104,7 +107,6 @@ public class Function {
         // 把返回参数和输入输出参数分别提取出来。
         returnArgs.clear();
         inoutArgs.clear();
-        inArgsCount = 0;
 
         for (FunctionArg arg : originalArgs) {
             final int argTypeValue = arg.getArgTypeValue();
@@ -120,11 +122,6 @@ public class Function {
                     || argTypeValue == FunctionArg.ARG_TYPE_VALUE_OUT) {
                 inoutArgs.add(arg);
             }
-
-            // 输入参数个数。
-            if (argTypeValue == FunctionArg.ARG_TYPE_VALUE_IN || argTypeValue == FunctionArg.ARG_TYPE_VALUE_INOUT) {
-                inArgsCount++;
-            }
         }
 
         return this;
@@ -138,7 +135,11 @@ public class Function {
      * @return 返回函数的签名。
      */
     public String getSignature() {
-        return null;
+        // func_name(IN id int, IN count int) return int
+        String inArgsString = inoutArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
+        String returnArgsString = returnArgs.get(0).getDataTypeName();
+
+        return String.format("%s(%s) return %s", name, inArgsString, returnArgsString);
     }
 
     /**
@@ -147,6 +148,14 @@ public class Function {
      * @return 返回 JDBC call 的 SQL 语句。
      */
     public String getCallableSql() {
-        return null;
+        //  { ? = call func_name(?, ?, ?) }
+
+        // 问号 ? 的数量为输入参数的个数。
+        List<String> questionMarks = new LinkedList<>();
+        for (int i = 0; i < inoutArgs.size(); i++) {
+            questionMarks.add("?");
+        }
+
+        return String.format("{ ? = call %s(%s) }", name, String.join(", ", questionMarks));
     }
 }

@@ -20,6 +20,11 @@ public class PostgresFunction extends Function {
      */
     private boolean refCursorReturned;
 
+    /**
+     * 输入参数个数。
+     */
+    protected int inArgsCount = 0;
+
     @Override
     public Function build() {
         super.build();
@@ -37,6 +42,15 @@ public class PostgresFunction extends Function {
             if (arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_INOUT || arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_OUT) {
                 returnArgs.clear();
                 break;
+            }
+        }
+
+        // 计算输入参数的个数
+        inArgsCount = 0;
+        for (FunctionArg arg : inoutArgs) {
+            // 输入参数个数。
+            if (arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_IN || arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_INOUT) {
+                inArgsCount++;
             }
         }
 
@@ -64,7 +78,7 @@ public class PostgresFunction extends Function {
 
         // 问号 ? 的数量为输入参数的个数。
         List<String> questionMarks = new LinkedList<>();
-        for (int i = 0; i < super.inArgsCount; i++) {
+        for (int i = 0; i < inArgsCount; i++) {
             questionMarks.add("?");
         }
 

@@ -36,6 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/demo/**",
                         "/api/agents/**",
                         "/api/bigfile/**",
+                        "/form/upload/**",
                         Urls.API_ORGS,
                         Urls.API_LOGIN_TOKENS,
                         Urls.API_LOGIN_USERS_CURRENT
