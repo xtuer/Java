@@ -3,8 +3,8 @@ package mysql;
 import org.junit.Test;
 import xtuer.procfunc.Result;
 import xtuer.procfunc.function.Function;
+import xtuer.procfunc.function.FunctionExecutorRegistry;
 import xtuer.procfunc.function.FunctionFetcher;
-import xtuer.procfunc.function.SimpleFunctionExecutor;
 import xtuer.util.TablePrinter;
 import xtuer.util.Utils;
 
@@ -16,6 +16,7 @@ public class MysqlFunctionTest {
     static final String PASS   = "root";
     static final String CATALOG = "test";
     static final String SCHEMA  = "test";
+    static final FunctionExecutorRegistry.DatabaseType DB_TYPE = FunctionExecutorRegistry.DatabaseType.MySQL;
 
     @Test
     public void execute() throws Exception {
@@ -23,7 +24,7 @@ public class MysqlFunctionTest {
             Function func = FunctionFetcher.fetch(conn, CATALOG, SCHEMA, "fun_dateToStr");
             print(func);
 
-            Result result = new SimpleFunctionExecutor().execute(conn, func, "2023-06-02");
+            Result result = FunctionExecutorRegistry.findExecutor(DB_TYPE).execute(conn, func, "2023-06-02");
             Utils.dump(result);
         }
     }

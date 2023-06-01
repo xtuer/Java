@@ -2,10 +2,7 @@ package pg;
 
 import org.junit.Test;
 import xtuer.procfunc.Result;
-import xtuer.procfunc.function.Function;
-import xtuer.procfunc.function.FunctionFetcher;
-import xtuer.procfunc.function.PostgresFunction;
-import xtuer.procfunc.function.PostgresFunctionExecutor;
+import xtuer.procfunc.function.*;
 import xtuer.util.TablePrinter;
 import xtuer.util.Utils;
 
@@ -20,6 +17,7 @@ public class PostgresFunctionTest {
     static final String PASS    = "123456";
     static final String CATALOG = "postgres";
     static final String SCHEMA  = "biao";
+    static final FunctionExecutorRegistry.DatabaseType DB_TYPE = FunctionExecutorRegistry.DatabaseType.Postgres;
 
     @Test
     public void execute() throws Exception {
@@ -27,7 +25,7 @@ public class PostgresFunctionTest {
             Function func = FunctionFetcher.fetch(conn, CATALOG, SCHEMA, "func_has_arg_return_setof_record");
             print(Function.fromFunction(func, PostgresFunction.class));
 
-            Result result = new PostgresFunctionExecutor().execute(conn, func, 1, 2, 3);
+            Result result = FunctionExecutorRegistry.findExecutor(DB_TYPE).execute(conn, func, 1, 2, 3);
             Utils.dump(result);
         }
     }

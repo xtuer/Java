@@ -74,7 +74,7 @@ public abstract class FunctionExecutor {
     }
 
     /**
-     * 设置输入输出参数。
+     * 设置输入参数，注册输出参数。
      */
     protected abstract void setParameters() throws SQLException;
 
