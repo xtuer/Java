@@ -13,15 +13,14 @@ public class SimpleFunction extends Function {
     /**
      * 输入参数。
      */
-    private final List<FunctionArg> inArgs = new LinkedList<>();
+    private List<FunctionArg> inArgs = new LinkedList<>();
 
     @Override
     public Function build() {
         super.build();
 
         // 输入参数，简单函数的 inoutArgs 只会有输入参数。
-        this.inArgs.clear();
-        this.inArgs.addAll(super.inoutArgs);
+        this.inArgs = super.inoutArgs;
 
         return this;
     }

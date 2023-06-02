@@ -13,7 +13,7 @@ import java.sql.Types;
 @Slf4j
 public class PostgresFunctionExecutor extends FunctionExecutor {
     @Override
-    protected void setParameters() throws SQLException {
+    protected void setAndRegisterParameters() throws SQLException {
         int index = 0;
 
         // 注册游标参数。
@@ -54,8 +54,9 @@ public class PostgresFunctionExecutor extends FunctionExecutor {
     }
 
     @Override
-    protected Function convertFunction(Function func) {
-        // Postgres 执行的函数需要使用自定义的 PostgresFunction。
-        return Function.newFunction(func, PostgresFunction.class);
+    protected void preCheck() {
+        if (!PostgresFunction.class.isAssignableFrom(super.func.getClass())) {
+            throw new RuntimeException("函数类型必须为 PostgresFunction");
+        }
     }
 }

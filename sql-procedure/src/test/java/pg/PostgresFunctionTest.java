@@ -1,8 +1,12 @@
 package pg;
 
 import org.junit.Test;
+import xtuer.procfunc.DatabaseType;
 import xtuer.procfunc.Result;
-import xtuer.procfunc.function.*;
+import xtuer.procfunc.function.Function;
+import xtuer.procfunc.function.FunctionExecutors;
+import xtuer.procfunc.function.FunctionFetcher;
+import xtuer.procfunc.function.PostgresFunction;
 import xtuer.util.TablePrinter;
 import xtuer.util.Utils;
 
@@ -17,15 +21,15 @@ public class PostgresFunctionTest {
     static final String PASS    = "123456";
     static final String CATALOG = "postgres";
     static final String SCHEMA  = "biao";
-    static final FunctionExecutorRegistry.DatabaseType DB_TYPE = FunctionExecutorRegistry.DatabaseType.Postgres;
+    static final DatabaseType DB_TYPE = DatabaseType.Postgres;
 
     @Test
     public void execute() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Function func = FunctionFetcher.fetch(conn, CATALOG, SCHEMA, "func_has_arg_return_setof_record");
-            print(Function.newFunction(func, PostgresFunction.class));
+            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "func_has_arg_return_setof_record");
+            print(func);
 
-            Result result = FunctionExecutorRegistry.findExecutor(DB_TYPE).execute(conn, func, 1, 2, 3);
+            Result result = FunctionExecutors.executeFunction(DB_TYPE, conn, func, 1, 2, 3);
             Utils.dump(result);
         }
     }
@@ -44,7 +48,7 @@ public class PostgresFunctionTest {
             pFunc = Utils.fromJson(json, PostgresFunction.class);
             print(pFunc);
 
-            Result result = FunctionExecutorRegistry.findExecutor(DB_TYPE).execute(conn, pFunc, 1, 2, 3);
+            Result result = FunctionExecutors.findFunctionExecutor(DB_TYPE).execute(conn, pFunc, 1, 2, 3);
             Utils.dump(result);
         }
     }

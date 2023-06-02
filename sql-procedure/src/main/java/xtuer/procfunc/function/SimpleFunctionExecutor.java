@@ -15,7 +15,7 @@ import java.sql.Types;
 @Slf4j
 public class SimpleFunctionExecutor extends FunctionExecutor {
     @Override
-    protected void setParameters() throws SQLException {
+    protected void setAndRegisterParameters() throws SQLException {
         /*
          逻辑: 只有 IN 输入参数和单个返回值，没有 OUT 参数，调用语句为 "{ ? = call fun_dateToStr(?) }":
          1. 注册 OUT 参数获取结果。
@@ -51,7 +51,9 @@ public class SimpleFunctionExecutor extends FunctionExecutor {
     }
 
     @Override
-    protected Function convertFunction(Function func) {
-        return Function.newFunction(func, SimpleFunction.class);
+    protected void preCheck() {
+        if (!SimpleFunction.class.isAssignableFrom(super.func.getClass())) {
+            throw new RuntimeException("函数类型必须为 SimpleFunction");
+        }
     }
 }

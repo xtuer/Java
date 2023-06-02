@@ -116,4 +116,34 @@ public class JdbcTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testFunctionExist() throws Exception {
+        String url = "jdbc:mysql://127.0.0.1:3306/test?useSSL=false";
+        String user = "root";
+        String pass = "root";
+
+        try (Connection conn = DriverManager.getConnection(url, user, pass)) {
+            DatabaseMetaData meta = conn.getMetaData();
+
+            try (ResultSet rs = meta.getFunctionColumns("test", null, "func_no_arg", null)) {
+                System.out.println(111);
+
+                while (rs.next()) {
+                    String argName         = rs.getString("COLUMN_NAME");   // 参数名称
+                    int originalPosition   = rs.getInt("ORDINAL_POSITION"); // 参数原始位置
+                    int argTypeValue       = rs.getInt("COLUMN_TYPE");      // 入参出参:  1 (IN), 4 (OUT), 2 (INOUT)
+                    int argDataTypeValue   = rs.getInt("DATA_TYPE");        // 参数的数据类型值: SQL type from java.sql.Types
+                    String argDataTypeName = rs.getString("TYPE_NAME");     // 参数的数据类型名: SQL type name, for a UDT type the type name is fully qualified
+                    int length             = rs.getInt("LENGTH");           // 长度
+                    int precision          = rs.getInt("PRECISION");        // 精度
+                    short scale            = rs.getShort("SCALE");          // 标度
+
+                    System.out.println("x:" + argName);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -10,7 +10,7 @@ import java.sql.SQLException;
  */
 public class FunctionFetcher {
     /**
-     * 获取存储过程。
+     * 获取存储函数。
      *
      * @param conn 数据库连接。
      * @param catalog 所属 catalog。

@@ -46,7 +46,7 @@ public abstract class FunctionExecutor {
          */
 
         this.conn = conn;
-        this.func = convertFunction(func);
+        this.func = func;
         this.funcArguments = Arrays.asList(funcArguments);
 
         // 设置 Catalog, schema, transaction (Postgres 返回游标需要关闭自动提交)。
@@ -54,13 +54,16 @@ public abstract class FunctionExecutor {
         this.conn.setSchema(this.func.getSchema());
         this.conn.setAutoCommit(false);
 
+        // 执行前的条件检查，例如数据库和函数是否匹配。
+        this.preCheck();
+
         // [1] 创建 CallableStatement。
         log.info("执行函数: {}", this.func.getCallableSql());
         try (CallableStatement cstmt = this.conn.prepareCall(this.func.getCallableSql())) {
             this.cstmt = cstmt;
 
             // [2] 设置函数的参数: 入参、出参、入出参。
-            setParameters();
+            setAndRegisterParameters();
 
             // [3] 执行函数。
             cstmt.execute();
@@ -76,7 +79,7 @@ public abstract class FunctionExecutor {
     /**
      * 设置输入参数，注册输出参数。
      */
-    protected abstract void setParameters() throws SQLException;
+    protected abstract void setAndRegisterParameters() throws SQLException;
 
     /**
      * 获取函数执行的结果集。
@@ -91,9 +94,9 @@ public abstract class FunctionExecutor {
     protected abstract void getOutParameters(Result result) throws SQLException;
 
     /**
-     * 把方法 execute 传入的函数对象转为想要使用的函数对象。
+     * 执行前的条件检查，例如数据库和函数是否匹配。
      */
-    protected abstract Function convertFunction(Function func);
+    protected abstract void preCheck();
 
     /**
      * 获取函数执行的结果。
