@@ -18,10 +18,10 @@ public class FunctionFetcher {
      * @param functionName 函数的名称。
      * @return 返回获取到的函数对象。
      */
-    public static Function fetch(Connection conn,
-                                 String catalog,
-                                 String schema,
-                                 String functionName) throws SQLException {
+    public static Function fetchFunction(Connection conn,
+                                         String catalog,
+                                         String schema,
+                                         String functionName) throws SQLException {
         Function function = new Function(catalog, schema, functionName);
         DatabaseMetaData meta = conn.getMetaData();
 
@@ -41,5 +41,26 @@ public class FunctionFetcher {
 
             return function.build();
         }
+    }
+
+    /**
+     * 检查函数是否存在。
+     */
+    public static boolean checkFunctionExists(Connection conn,
+                                              String catalog,
+                                              String schema,
+                                              String functionName) throws SQLException {
+        DatabaseMetaData metaData = conn.getMetaData();
+
+        // Provide the necessary arguments to getFunctions method based on your specific database schema and settings
+        ResultSet functions = metaData.getFunctions(catalog, schema, functionName);
+
+        // Check if the ResultSet has any rows
+        boolean exists = functions.next();
+
+        // Close the ResultSet
+        functions.close();
+
+        return exists;
     }
 }

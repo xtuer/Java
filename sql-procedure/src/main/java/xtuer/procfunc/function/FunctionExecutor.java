@@ -69,7 +69,7 @@ public abstract class FunctionExecutor {
             cstmt.execute();
 
             // [4] 获取函数执行的结果。
-            Result result = getResult();
+            Result result = handleResult();
             conn.commit();
 
             return result;
@@ -101,7 +101,7 @@ public abstract class FunctionExecutor {
     /**
      * 获取函数执行的结果。
      */
-    private Result getResult() throws SQLException {
+    private Result handleResult() throws SQLException {
         /*
          逻辑:
          1. 获取更新的影响行数 (即使是更新语句，也有可能返回 -1)。

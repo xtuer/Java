@@ -5,6 +5,7 @@ import xtuer.procfunc.DatabaseType;
 import xtuer.procfunc.Result;
 import xtuer.procfunc.function.Function;
 import xtuer.procfunc.function.FunctionExecutors;
+import xtuer.procfunc.function.FunctionFetcher;
 import xtuer.util.TablePrinter;
 import xtuer.util.Utils;
 
@@ -48,6 +49,15 @@ public class MysqlFunctionTest {
             System.out.println(cstmt.getObject(1));
 
             conn.commit();
+        }
+    }
+
+    // 检查函数是否存在。
+    @Test
+    public void checkFunctionExists() throws Exception {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            boolean exists = FunctionFetcher.checkFunctionExists(conn, CATALOG, SCHEMA, "func_dateToStr2");
+            System.out.println(exists);
         }
     }
 

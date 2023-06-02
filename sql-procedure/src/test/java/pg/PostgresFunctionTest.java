@@ -37,7 +37,7 @@ public class PostgresFunctionTest {
     @Test
     public void executeJson() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Function func = FunctionFetcher.fetch(conn, CATALOG, SCHEMA, "func_has_arg_return_setof_record");
+            Function func = FunctionFetcher.fetchFunction(conn, CATALOG, SCHEMA, "func_has_arg_return_setof_record");
             PostgresFunction pFunc = Function.newFunction(func, PostgresFunction.class);
 
             // 传给前端。
@@ -74,6 +74,15 @@ public class PostgresFunctionTest {
             }
 
             conn.commit();
+        }
+    }
+
+    // 检查函数是否存在。
+    @Test
+    public void checkFunctionExists() throws Exception {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            boolean exists = FunctionFetcher.checkFunctionExists(conn, CATALOG, SCHEMA, "func_has_arg_return_setof_record");
+            System.out.println(exists);
         }
     }
 

@@ -11,8 +11,10 @@ import java.util.Map;
 
 /**
  * 函数执行工具类，集中管理数据库和对应的函数执行器。
- * - 查询函数: findFunction
- * - 执行函数: executeFunction
+ * - 查询函数: findFunction()
+ * - 执行函数: executeFunction()
+ *
+ * 提示: 需要判断函数是否存在可调用 FunctionFetcher.checkFunctionExists()
  */
 @Slf4j
 public class FunctionExecutors {
@@ -56,7 +58,8 @@ public class FunctionExecutors {
             return null;
         }
 
-        Function func = FunctionFetcher.fetch(conn, catalog, schema, functionName);
+        // 把查询得到的函数转为目标数据库使用的函数对象。
+        Function func = FunctionFetcher.fetchFunction(conn, catalog, schema, functionName);
         Function specFunc = Function.newFunction(func, klass);
 
         return specFunc;

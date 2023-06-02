@@ -146,8 +146,8 @@ public class Function {
     }
 
     /**
-     * 生成 Callable SQL 语句的参数部分的问号占位符。
-     * 例如 paramCount 则生成 "?, ?, ?"。
+     * 生成 Callable SQL 语句 {? = call func_sum(?, ?, ?)} 的参数部分的问号占位符。
+     * 例如 paramCount 为 3 则生成 "?, ?, ?"。
      *
      * @param paramCount 参数个数。
      * @return 返回参数占位符字符串。
