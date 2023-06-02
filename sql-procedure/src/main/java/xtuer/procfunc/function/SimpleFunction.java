@@ -10,25 +10,35 @@ import java.util.stream.Collectors;
  * 简单函数，只有输入参数、一个返回值，不支持输出参数。
  */
 public class SimpleFunction extends Function {
+    /**
+     * 输入参数。
+     */
+    private final List<FunctionArg> inArgs = new LinkedList<>();
+
+    @Override
+    public Function build() {
+        super.build();
+
+        // 输入参数，简单函数的 inoutArgs 只会有输入参数。
+        this.inArgs.clear();
+        this.inArgs.addAll(super.inoutArgs);
+
+        return this;
+    }
+
+    @Override
     public String getSignature() {
         // func_name(IN id int, IN count int) return int
-        List<FunctionArg> inArgs = super.inoutArgs;
-        String inArgsString = inArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
+
+        String inArgsString = this.inArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
         String returnArgsString = super.returnArgs.get(0).getDataTypeName();
 
         return String.format("%s(%s) return %s", super.name, inArgsString, returnArgsString);
     }
 
+    @Override
     public String getCallableSql() {
         // { ? = call func_name(?, ?, ?) }
-
-        // 问号 ? 的数量为输入参数的个数。
-        List<FunctionArg> inArgs = super.inoutArgs;
-        List<String> questionMarks = new LinkedList<>();
-        for (int i = 0; i < inArgs.size(); i++) {
-            questionMarks.add("?");
-        }
-
-        return String.format("{ ? = call %s(%s) }", super.name, String.join(", ", questionMarks));
+        return String.format("{ ? = call %s(%s) }", super.name, Function.generateCallableSqlParameterQuestionMarks(this.inArgs.size()));
     }
 }

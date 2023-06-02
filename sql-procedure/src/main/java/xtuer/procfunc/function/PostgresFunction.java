@@ -2,8 +2,6 @@ package xtuer.procfunc.function;
 
 import xtuer.procfunc.Arg;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -21,11 +19,6 @@ public class PostgresFunction extends Function {
      * 是否返回游标。
      */
     private boolean refCursorReturned;
-
-    /**
-     * 输入参数个数。
-     */
-    protected int inArgsCount = 0;
 
     @Override
     public Function build() {
@@ -48,22 +41,16 @@ public class PostgresFunction extends Function {
             }
         }
 
-        // 计算输入参数的个数。
-        this.inArgsCount = 0;
-        for (FunctionArg arg : super.inoutArgs) {
-            if (arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_IN || arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_INOUT) {
-                this.inArgsCount++;
-            }
-        }
-
         return this;
     }
 
     @Override
     public String getSignature() {
         // 函数签名需要显示输入参数、输出参数、返回值。
-        // func_name() return (void)
-        // func_name(IN id int, OUT count int) return (id int)
+        // func_name() return (varchar name)
+        // func_name(IN id int, OUT count int) return (void)
+        // func_name(IN id int, IN count int) return (id int, name varchar)
+
         String inoutArgsString = super.inoutArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
         String returnArgsString = super.returnArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
 
@@ -80,11 +67,11 @@ public class PostgresFunction extends Function {
         // 普通: { call func_name(?, ?, ?) }
         // 游标: { ? = call func_name(?) }
 
-        // 问号 ? 的数量为输入参数的个数。
-        List<String> questionMarks = new LinkedList<>();
-        for (int i = 0; i < inArgsCount; i++) {
-            questionMarks.add("?");
-        }
+        // 输入参数的个数。
+        long inArgsCount = super.inoutArgs.stream()
+                .filter(arg -> arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_IN || arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_INOUT)
+                .count();
+        String questionMarks = Function.generateCallableSqlParameterQuestionMarks((int) inArgsCount);
 
         if (this.refCursorReturned) {
             return String.format("{ ? = call %s(%s) }", super.name, String.join(", ", questionMarks));

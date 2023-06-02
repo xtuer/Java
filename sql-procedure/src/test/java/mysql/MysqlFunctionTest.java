@@ -33,8 +33,6 @@ public class MysqlFunctionTest {
     @Test
     public void executeFunction() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            // 获取 cursor 需要关闭自动提交，否则报错 cursor "<unnamed portal 1>" does not exist，
-            // 会报 cursor "<unnamed portal 1>" does not exist 错误。
             conn.setCatalog(CATALOG);
             conn.setSchema(SCHEMA);
             conn.setAutoCommit(false);
@@ -46,11 +44,6 @@ public class MysqlFunctionTest {
 
             // 获取返回结果
             System.out.println(cstmt.getObject(1));
-
-            ResultSet rs = cstmt.getResultSet();
-            while (rs != null && rs.next()) {
-                Utils.dump(rs);
-            }
 
             conn.commit();
         }

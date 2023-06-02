@@ -144,4 +144,20 @@ public class Function {
     public String getCallableSql() {
         return null; // 推迟到子类实现。
     }
+
+    /**
+     * 生成 Callable SQL 语句的参数部分的问号占位符。
+     * 例如 paramCount 则生成 "?, ?, ?"。
+     *
+     * @param paramCount 参数个数。
+     * @return 返回参数占位符字符串。
+     */
+    public static String generateCallableSqlParameterQuestionMarks(int paramCount) {
+        List<String> qms = new ArrayList<>(paramCount);
+        for (int i = 0; i < paramCount; i++) {
+            qms.add("?");
+        }
+
+        return String.join(", ", qms);
+    }
 }
