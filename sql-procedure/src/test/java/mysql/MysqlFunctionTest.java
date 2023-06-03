@@ -65,7 +65,7 @@ public class MysqlFunctionTest {
         System.out.println("OriginalArgs:");
         TablePrinter.print(func.getOriginalArgs(), "scale", "value", "length", "precision", "dataTypeValue");
         System.out.println("InoutArgs:");
-        TablePrinter.print(func.getInoutArgs(), "scale", "value", "length", "precision", "dataTypeValue");
+        TablePrinter.print(func.getInOutInoutArgs(), "scale", "value", "length", "precision", "dataTypeValue");
         System.out.println("ReturnArgs:");
         TablePrinter.print(func.getReturnArgs(), "scale", "value", "length", "precision", "dataTypeValue");
         System.out.println("CallableSQL:");

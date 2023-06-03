@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 /**
- * 简单函数执行器，只支持像 MySQL 这样的简单函数: 多个 IN 入参，单个返回值，函数参数没有 OUT 参数。
+ * 简单函数执行器，只支持像 MySQL 这样的简单函数: 只有 IN 入参，单个返回值，没有 INOUT, OUT 参数。
  *
  * MySQL 官方文档: https://dev.mysql.com/doc/refman/8.0/en/create-procedure.html
  */
@@ -28,14 +28,11 @@ public class SimpleFunctionExecutor extends FunctionExecutor {
 
         // [2] 设置 IN 的入参。
         int index = 1;
-        for (FunctionArg arg : super.func.getInoutArgs()) {
-            int argTypeValue = arg.getArgTypeValue();
-
-            if (FunctionArg.ARG_TYPE_VALUE_IN == argTypeValue) {
-                index++;
-                log.debug("输入参数: 下标 [{}], 参数值 [{}]", index, super.funcArguments.get(index - 2));
-                super.cstmt.setObject(index, super.funcArguments.get(index - 2));
-            }
+        for (FunctionArg arg : super.func.getInArgs()) {
+            index++;
+            Object value = super.funcArguments.get(index - 2);
+            log.debug("输入参数: 下标 [{}], 参数 [{}]", index, value);
+            super.cstmt.setObject(index, value);
         }
     }
 
@@ -52,8 +49,6 @@ public class SimpleFunctionExecutor extends FunctionExecutor {
 
     @Override
     protected void preCheck() {
-        if (!SimpleFunction.class.isAssignableFrom(super.func.getClass())) {
-            throw new RuntimeException("函数类型必须为 SimpleFunction");
-        }
+        FunctionExecutor.checkAssignable(SimpleFunction.class, super.func);
     }
 }

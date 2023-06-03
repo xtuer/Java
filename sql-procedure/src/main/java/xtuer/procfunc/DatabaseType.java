@@ -6,4 +6,5 @@ package xtuer.procfunc;
 public enum DatabaseType {
     MySQL,
     Postgres,
+    Oracle,
 }

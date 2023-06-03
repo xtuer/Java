@@ -26,7 +26,7 @@ public class PostgresFunctionTest {
     @Test
     public void execute() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "func_has_arg_return_setof_record");
+            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "func_out_arg_no_return");
             print(func);
 
             Result result = FunctionExecutors.executeFunction(DB_TYPE, conn, func, 1, 2, 3);
@@ -90,7 +90,7 @@ public class PostgresFunctionTest {
         System.out.println("OriginalArgs:");
         TablePrinter.print(func.getOriginalArgs(), "scale", "value", "length", "precision", "dataTypeValue");
         System.out.println("InoutArgs:");
-        TablePrinter.print(func.getInoutArgs(), "scale", "value", "length", "precision", "dataTypeValue");
+        TablePrinter.print(func.getInOutInoutArgs(), "scale", "value", "length", "precision", "dataTypeValue");
         System.out.println("ReturnArgs:");
         TablePrinter.print(func.getReturnArgs(), "scale", "value", "length", "precision", "dataTypeValue");
         System.out.println("CallableSQL:");

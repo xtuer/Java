@@ -28,10 +28,13 @@ public class FunctionExecutors {
      */
     private static final Map<DatabaseType, Class<? extends FunctionExecutor>> DB_EXECUTOR_MAP = new HashMap<>();
 
+    // 注册函数执行器和类型。
     static {
-        // 注册函数执行器和类型。
         DB_FUNCTION_MAP.put(DatabaseType.MySQL, SimpleFunction.class);
         DB_EXECUTOR_MAP.put(DatabaseType.MySQL, SimpleFunctionExecutor.class);
+
+        DB_FUNCTION_MAP.put(DatabaseType.Oracle, OracleFunction.class);
+        DB_EXECUTOR_MAP.put(DatabaseType.Oracle, OracleFunctionExecutor.class);
 
         DB_FUNCTION_MAP.put(DatabaseType.Postgres, PostgresFunction.class);
         DB_EXECUTOR_MAP.put(DatabaseType.Postgres, PostgresFunctionExecutor.class);

@@ -34,7 +34,7 @@ public class PostgresFunction extends Function {
         }
 
         // 有输出参数时不能使用 RETURN。
-        for (FunctionArg arg : super.inoutArgs) {
+        for (FunctionArg arg : super.inOutInoutArgs) {
             if (arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_INOUT || arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_OUT) {
                 super.returnArgs.clear();
                 break;
@@ -51,7 +51,7 @@ public class PostgresFunction extends Function {
         // func_name(IN id int, OUT count int) return (void)
         // func_name(IN id int, IN count int) return (id int, name varchar)
 
-        String inoutArgsString = super.inoutArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
+        String inoutArgsString = super.inOutInoutArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
         String returnArgsString = super.returnArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
 
         if ("".equals(returnArgsString)) {
@@ -67,11 +67,7 @@ public class PostgresFunction extends Function {
         // 普通: { call func_name(?, ?, ?) }
         // 游标: { ? = call func_name(?) }
 
-        // 输入参数的个数。
-        long inArgsCount = super.inoutArgs.stream()
-                .filter(arg -> arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_IN || arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_INOUT)
-                .count();
-        String questionMarks = Function.generateCallableSqlParameterQuestionMarks((int) inArgsCount);
+        String questionMarks = Function.generateCallableSqlParameterQuestionMarks(super.inArgs.size());
 
         if (this.refCursorReturned) {
             return String.format("{ ? = call %s(%s) }", super.name, String.join(", ", questionMarks));

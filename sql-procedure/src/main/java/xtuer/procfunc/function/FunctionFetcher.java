@@ -10,7 +10,7 @@ import java.sql.SQLException;
  */
 public class FunctionFetcher {
     /**
-     * 获取存储函数。
+     * 获取存储函数。需要注意的是这里返回的函数对象是一个通用的结构，在使用的时候有可能需要转为数据库对应的函数类型。
      *
      * @param conn 数据库连接。
      * @param catalog 所属 catalog。
@@ -29,7 +29,7 @@ public class FunctionFetcher {
             while (rs.next()) {
                 String argName         = rs.getString("COLUMN_NAME");   // 参数名称
                 int originalPosition   = rs.getInt("ORDINAL_POSITION"); // 参数原始位置
-                int argTypeValue       = rs.getInt("COLUMN_TYPE");      // 入参出参:  1 (IN), 4 (OUT), 2 (INOUT)
+                int argTypeValue       = rs.getInt("COLUMN_TYPE");      // 入参出参:  1 (IN), 2 (INOUT), 3 (OUT), 4 (RETURN)
                 int argDataTypeValue   = rs.getInt("DATA_TYPE");        // 参数的数据类型值: SQL type from java.sql.Types
                 String argDataTypeName = rs.getString("TYPE_NAME");     // 参数的数据类型名: SQL type name, for a UDT type the type name is fully qualified
                 int length             = rs.getInt("LENGTH");           // 长度

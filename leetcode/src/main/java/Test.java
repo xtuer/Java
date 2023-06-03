@@ -8,8 +8,6 @@ public class Test {
     static final String PASS   = "mypass";
 
     public static void main(String[] args) {
-        List<String> list = new ArrayList<>(3);
-        Collections.fill(list, "?");
-        System.out.println(list);
+        System.out.println(Charset.class.getName());
     }
 }

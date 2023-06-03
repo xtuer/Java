@@ -38,14 +38,19 @@ public class Function {
     protected List<FunctionArg> originalArgs = new ArrayList<>();
 
     /**
-     * 返回参数。
+     * 输入参数，包括 IN, INOUT 参数。
      */
-    protected List<FunctionArg> returnArgs = new LinkedList<>();
+    protected List<FunctionArg> inArgs = new LinkedList<>();
 
     /**
      * 输入输出参数，包括 IN, OUT, INOUT 参数。
      */
-    protected List<FunctionArg> inoutArgs = new LinkedList<>();
+    protected List<FunctionArg> inOutInoutArgs = new LinkedList<>();
+
+    /**
+     * 返回参数。
+     */
+    protected List<FunctionArg> returnArgs = new LinkedList<>();
 
     public Function() {}
 
@@ -104,21 +109,27 @@ public class Function {
     public Function build() {
         // 把返回参数和输入输出参数分别提取出来。
         returnArgs.clear();
-        inoutArgs.clear();
+        inOutInoutArgs.clear();
+        inArgs.clear();
 
         for (FunctionArg arg : originalArgs) {
             final int argTypeValue = arg.getArgTypeValue();
 
-            // 返回参数。
-            if (argTypeValue == FunctionArg.ARG_TYPE_VALUE_RETURN || argTypeValue == FunctionArg.ARG_TYPE_VALUE_RETURN_POST) {
-                returnArgs.add(arg);
+            // 输入参数。
+            if (argTypeValue == FunctionArg.ARG_TYPE_VALUE_IN || argTypeValue == FunctionArg.ARG_TYPE_VALUE_INOUT) {
+                inArgs.add(arg);
             }
 
             // 输入输出参数。
             if (argTypeValue == FunctionArg.ARG_TYPE_VALUE_IN
                     || argTypeValue == FunctionArg.ARG_TYPE_VALUE_INOUT
                     || argTypeValue == FunctionArg.ARG_TYPE_VALUE_OUT) {
-                inoutArgs.add(arg);
+                inOutInoutArgs.add(arg);
+            }
+
+            // 返回参数。
+            if (argTypeValue == FunctionArg.ARG_TYPE_VALUE_RETURN || argTypeValue == FunctionArg.ARG_TYPE_VALUE_RETURN_POST) {
+                returnArgs.add(arg);
             }
         }
 

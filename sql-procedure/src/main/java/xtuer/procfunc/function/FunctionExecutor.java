@@ -58,7 +58,7 @@ public abstract class FunctionExecutor {
         this.preCheck();
 
         // [1] 创建 CallableStatement。
-        log.info("执行函数: {}", this.func.getCallableSql());
+        log.info("执行函数: SQL [{}]，参数 {}", this.func.getCallableSql(), this.funcArguments);
         try (CallableStatement cstmt = this.conn.prepareCall(this.func.getCallableSql())) {
             this.cstmt = cstmt;
 
@@ -130,5 +130,17 @@ public abstract class FunctionExecutor {
         }
 
         return result;
+    }
+
+    /**
+     * 检查 klass 是否可以赋值为 func，如果不可以则抛出异常。
+     *
+     * @param klass 函数类型。
+     * @param func 函数对象。
+     */
+    public static void checkAssignable(Class<? extends Function> klass, Function func) {
+        if (!klass.isAssignableFrom(func.getClass())) {
+            throw new RuntimeException("要执行的函数类型必须为 " + klass.getName());
+        }
     }
 }
