@@ -1,6 +1,6 @@
-package xtuer.procfunc.function;
+package xtuer.funcproc.function;
 
-import xtuer.procfunc.Result;
+import xtuer.funcproc.Result;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

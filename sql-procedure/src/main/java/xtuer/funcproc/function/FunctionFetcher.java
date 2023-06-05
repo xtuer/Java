@@ -1,4 +1,4 @@
-package xtuer.procfunc.function;
+package xtuer.funcproc.function;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

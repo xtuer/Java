@@ -1,7 +1,7 @@
-package xtuer.procfunc.function;
+package xtuer.funcproc.function;
 
 import lombok.extern.slf4j.Slf4j;
-import xtuer.procfunc.Result;
+import xtuer.funcproc.Result;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

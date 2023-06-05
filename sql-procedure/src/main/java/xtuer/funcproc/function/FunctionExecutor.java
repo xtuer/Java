@@ -1,8 +1,8 @@
-package xtuer.procfunc.function;
+package xtuer.funcproc.function;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbutils.BasicRowProcessor;
-import xtuer.procfunc.Result;
+import xtuer.funcproc.Result;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;

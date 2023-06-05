@@ -1,4 +1,4 @@
-package xtuer.procfunc;
+package xtuer.funcproc;
 
 /**
  * 数据库类型。

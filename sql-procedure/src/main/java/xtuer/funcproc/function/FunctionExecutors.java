@@ -1,8 +1,8 @@
-package xtuer.procfunc.function;
+package xtuer.funcproc.function;
 
 import lombok.extern.slf4j.Slf4j;
-import xtuer.procfunc.DatabaseType;
-import xtuer.procfunc.Result;
+import xtuer.funcproc.DatabaseType;
+import xtuer.funcproc.Result;
 
 import java.sql.Connection;
 import java.sql.SQLException;

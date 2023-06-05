@@ -1,13 +1,13 @@
 package mysql;
 
 import org.junit.Test;
-import xtuer.procfunc.DatabaseType;
-import xtuer.procfunc.Result;
-import xtuer.procfunc.function.Function;
-import xtuer.procfunc.function.FunctionExecutors;
-import xtuer.procfunc.function.FunctionFetcher;
-import xtuer.util.TablePrinter;
+import xtuer.funcproc.DatabaseType;
+import xtuer.funcproc.Result;
+import xtuer.funcproc.function.Function;
+import xtuer.funcproc.function.FunctionExecutors;
+import xtuer.funcproc.function.FunctionFetcher;
 import xtuer.util.Utils;
+import static xtuer.util.FunctionPrinter.print;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -59,19 +59,5 @@ public class MysqlFunctionTest {
             boolean exists = FunctionFetcher.checkFunctionExists(conn, CATALOG, SCHEMA, "func_dateToStr2");
             System.out.println(exists);
         }
-    }
-
-    public static void print(Function func) {
-        System.out.println("OriginalArgs:");
-        TablePrinter.print(func.getOriginalArgs(), "scale", "value", "length", "precision", "dataTypeValue");
-        System.out.println("InoutArgs:");
-        TablePrinter.print(func.getInOutInoutArgs(), "scale", "value", "length", "precision", "dataTypeValue");
-        System.out.println("ReturnArgs:");
-        TablePrinter.print(func.getReturnArgs(), "scale", "value", "length", "precision", "dataTypeValue");
-        System.out.println("CallableSQL:");
-        System.out.println(func.getCallableSql());
-        System.out.println("Signature:");
-        System.out.println(func.getSignature());
-        System.out.println();
     }
 }

@@ -1,6 +1,6 @@
-package xtuer.procfunc.function;
+package xtuer.funcproc.function;
 
-import xtuer.procfunc.Arg;
+import xtuer.funcproc.Arg;
 
 /**
  * 函数参数。

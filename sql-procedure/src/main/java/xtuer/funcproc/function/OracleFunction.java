@@ -1,4 +1,4 @@
-package xtuer.procfunc.function;
+package xtuer.funcproc.function;
 
 public class OracleFunction extends Function {
 }
