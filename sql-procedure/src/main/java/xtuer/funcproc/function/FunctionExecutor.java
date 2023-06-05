@@ -132,6 +132,17 @@ public abstract class FunctionExecutor {
         return result;
     }
 
+    // 获取返回参数，只有一个返回参数时。
+    protected FunctionArg getReturnArg() {
+        List<FunctionArg> returnArgs = func.getReturnArgs();
+
+        if (returnArgs.size() != 1) {
+            log.warn("[注意] 函数的返回参数不唯一，returnArgs 的元素个数为 [{}]", returnArgs.size());
+        }
+
+        return returnArgs.get(0);
+    }
+
     /**
      * 检查 klass 是否可以赋值为 func，如果不可以则抛出异常。
      *

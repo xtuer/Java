@@ -1,5 +1,6 @@
 package xtuer.funcproc.function;
 
+import lombok.Getter;
 import xtuer.funcproc.Arg;
 
 import java.util.stream.Collectors;
@@ -18,6 +19,7 @@ public class PostgresFunction extends Function {
     /**
      * 是否返回游标。
      */
+    @Getter
     private boolean refCursorReturned;
 
     @Override
@@ -74,14 +76,5 @@ public class PostgresFunction extends Function {
         } else {
             return String.format("{ call %s(%s) }", super.name, String.join(", ", questionMarks));
         }
-    }
-
-    /**
-     * 获取是否返回游标。
-     *
-     * @return 返回游标返回 true，否则返回 false。
-     */
-    public boolean isRefCursorReturned() {
-        return refCursorReturned;
     }
 }
