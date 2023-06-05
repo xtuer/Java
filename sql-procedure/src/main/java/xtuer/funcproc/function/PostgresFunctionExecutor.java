@@ -19,7 +19,7 @@ public class PostgresFunctionExecutor extends FunctionExecutor {
 
         // 注册游标参数。
         if (pgFunc.isRefCursorReturned()) {
-            log.debug("注册游标 Types.REF_CURSOR");
+            log.debug("输出参数: 下标 [1], 类型为游标 Types.REF_CURSOR，类型值 [{}]", Types.REF_CURSOR);
             index = 1;
             super.cstmt.registerOutParameter(index, Types.REF_CURSOR);
         }
