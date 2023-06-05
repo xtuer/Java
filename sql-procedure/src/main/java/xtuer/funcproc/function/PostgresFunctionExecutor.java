@@ -14,18 +14,17 @@ import java.sql.Types;
 public class PostgresFunctionExecutor extends FunctionExecutor {
     @Override
     protected void setAndRegisterParameters() throws SQLException {
-        PostgresFunction pgFunc = (PostgresFunction) super.func;
         int index = 0;
 
         // 注册游标参数。
-        if (pgFunc.isRefCursorReturned()) {
+        if (super.func.isCursorReturned()) {
             log.debug("输出参数: 下标 [1], 类型为游标 Types.REF_CURSOR，类型值 [{}]", Types.REF_CURSOR);
             index = 1;
             super.cstmt.registerOutParameter(index, Types.REF_CURSOR);
         }
 
         // 设置输入参数。只设置 IN, INOUT 入参，OUT 出参 OUT 不需要设置。
-        for (FunctionArg arg : pgFunc.getInArgs()) {
+        for (FunctionArg arg : super.func.getInArgs()) {
             index++;
             log.debug("输入参数: 下标 [{}], 参数 [{}]", index, super.funcArguments.get(index - 1));
             super.cstmt.setObject(index, super.funcArguments.get(index - 1));
@@ -39,9 +38,7 @@ public class PostgresFunctionExecutor extends FunctionExecutor {
 
     @Override
     protected ResultSet getResultSet() throws SQLException {
-        PostgresFunction pgFunc = (PostgresFunction) super.func;
-
-        if (pgFunc.isRefCursorReturned()) {
+        if (super.func.isCursorReturned()) {
             // 返回游标的时候需要使用 stmt.getObject(1) 获取结果集。
             return (ResultSet) super.cstmt.getObject(1);
         } else {

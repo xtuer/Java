@@ -1,6 +1,5 @@
 package xtuer.funcproc.function;
 
-import lombok.Getter;
 import xtuer.funcproc.Arg;
 
 import java.util.stream.Collectors;
@@ -16,21 +15,15 @@ public class PostgresFunction extends Function {
      */
     public static final String REF_CURSOR_NAME = "refcursor";
 
-    /**
-     * 是否返回游标。
-     */
-    @Getter
-    private boolean refCursorReturned;
-
     @Override
     public Function build() {
         super.build();
 
         // 判断是否返回游标 cursor。
-        this.refCursorReturned = false;
+        super.cursorReturned = false;
         for (FunctionArg arg : super.returnArgs) {
             if (REF_CURSOR_NAME.equals(arg.getDataTypeName())) {
-                this.refCursorReturned = true;
+                super.cursorReturned = true;
                 break;
             }
         }
@@ -71,7 +64,7 @@ public class PostgresFunction extends Function {
 
         String questionMarks = Function.generateCallableSqlParameterQuestionMarks(super.inArgs.size());
 
-        if (this.refCursorReturned) {
+        if (super.cursorReturned) {
             return String.format("{ ? = call %s(%s) }", super.name, String.join(", ", questionMarks));
         } else {
             return String.format("{ call %s(%s) }", super.name, String.join(", ", questionMarks));

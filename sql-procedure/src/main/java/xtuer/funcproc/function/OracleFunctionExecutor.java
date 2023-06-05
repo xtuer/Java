@@ -21,11 +21,10 @@ public class OracleFunctionExecutor extends FunctionExecutor {
          2. 设置 IN 的入参。
          */
 
-        OracleFunction oFunc = (OracleFunction) super.func;
         int index = 1;
 
         // [1] 注册 OUT 参数或者游标获取结果。
-        if (oFunc.isRefCursorReturned()) {
+        if (super.func.isCursorReturned()) {
             log.debug("输出参数: 下标 [1], 类型为游标 OracleTypes.CURSOR，类型值 [{}]", OracleFunction.ORACLE_TYPES_CURSOR);
             super.cstmt.registerOutParameter(1, OracleFunction.ORACLE_TYPES_CURSOR);
         } else {
@@ -45,9 +44,7 @@ public class OracleFunctionExecutor extends FunctionExecutor {
 
     @Override
     protected void getOutParameters(Result result) throws SQLException {
-        OracleFunction oFunc = (OracleFunction) super.func;
-
-        if (!oFunc.isRefCursorReturned()) {
+        if (!super.func.isCursorReturned()) {
             Object ret = super.cstmt.getObject(1); // 获取函数的返回值。
             result.getOutResult().put("returnValue", ret);
         }
@@ -56,9 +53,7 @@ public class OracleFunctionExecutor extends FunctionExecutor {
 
     @Override
     protected ResultSet getResultSet() throws SQLException {
-        OracleFunction oFunc = (OracleFunction) super.func;
-
-        if (oFunc.isRefCursorReturned()) {
+        if (super.func.isCursorReturned()) {
             // 返回游标的时候需要使用 stmt.getObject(1) 获取结果集。
             return (ResultSet) super.cstmt.getObject(1);
         } else {

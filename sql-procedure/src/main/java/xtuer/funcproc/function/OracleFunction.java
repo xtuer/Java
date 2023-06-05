@@ -3,12 +3,16 @@ package xtuer.funcproc.function;
 import lombok.Getter;
 import xtuer.funcproc.Arg;
 
+import java.sql.Types;
 import java.util.stream.Collectors;
 
 /**
  * Oracle 的存储函数。
  *
- * 注意: 函数名大小写敏感。
+ * 注意:
+ * - 函数名大小写敏感。
+ * - 支持返回简单类型、游标。
+ * - 不支持返回复合类型。
  */
 public class OracleFunction extends Function {
     /**
@@ -22,23 +26,24 @@ public class OracleFunction extends Function {
     public static final int ORACLE_TYPES_CURSOR = -10;
 
     /**
-     * 是否返回游标。
+     * 是否返回 STRUCT 的复合类型。
      */
     @Getter
-    private boolean refCursorReturned;
+    private boolean structReturned = false;
 
     @Override
     public Function build() {
         super.build();
 
+        // 返回参数。
+        FunctionArg returnArg = super.getReturnArgs().get(0);
+
         // 判断是否返回游标 cursor。
-        this.refCursorReturned = false;
-        for (FunctionArg arg : super.returnArgs) {
-            if (REF_CURSOR_NAME.equals(arg.getDataTypeName())) {
-                this.refCursorReturned = true;
-                break;
-            }
-        }
+        super.cursorReturned = REF_CURSOR_NAME.equals(returnArg.getDataTypeName());
+
+        // 返回复合类型: Types.STRUCT，不支持。
+        this.structReturned = Types.STRUCT == returnArg.getDataTypeValue();
+        super.supported = false;
 
         return this;
     }
@@ -50,7 +55,7 @@ public class OracleFunction extends Function {
         String inArgsString = super.inArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
         String returnArgsString = super.returnArgs.get(0).getDataTypeName();
 
-        if (this.refCursorReturned) {
+        if (super.cursorReturned) {
             returnArgsString = "SYS_REFCURSOR";
         }
 

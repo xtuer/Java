@@ -52,6 +52,12 @@ public class Function {
      */
     protected List<FunctionArg> returnArgs = new LinkedList<>();
 
+    /**
+     * 是否返回游标。
+     * 例如 Postgres，Oracle 可能会返回游标，MySQL 不会返回游标。
+     */
+    protected boolean cursorReturned = false;
+
     public Function() {}
 
     /**

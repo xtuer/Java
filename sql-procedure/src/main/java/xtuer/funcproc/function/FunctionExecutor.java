@@ -132,12 +132,14 @@ public abstract class FunctionExecutor {
         return result;
     }
 
-    // 获取返回参数，只有一个返回参数时。
+    // 获取返回值参数。
+    // MySQL、Oracle 等的函数确定必须返回一个值，可以调用这个函数。
+    // Postgres 的函数可能返回 0 个或者多个值，不要调用这个函数。
     protected FunctionArg getReturnArg() {
         List<FunctionArg> returnArgs = func.getReturnArgs();
 
-        if (returnArgs.size() != 1) {
-            log.warn("[注意] 函数的返回参数不唯一，returnArgs 的元素个数为 [{}]", returnArgs.size());
+        if (returnArgs.size() < 1) {
+            throw new RuntimeException("函数的返回参数不唯一，returnArgs 的元素个数为 " + returnArgs.size());
         }
 
         return returnArgs.get(0);
