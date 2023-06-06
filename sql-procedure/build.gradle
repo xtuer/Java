@@ -40,6 +40,8 @@ dependencies {
     implementation 'mysql:mysql-connector-java:5.1.46'
     implementation 'com.oracle.database.jdbc:ojdbc10:19.18.0.0'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
+//    implementation group: 'com.ibm.db2.jcc', name: 'db2jcc', version: 'db2jcc4'
+    implementation files('src/lib/db2jcc4_4.26.14.jar')
 
     testImplementation 'junit:junit:4.13.2'
     compileOnly 'org.projectlombok:lombok:1.18.24'

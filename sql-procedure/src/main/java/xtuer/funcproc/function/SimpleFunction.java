@@ -14,6 +14,7 @@ public class SimpleFunction extends Function {
     public String getSignature() {
         // func_name(IN id int, IN count int) return int
 
+        // 正确的函数一定会有一个且唯一一个返回参数。
         String inArgsString = super.inArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
         String returnArgsString = super.returnArgs.get(0).getDataTypeName();
 

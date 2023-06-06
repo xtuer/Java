@@ -5,7 +5,6 @@ import xtuer.funcproc.Result;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 
 /**
  * 简单函数执行器，只支持像 MySQL 这样的简单函数: 只有 IN 入参，单个返回值，没有 INOUT, OUT 参数。
@@ -23,7 +22,7 @@ public class SimpleFunctionExecutor extends FunctionExecutor {
          */
 
         // [1] 注册 OUT 参数获取结果。
-        FunctionArg returnArg = super.getReturnArg();
+        FunctionArg returnArg = super.func.getReturnArg();
         log.debug("输出参数: 下标 [1], 类型名 [{}], 类型值 [{}]", returnArg.getDataTypeName(), returnArg.getDataTypeValue());
         super.cstmt.registerOutParameter(1, returnArg.getDataTypeValue()); // 返回类型可以使用 Types.OTHER。
 

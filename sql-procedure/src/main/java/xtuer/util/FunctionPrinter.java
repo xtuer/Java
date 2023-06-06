@@ -8,6 +8,8 @@ public class FunctionPrinter {
         TablePrinter.print(func.getOriginalArgs(), "scale", "value", "length", "precision", "dataTypeValue2");
         System.out.println("InoutArgs:");
         TablePrinter.print(func.getInOutInoutArgs(), "scale", "value", "length", "precision", "dataTypeValue2");
+        System.out.println("InArgs:");
+        TablePrinter.print(func.getInArgs(), "scale", "value", "length", "precision", "dataTypeValue2");
         System.out.println("ReturnArgs:");
         TablePrinter.print(func.getReturnArgs(), "scale", "value", "length", "precision", "dataTypeValue2");
         System.out.println("CallableSQL:");

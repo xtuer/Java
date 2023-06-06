@@ -36,6 +36,14 @@ public class PostgresFunction extends Function {
             }
         }
 
+        // 有下划线开头的类型参数时不支持: 数组、可变参数。
+        for (FunctionArg arg : super.inOutInoutArgs) {
+            if (arg.getDataTypeName().startsWith("_")) {
+                super.supported = false;
+                break;
+            }
+        }
+
         return this;
     }
 

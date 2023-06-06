@@ -162,6 +162,17 @@ public class Function {
         return null; // 推迟到子类实现。
     }
 
+    // 获取返回值参数。
+    // MySQL、Oracle 等的函数确定必须返回一个值，可以调用这个函数。
+    // Postgres 的函数可能返回 0 个或者多个值，不要调用这个函数。
+    public FunctionArg getReturnArg() {
+        if (returnArgs.size() < 1) {
+            throw new RuntimeException("函数的返回参数不唯一，returnArgs 的元素个数为 " + returnArgs.size());
+        }
+
+        return returnArgs.get(0);
+    }
+
     /**
      * 生成 Callable SQL 语句 {? = call func_sum(?, ?, ?)} 的参数部分的问号占位符。
      * 例如 paramCount 为 3 则生成 "?, ?, ?"。

@@ -28,7 +28,7 @@ public class OracleFunctionExecutor extends FunctionExecutor {
             log.debug("输出参数: 下标 [1], 类型为游标 OracleTypes.CURSOR，类型值 [{}]", OracleFunction.ORACLE_TYPES_CURSOR);
             super.cstmt.registerOutParameter(1, OracleFunction.ORACLE_TYPES_CURSOR);
         } else {
-            FunctionArg returnArg = super.getReturnArg();
+            FunctionArg returnArg = super.func.getReturnArg();
             log.debug("输出参数: 下标 [1], 类型名 [{}], 类型值 [{}]", returnArg.getDataTypeName(), returnArg.getDataTypeValue());
             super.cstmt.registerOutParameter(1, returnArg.getDataTypeValue()); // 返回类型不能使用 Types.OTHER。
         }

@@ -35,7 +35,7 @@ public abstract class FunctionExecutor {
      * @return 返回执行结果。
      * @throws SQLException 执行或获取函数结果出错时抛出异常。
      */
-    public final Result execute(Connection conn, Function func, Object ...funcArguments) throws SQLException {
+    public Result execute(Connection conn, Function func, Object ...funcArguments) throws SQLException {
         /*
          逻辑 (使用 Object 类型设置入参和出参，是因为结果显示给前端使用不需要数据类型参与业务计算):
          1. 创建 CallableStatement。
@@ -101,7 +101,7 @@ public abstract class FunctionExecutor {
     /**
      * 获取函数执行的结果。
      */
-    private Result handleResult() throws SQLException {
+    protected Result handleResult() throws SQLException {
         /*
          逻辑:
          1. 获取更新的影响行数 (即使是更新语句，也有可能返回 -1)。
@@ -112,7 +112,9 @@ public abstract class FunctionExecutor {
         Result result = new Result();
 
         // [1] 获取更新的影响行数 (即使是更新语句，也有可能返回 -1)。
-        result.setUpdateCount(cstmt.getUpdateCount());
+        if (this.cstmt != null) {
+            result.setUpdateCount(cstmt.getUpdateCount());
+        }
 
         // [2] 获取函数执行的输出参数。
         getOutParameters(result);
@@ -130,19 +132,6 @@ public abstract class FunctionExecutor {
         }
 
         return result;
-    }
-
-    // 获取返回值参数。
-    // MySQL、Oracle 等的函数确定必须返回一个值，可以调用这个函数。
-    // Postgres 的函数可能返回 0 个或者多个值，不要调用这个函数。
-    protected FunctionArg getReturnArg() {
-        List<FunctionArg> returnArgs = func.getReturnArgs();
-
-        if (returnArgs.size() < 1) {
-            throw new RuntimeException("函数的返回参数不唯一，returnArgs 的元素个数为 " + returnArgs.size());
-        }
-
-        return returnArgs.get(0);
     }
 
     /**

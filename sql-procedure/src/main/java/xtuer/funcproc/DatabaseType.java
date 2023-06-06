@@ -7,4 +7,5 @@ public enum DatabaseType {
     MySQL,
     Postgres,
     Oracle,
+    DB2,
 }

@@ -104,7 +104,7 @@ public abstract class Arg {
      * @return 返回参数的签名字符串。
      */
     public String getSignature() {
-        if (ARG_TYPE_NAME_RETURN.equals(argTypeName) || ARG_TYPE_NAME_RETURN_POST.equals(argTypeName)) {
+        if (ARG_TYPE_NAME_RETURN.equals(argTypeName) || ARG_TYPE_NAME_RETURN_POST.equals(argTypeName) || ARG_TYPE_NAME_UNKNOWN.equals(argTypeName)) {
             // 返回类型: count int
             return String.format("%s %s", name, dataTypeName);
         } else {

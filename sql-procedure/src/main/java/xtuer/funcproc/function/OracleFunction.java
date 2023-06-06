@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  * 注意:
  * - 函数名大小写敏感。
  * - 支持返回简单类型、游标。
- * - 不支持返回复合类型。
+ * - 不支持返回复合类型 STRUCT。
  */
 public class OracleFunction extends Function {
     /**
@@ -35,7 +35,7 @@ public class OracleFunction extends Function {
     public Function build() {
         super.build();
 
-        // 返回参数。
+        // 正确的函数一定会有一个且唯一一个返回参数。
         FunctionArg returnArg = super.getReturnArgs().get(0);
 
         // 判断是否返回游标 cursor。
