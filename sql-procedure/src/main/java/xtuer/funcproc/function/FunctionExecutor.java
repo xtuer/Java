@@ -4,10 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbutils.BasicRowProcessor;
 import xtuer.funcproc.Result;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,6 +17,12 @@ public abstract class FunctionExecutor {
     protected Function func;
     protected List<Object> funcArguments;
     protected CallableStatement cstmt;
+    protected PreparedStatement pstmt;
+
+    /**
+     * 为 true 使用 CallableStatement，为 false 使用 PreparedStatement。
+     */
+    protected boolean useCallableStatement = true;
 
     /**
      * 执行存储函数。
@@ -59,6 +62,17 @@ public abstract class FunctionExecutor {
 
         // [1] 创建 CallableStatement。
         log.info("执行函数: SQL [{}]，参数 {}", this.func.getCallableSql(), this.funcArguments);
+        if (this.useCallableStatement) {
+            return this.executeUseCallableStatement();
+        } else {
+            return this.executeUsePreparedStatement();
+        }
+    }
+
+    /**
+     * 使用 CallableStatement 的方式执行存储函数。
+     */
+    protected Result executeUseCallableStatement() throws SQLException {
         try (CallableStatement cstmt = this.conn.prepareCall(this.func.getCallableSql())) {
             this.cstmt = cstmt;
 
@@ -67,6 +81,27 @@ public abstract class FunctionExecutor {
 
             // [3] 执行函数。
             cstmt.execute();
+
+            // [4] 获取函数执行的结果。
+            Result result = handleResult();
+            conn.commit();
+
+            return result;
+        }
+    }
+
+    /**
+     * 使用 PreparedStatement 的方式执行存储函数。
+     */
+    protected Result executeUsePreparedStatement() throws SQLException {
+        try (PreparedStatement pstmt = conn.prepareStatement(this.func.getCallableSql())) {
+            this.pstmt = pstmt;
+
+            // [2] 设置函数的参数: 入参、出参、入出参。
+            setAndRegisterParameters();
+
+            // [3] 执行函数。
+            pstmt.execute();
 
             // [4] 获取函数执行的结果。
             Result result = handleResult();

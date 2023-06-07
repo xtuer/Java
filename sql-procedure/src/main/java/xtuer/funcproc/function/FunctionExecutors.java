@@ -41,6 +41,9 @@ public class FunctionExecutors {
 
         DB_FUNCTION_MAP.put(DatabaseType.DB2, DB2Function.class);
         DB_EXECUTOR_MAP.put(DatabaseType.DB2, DB2FunctionExecutor.class);
+
+        DB_FUNCTION_MAP.put(DatabaseType.SqlServer, SqlServerFunction.class);
+        DB_EXECUTOR_MAP.put(DatabaseType.SqlServer, SqlServerFunctionExecutor.class);
     }
 
     /**

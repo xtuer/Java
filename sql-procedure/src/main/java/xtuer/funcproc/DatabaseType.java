@@ -8,4 +8,5 @@ public enum DatabaseType {
     Postgres,
     Oracle,
     DB2,
+    SqlServer,
 }
