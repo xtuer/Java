@@ -168,7 +168,7 @@ public class Function {
     // Postgres 的函数可能返回 0 个或者多个值，不要调用这个函数。
     @JsonIgnore
     public FunctionArg getReturnArg() {
-        if (returnArgs.size() < 1) {
+        if (returnArgs.size() != 1) {
             throw new RuntimeException("函数的返回参数不唯一，returnArgs 的元素个数为 " + returnArgs.size());
         }
 

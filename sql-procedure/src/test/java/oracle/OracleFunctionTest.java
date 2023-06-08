@@ -24,7 +24,7 @@ public class OracleFunctionTest {
     @Test
     public void execute() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "CIRCLE_AREA"); // 函数名默认需要大写: CIRCLE_AREA, GET_TEST_CURSOR
+            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "GET_TEST_CURSOR"); // 函数名默认需要大写: CIRCLE_AREA, GET_TEST_CURSOR
             print(func);
 
             Result result = FunctionExecutors.executeFunction(DB_TYPE, conn, func, 3);
