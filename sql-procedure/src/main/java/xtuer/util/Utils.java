@@ -93,6 +93,7 @@ public class Utils {
         try {
             return objectMapper.writer(printer).writeValueAsString(object);
         } catch (JsonProcessingException e) {
+            e.printStackTrace();
             return "{}";
         }
     }
