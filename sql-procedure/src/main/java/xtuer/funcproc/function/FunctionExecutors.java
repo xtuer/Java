@@ -30,8 +30,8 @@ public final class FunctionExecutors {
 
     // 注册函数执行器和类型。
     static {
-        DB_FUNCTION_MAP.put(DatabaseType.MySQL, SimpleFunction.class);
-        DB_EXECUTOR_MAP.put(DatabaseType.MySQL, SimpleFunctionExecutor.class);
+        DB_FUNCTION_MAP.put(DatabaseType.Mysql, MysqlFunction.class);
+        DB_EXECUTOR_MAP.put(DatabaseType.Mysql, MysqlFunctionExecutor.class);
 
         DB_FUNCTION_MAP.put(DatabaseType.Oracle, OracleFunction.class);
         DB_EXECUTOR_MAP.put(DatabaseType.Oracle, OracleFunctionExecutor.class);

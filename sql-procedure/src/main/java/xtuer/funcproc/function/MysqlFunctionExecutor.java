@@ -7,12 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * 简单函数执行器，只支持像 MySQL 这样的简单函数: 只有 IN 入参，单个返回值，没有 INOUT, OUT 参数。
+ * MySQL 函数执行器: 只有 IN 入参，单个返回值，没有 INOUT, OUT 参数。
  *
  * MySQL 官方文档: https://dev.mysql.com/doc/refman/8.0/en/create-procedure.html
  */
 @Slf4j
-public class SimpleFunctionExecutor extends FunctionExecutor {
+public class MysqlFunctionExecutor extends FunctionExecutor {
     @Override
     protected void setAndRegisterParameters() throws SQLException {
         /*
@@ -49,6 +49,6 @@ public class SimpleFunctionExecutor extends FunctionExecutor {
 
     @Override
     protected void preCheck() {
-        FunctionExecutor.checkAssignable(SimpleFunction.class, super.func);
+        FunctionExecutor.checkAssignable(MysqlFunction.class, super.func);
     }
 }

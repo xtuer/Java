@@ -6,10 +6,10 @@ import xtuer.funcproc.Arg;
 import java.util.stream.Collectors;
 
 /**
- * 简单函数，只有输入参数、一个返回值，不支持输出参数。
+ * MySQL 函数，只有输入参数、一个返回值，不支持输出参数。
  */
 @Getter
-public class SimpleFunction extends Function {
+public class MysqlFunction extends Function {
     @Override
     public String getSignature() {
         // func_name(IN id int, IN count int) return int

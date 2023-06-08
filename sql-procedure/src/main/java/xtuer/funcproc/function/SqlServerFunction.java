@@ -9,10 +9,9 @@ import java.util.stream.Collectors;
 public class SqlServerFunction extends Function {
     /**
      * 是否使用 CallableStatement 执行函数。
-     * 提示: 返回 inline table 的时候使用 PreparedStatement 访问。
+     * 提示: 返回 table 的时候使用 PreparedStatement 访问。
      */
     private boolean useCallableStatement = true;
-
     private boolean tableReturned = false;
 
     @Override
