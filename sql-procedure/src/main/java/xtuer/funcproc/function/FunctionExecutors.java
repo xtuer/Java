@@ -17,7 +17,7 @@ import java.util.Map;
  * 提示: 需要判断函数是否存在可调用 FunctionFetcher.checkFunctionExists()
  */
 @Slf4j
-public class FunctionExecutors {
+public final class FunctionExecutors {
     /**
      * 每种数据库对应的函数类型注册表。
      */

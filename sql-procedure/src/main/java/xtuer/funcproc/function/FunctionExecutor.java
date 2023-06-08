@@ -72,7 +72,7 @@ public abstract class FunctionExecutor {
     /**
      * 使用 CallableStatement 的方式执行存储函数。
      */
-    protected Result executeUseCallableStatement() throws SQLException {
+    private Result executeUseCallableStatement() throws SQLException {
         try (CallableStatement cstmt = this.conn.prepareCall(this.func.getCallableSql())) {
             this.cstmt = cstmt;
 
@@ -93,7 +93,7 @@ public abstract class FunctionExecutor {
     /**
      * 使用 PreparedStatement 的方式执行存储函数。
      */
-    protected Result executeUsePreparedStatement() throws SQLException {
+    private Result executeUsePreparedStatement() throws SQLException {
         try (PreparedStatement pstmt = conn.prepareStatement(this.func.getCallableSql())) {
             this.pstmt = pstmt;
 

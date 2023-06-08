@@ -20,7 +20,7 @@ public class SqlServerFunctionExecutor extends FunctionExecutor {
     @Override
     public Result execute(Connection conn, Function func, Object ...funcArguments) throws SQLException {
         this.ssFunc = (SqlServerFunction) func;
-        super.useCallableStatement = !ssFunc.isUsePreparedStatement();
+        super.useCallableStatement = ssFunc.isUseCallableStatement();
 
         return super.execute(conn, func, funcArguments);
     }
@@ -30,7 +30,7 @@ public class SqlServerFunctionExecutor extends FunctionExecutor {
         int index = 0;
         int delta = 1;
 
-        if (!this.ssFunc.isUsePreparedStatement()) {
+        if (this.ssFunc.isUseCallableStatement()) {
             // [1] 注册 OUT 参数获取结果。
             index = 1;
             delta = 2;
@@ -40,7 +40,7 @@ public class SqlServerFunctionExecutor extends FunctionExecutor {
         }
 
         // [2] 设置 IN 的入参。
-        PreparedStatement pstmt = this.ssFunc.isUsePreparedStatement() ? super.pstmt : super.cstmt;
+        PreparedStatement pstmt = this.ssFunc.isUseCallableStatement() ? super.cstmt : super.pstmt;
         for (FunctionArg arg : super.func.getInArgs()) {
             index++;
             Object value = super.funcArguments.get(index - delta);
@@ -51,16 +51,16 @@ public class SqlServerFunctionExecutor extends FunctionExecutor {
 
     @Override
     protected ResultSet getResultSet() throws SQLException {
-        if (this.ssFunc.isUsePreparedStatement()) {
-            return super.pstmt.getResultSet();
-        } else {
+        if (this.ssFunc.isUseCallableStatement()) {
             return super.cstmt.getResultSet();
+        } else {
+            return super.pstmt.getResultSet();
         }
     }
 
     @Override
     protected void getOutParameters(Result result) throws SQLException {
-        if (!this.ssFunc.isUsePreparedStatement()) {
+        if (this.ssFunc.isUseCallableStatement()) {
             Object ret = super.cstmt.getObject(1); // 获取函数的返回值。
             result.getOutResult().put("returnValue", ret);
         }

@@ -22,10 +22,10 @@ public class SqlServerFunctionTest {
     public void execute() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
             // 查询的时候不能带 schema，执行的时候需要。
-            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "AddNumbers"); // func_return_inline_table, AddNumbers
+            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "func_return_multi_table"); // func_return_inline_table, func_return_multi_table, AddNumbers, ISOweek ("2022-12-31")
             print(func);
 
-            Result result = FunctionExecutors.executeFunction(DB_TYPE, conn, func, 1, 3);
+            Result result = FunctionExecutors.executeFunction(DB_TYPE, conn, func, 2, 3);
             Utils.dump(result);
         }
     }
@@ -61,9 +61,8 @@ public class SqlServerFunctionTest {
             conn.setSchema(SCHEMA);
             conn.setAutoCommit(false);
 
-            PreparedStatement pstmt = conn.prepareStatement("select * from test.func_return_inline_table(?)");
+            PreparedStatement pstmt = conn.prepareStatement("select * from test.func_return_multi_table(?)");
             pstmt.setObject(1, 1);
-            // pstmt.setObject(2, 3);
             pstmt.execute();
 
             ResultSet rs = pstmt.getResultSet();

@@ -21,7 +21,7 @@ public class Db2FunctionTest {
     @Test
     public void execute() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "TAN"); // TAN, FUNC_RETURN_TABLE
+            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "FUNC_RETURN_TABLE"); // TAN, FUNC_RETURN_TABLE
             FunctionPrinter.print(func);
 
             Result result = FunctionExecutors.executeFunction(DB_TYPE, conn, func, 1);
