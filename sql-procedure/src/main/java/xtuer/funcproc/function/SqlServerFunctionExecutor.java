@@ -34,7 +34,7 @@ public class SqlServerFunctionExecutor extends FunctionExecutor {
             // [1] 注册 OUT 参数获取结果。
             index = 1;
             delta = 2;
-            FunctionArg returnArg =  super.func.getReturnArg();
+            FunctionArg returnArg =  super.func.onlyOneReturnArg();
             log.debug("输出参数: 下标 [1], 类型名 [{}], 类型值 [{}]", returnArg.getDataTypeName(), returnArg.getDataTypeValue());
             super.cstmt.registerOutParameter(1, returnArg.getDataTypeValue()); // 返回类型不可以使用 Types.OTHER。
         }

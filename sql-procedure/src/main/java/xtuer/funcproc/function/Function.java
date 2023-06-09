@@ -1,6 +1,5 @@
 package xtuer.funcproc.function;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
@@ -163,11 +162,10 @@ public class Function {
         return null; // 推迟到子类实现。
     }
 
-    // 获取返回值参数。
+    // 获取只有一个返回值时的返回参数。
     // MySQL、Oracle 等的函数确定必须返回一个值，可以调用这个函数。
     // Postgres 的函数可能返回 0 个或者多个值，不要调用这个函数。
-    @JsonIgnore
-    public FunctionArg getReturnArg() {
+    public FunctionArg onlyOneReturnArg() {
         if (returnArgs.size() != 1) {
             throw new RuntimeException("函数的返回参数不唯一，returnArgs 的元素个数为 " + returnArgs.size());
         }
