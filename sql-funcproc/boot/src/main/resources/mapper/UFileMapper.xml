@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 非常重要：必须是 Mapper 类的全路径 -->
+<mapper namespace="com.xtuer.mapper.UFileMapper">
+    <!-- 使用 fileUid 查询上传文件对象的 json，用于反序列化出 UFile 对象 -->
+    <select id="findUFileJsonByFileUid" parameterType="string" resultType="string">
+        SELECT json FROM dsc_ufile WHERE file_uid=#{fileUid}
+    </select>
+
+    <!-- 使用 fileUid 查询上传文件的分片 Json -->
+    <select id="findUFileChunkJsonsByFileUid" parameterType="string" resultType="string">
+        SELECT json FROM dsc_ufile_chunk WHERE file_uid=#{fileUid} ORDER BY sn ASC
+    </select>
+
+    <!-- 查询传入 fileUid 上次文件的第 sn 个分片 -->
+    <select id="fileUFileChunkJsonByFileUidAndSn" resultType="string">
+        SELECT json FROM dsc_ufile_chunk WHERE file_uid=#{fileUid} AND sn=#{sn}
+    </select>
+
+    <!-- 统计非成功状态的分片数量 -->
+    <select id="countUnsuccessfulUFileChunk" resultType="int">
+        SELECT count(1) FROM dsc_ufile_chunk WHERE file_uid=#{fileUid} AND state!=1
+    </select>
+
+    <!-- 插入上传文件对象 -->
+    <insert id="insertUFile">
+        INSERT INTO dsc_ufile(file_uid, file_name, json, create_time)
+        VALUES(#{fileUid}, #{fileName}, #{json}, now())
+    </insert>
+
+    <!-- 插入上传文件的分片 -->
+    <insert id="insertUFileChunk">
+        INSERT INTO dsc_ufile_chunk(file_uid, sn, json)
+        VALUES(#{fileUid}, #{sn}, #{json})
+    </insert>
+
+    <!-- 更新传入 fileUid 的上传文件的状态 -->
+    <update id="updateUFileState">
+        UPDATE dsc_ufile
+        SET state=#{state}, json=#{json}
+        WHERE file_uid=#{fileUid}
+    </update>
+
+    <!-- 更新传入 fileUid 的第 sn 个分片的状态 -->
+    <update id="updateUFileChunkState">
+        UPDATE dsc_ufile_chunk
+        SET state=#{state}, json=#{json}
+        WHERE file_uid=#{fileUid} AND sn=#{sn}
+    </update>
+
+    <!-- 删除传入 fileUid 的上传文件 -->
+    <delete id="deleteUFile">
+        DELETE FROM dsc_ufile WHERE file_uid=#{fileUid}
+    </delete>
+
+    <!-- 删除传入 fileUid 的上传文件的所有分片 -->
+    <delete id="deleteUFileChunks">
+        DELETE FROM dsc_ufile_chunk WHERE file_uid=#{fileUid}
+    </delete>
+</mapper>

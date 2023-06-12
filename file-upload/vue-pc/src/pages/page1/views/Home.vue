@@ -38,6 +38,7 @@ export default {
             menuItems: [
                 // { label: '机构管理', name: 'orgs', roles: ['ROLE_ADMIN_SYSTEM'] },
                 { label: '问题管理', name: 'about',    roles: [] },
+                { label: '存储函数', name: 'function', roles: [] },
             ],
         };
     },
