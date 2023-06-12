@@ -15,19 +15,21 @@ public class PostgresFunctionExecutor extends FunctionExecutor {
     @Override
     protected void setAndRegisterParameters() throws SQLException {
         int index = 0;
+        int delta = 1;
 
         // 注册游标参数。
         if (super.func.isCursorReturned()) {
             log.debug("输出参数: 下标 [1], 类型为游标 Types.REF_CURSOR，类型值 [{}]", Types.REF_CURSOR);
             index = 1;
+            delta = 2;
             super.cstmt.registerOutParameter(index, Types.REF_CURSOR);
         }
 
         // 设置输入参数。只设置 IN, INOUT 入参，OUT 出参 OUT 不需要设置。
         for (FunctionArg arg : super.func.getInArgs()) {
             index++;
-            log.debug("输入参数: 下标 [{}], 参数 [{}]", index, super.funcArguments.get(index - 1));
-            super.cstmt.setObject(index, super.funcArguments.get(index - 1), arg.getDataTypeValue());
+            log.debug("输入参数: 下标 [{}], 参数 [{}]", index, super.funcArguments.get(index - delta));
+            super.cstmt.setObject(index, super.funcArguments.get(index - delta), arg.getDataTypeValue());
         }
     }
 

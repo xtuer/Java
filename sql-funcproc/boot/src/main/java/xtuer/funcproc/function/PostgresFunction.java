@@ -38,7 +38,18 @@ public class PostgresFunction extends Function {
 
         // 有下划线开头的类型参数时不支持: 数组、可变参数。
         for (FunctionArg arg : super.inOutInoutArgs) {
-            if (arg.getDataTypeName().startsWith("_")) {
+            String typeName = arg.getDataTypeName();
+
+            // 类型以 _ 开头的是数组，以 anyelement 开头的是 polymorphic。
+            if (typeName.startsWith("_") || typeName.startsWith("any")) {
+                super.supported = false;
+                break;
+            }
+        }
+        for (FunctionArg arg : super.returnArgs) {
+            String typeName = arg.getDataTypeName();
+
+            if (typeName.startsWith("_") || typeName.startsWith("any") || "trigger".equals(typeName)) {
                 super.supported = false;
                 break;
             }
@@ -57,7 +68,7 @@ public class PostgresFunction extends Function {
         String inoutArgsString = super.inOutInoutArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
         String returnArgsString = super.returnArgs.stream().map(Arg::getSignature).collect(Collectors.joining(", "));
 
-        if ("".equals(returnArgsString)) {
+        if ("".equals(returnArgsString) || "returnValue void".equals(returnArgsString)) {
             returnArgsString = "void";
         }
 

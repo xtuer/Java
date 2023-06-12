@@ -27,11 +27,11 @@ public class PostgresFunctionTest {
     @Test
     public void execute() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "func_has_return_cursor");
+            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "func_pl_return_void");
             print(func);
 
-            Result result = FunctionExecutors.executeFunction(DB_TYPE, conn, func, 1, 2, 3);
-            Utils.dump(result);
+            // Result result = FunctionExecutors.executeFunction(DB_TYPE, conn, func, 1, 2, 3);
+            // Utils.dump(result);
         }
     }
 

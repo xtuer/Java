@@ -34,7 +34,7 @@ public class FunctionController {
      * 网址: http://localhost:8080/api/functionNames
      * 参数: 无
      * 测试: curl http://localhost:8080/api/functionNames
-     * @return payload 为函数名。
+     * @return payload 为函数名数组。
      */
     @GetMapping("/api/functionNames")
     public Result<List<String>> listFunctionNames() throws SQLException {
@@ -52,10 +52,10 @@ public class FunctionController {
      * 测试: curl http://localhost:8080/api/functions/func_has_arg_return_base_type
      *
      * @param functionName 函数名。
-     * @return payload 为函数对象的 JSON。
+     * @return payload 为函数对象。
      */
     @GetMapping("/api/functions/{functionName}")
-    public Result<Function> findFunctionByName(@PathVariable String functionName) throws SQLException {
+    public Result<Function> findFunction(@PathVariable String functionName) throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
             Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, functionName);
             return Result.ok(func);
