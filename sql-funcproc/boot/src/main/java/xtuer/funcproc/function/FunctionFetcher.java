@@ -76,9 +76,9 @@ public class FunctionFetcher {
     /**
      * 列出 schema 中的所有函数名。
      */
-    public static List<String> listFunctionNames(Connection conn,
-                                                 String catalog,
-                                                 String schema) throws SQLException {
+    public static List<String> fetchFunctionNames(Connection conn,
+                                                  String catalog,
+                                                  String schema) throws SQLException {
         List<String> functionNames = new LinkedList<>();
         DatabaseMetaData metaData = conn.getMetaData();
         ResultSet functions = metaData.getFunctions(catalog, schema, null);

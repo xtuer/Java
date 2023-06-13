@@ -1,5 +1,7 @@
+<!-- 存储函数可视化执行 -->
 <template>
     <div class="stored-function">
+        <!-- 函数列表 -->
         <List header="存储函数" border>
             <ListItem v-for="name in functionNames" :key="name" @click.native="selectFunction(name)">{{ name }}</ListItem>
         </List>
@@ -8,16 +10,19 @@
         <div class="function-execute">
             <span>签名:</span>
             <div>{{ func.signature }}</div>
+
+            <!-- 函数的参数，用户输入 -->
             <span>参数:</span>
             <div class="function-params">
                 <template v-for="(value, idx) in funcArguments">
-                    <Input v-model="funcArguments[idx]" :key="idx" :placeholder="func.inArgs[idx].dataTypeName"/>
+                    <Input v-model="funcArguments[idx]" :key="idx" :placeholder="`${func.inArgs[idx].name} - ${func.inArgs[idx].dataTypeName}`"/>
                 </template>
 
                 <!-- supported 为 false 则不支持 -->
                 <Button type="primary" :disabled="!func.supported" :loading="executing" @click="executeFunction">执行</Button>
             </div>
 
+            <!-- 显示函数的执行结果 -->
             <span>结果:</span>
             <div>{{ funcResult }}</div>
         </div>
@@ -30,22 +35,27 @@ import StoredFunctionDao from '@/../public/static-p/js/dao/StoredFunctionDao';
 export default {
     data() {
         return {
-            functionNames: [], // 选择的 schema 下的函数名数组。
-            func: {}, // 函数。
-            funcArguments: [], // 函数的参数值。
-            funcResult: {}, // 函数执行结果。
-            executing: false, // 执行中
+            functionNames: [],         // 选择的 schema 下的函数名数组。
+            func         : {},         // 当前选中的函数。
+            funcArguments: [],         // 函数的参数值。
+            funcResult   : {},         // 函数执行结果。
+            executing    : false,      // 执行中。
+            catalog      : 'postgres', // 数据库。
+            schema       : 'biao',     // 模式。
         };
     },
     mounted() {
-        StoredFunctionDao.listFunctionNames().then(functionNames => {
+        // 查询出所有的存储函数名。
+        StoredFunctionDao.listFunctionNames(this.catalog, this.schema).then(functionNames => {
             this.functionNames = functionNames;
         });
     },
     methods: {
         // 选择函数。
         selectFunction(functionName) {
-            StoredFunctionDao.findFunction(functionName).then(func => {
+            this.funcResult = {}; // 清楚执行结果。
+
+            StoredFunctionDao.findFunction(this.catalog, this.schema, functionName).then(func => {
                 this.func = func;
                 this.funcArguments = new Array(func.inArgs.length);
                 console.log(func);
@@ -55,8 +65,16 @@ export default {
         executeFunction() {
             console.log(this.funcArguments);
 
+            // 要执行的函数信息。
+            const funcForm = {
+                catalog          : this.func.catalog,
+                schema           : this.func.schema,
+                functionName     : this.func.name,
+                functionArguments: this.funcArguments,
+            };
+
             this.executing = true;
-            StoredFunctionDao.executeFunction(this.func.name, this.funcArguments).then(funcResult => {
+            StoredFunctionDao.executeFunction(funcForm).then(funcResult => {
                 this.executing = true;
                 this.funcResult = funcResult;
                 this.executing = false;

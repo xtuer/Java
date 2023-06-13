@@ -7,6 +7,7 @@ import xtuer.funcproc.Result;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -72,6 +73,15 @@ public final class FunctionExecutors {
         Function specFunc = Function.newFunction(func, klass);
 
         return specFunc;
+    }
+
+    /**
+     * 列出 schema 中的所有函数名。
+     */
+    public static List<String> findFunctionNames(Connection conn,
+                                                 String catalog,
+                                                 String schema) throws SQLException {
+        return FunctionFetcher.fetchFunctionNames(conn, catalog, schema);
     }
 
     /**
