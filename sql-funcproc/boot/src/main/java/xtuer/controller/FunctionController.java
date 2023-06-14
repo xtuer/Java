@@ -35,8 +35,8 @@ public class FunctionController {
      *      schema : 模式
      * 测试: curl http://localhost:8080/api/functions/functionNames?catalog=x&schema=y
      *
-     * @param catalog 数据库
-     * @param schema 模式
+     * @param catalog 数据库。
+     * @param schema 模式。
      * @return payload 为函数名数组。
      */
     @GetMapping("/api/functions/functionNames")
@@ -55,8 +55,8 @@ public class FunctionController {
      *      schema : 模式
      * 测试: curl http://localhost:8080/api/functions/func_has_arg_return_base_type?catalog=x&schema=y
      *
-     * @param catalog 数据库
-     * @param schema 模式
+     * @param catalog 数据库。
+     * @param schema 模式。
      * @param functionName 函数名。
      * @return payload 为函数对象。
      */

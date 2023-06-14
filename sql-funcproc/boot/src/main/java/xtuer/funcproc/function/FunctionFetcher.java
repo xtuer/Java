@@ -1,6 +1,11 @@
 package xtuer.funcproc.function;
 
-import java.sql.*;
+import xtuer.funcproc.FuncProcUtils;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,7 +36,7 @@ public class FunctionFetcher {
 
         try (ResultSet rs = meta.getFunctionColumns(function.getCatalog(), function.getSchema(), function.getName(), null)) {
             // DB2 比较特殊，没有按照 JDBC 规范实现。
-            boolean forDb2 = FunctionFetcher.hasColumn(rs, PARAMETER_NAME_FOR_DB2);
+            boolean forDb2 = FuncProcUtils.hasColumn(rs, PARAMETER_NAME_FOR_DB2);
             String argTypeNameLabel  = forDb2 ? "PARAMETER_NAME" : "COLUMN_NAME";
             String argTypeValueLabel = forDb2 ? "PARAMETER_TYPE" : "COLUMN_TYPE";
 
@@ -88,25 +93,5 @@ public class FunctionFetcher {
         }
 
         return functionNames;
-    }
-
-    /**
-     * 判断结果集中是否有传入的列。
-     *
-     * @param rs 结果集。
-     * @param columnLabel 列名。
-     * @return 有则返回 true，否则返回 false。
-     */
-    public static boolean hasColumn(ResultSet rs, String columnLabel) throws SQLException {
-        ResultSetMetaData md = rs.getMetaData();
-        int count = md.getColumnCount();
-
-        for (int idx = 1; idx <= count; idx++) {
-            if (md.getColumnLabel(idx).equals(columnLabel)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

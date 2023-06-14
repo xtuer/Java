@@ -2,6 +2,7 @@ package xtuer.funcproc.function;
 
 import lombok.Getter;
 import xtuer.funcproc.Arg;
+import xtuer.funcproc.FuncProcUtils;
 
 import java.util.stream.Collectors;
 
@@ -49,7 +50,7 @@ public class SqlServerFunction extends Function {
         // 函数名需要有 schema
         // 返回简单类型: { ? = call test.AddNumbers(?) }
         // 返回 inline table: select * from test.func_return_inline_table(?)
-        String questionMarks = Function.generateCallableSqlParameterQuestionMarks(super.inArgs.size());
+        String questionMarks = FuncProcUtils.generateCallableSqlParameterQuestionMarks(super.inArgs.size());
 
         if (this.useCallableStatement) {
             return String.format("{ ? = call %s.%s(%s) }", super.schema, super.name, questionMarks);

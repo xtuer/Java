@@ -2,6 +2,7 @@ package xtuer.funcproc.function;
 
 import lombok.Getter;
 import xtuer.funcproc.Arg;
+import xtuer.funcproc.FuncProcUtils;
 
 import java.sql.Types;
 import java.util.stream.Collectors;
@@ -65,6 +66,6 @@ public class OracleFunction extends Function {
     @Override
     public String getCallableSql() {
         // { ? = call func_name(?, ?, ?) }
-        return String.format("{ ? = call %s(%s) }", super.name, Function.generateCallableSqlParameterQuestionMarks(super.inArgs.size()));
+        return String.format("{ ? = call %s(%s) }", super.name, FuncProcUtils.generateCallableSqlParameterQuestionMarks(super.inArgs.size()));
     }
 }

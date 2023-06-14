@@ -2,6 +2,7 @@ package xtuer.funcproc.function;
 
 import lombok.Getter;
 import xtuer.funcproc.Arg;
+import xtuer.funcproc.FuncProcUtils;
 
 import java.util.stream.Collectors;
 
@@ -68,7 +69,7 @@ public class DB2Function extends Function {
     public String getCallableSql() {
         // 简单类型: VALUES FUNC_NAME(?)
         // 返回 TABLE: SELECT * FROM TABLE(FUNC_NAME(?))
-        String questionMarks = Function.generateCallableSqlParameterQuestionMarks(super.inArgs.size());
+        String questionMarks = FuncProcUtils.generateCallableSqlParameterQuestionMarks(super.inArgs.size());
 
         if (this.tableReturned) {
             return String.format("SELECT * FROM TABLE(%s(%s))", super.name, questionMarks);

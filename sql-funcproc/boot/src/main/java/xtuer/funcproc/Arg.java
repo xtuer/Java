@@ -112,4 +112,22 @@ public abstract class Arg {
             return String.format("%s %s %s", argTypeName, name, dataTypeName);
         }
     }
+
+    /**
+     * 判断参数是否输入参数。
+     *
+     * @return 输入参数返回 true，否则返回 false。
+     */
+    public boolean isInArg() {
+        return ARG_TYPE_NAME_IN.equals(argTypeName) || ARG_TYPE_NAME_INOUT.equals(argTypeName);
+    }
+
+    /**
+     * 判断参数是否输出参数。
+     *
+     * @return 输出参数返回 true，否则返回 false。
+     */
+    public boolean isOutArg() {
+        return ARG_TYPE_NAME_OUT.equals(argTypeName) || ARG_TYPE_NAME_INOUT.equals(argTypeName);
+    }
 }

@@ -172,20 +172,4 @@ public class Function {
 
         return returnArgs.get(0);
     }
-
-    /**
-     * 生成 Callable SQL 语句 {? = call func_sum(?, ?, ?)} 的参数部分的问号占位符。
-     * 例如 paramCount 为 3 则生成 "?, ?, ?"。
-     *
-     * @param paramCount 参数个数。
-     * @return 返回参数占位符字符串。
-     */
-    public static String generateCallableSqlParameterQuestionMarks(int paramCount) {
-        List<String> qms = new ArrayList<>(paramCount);
-        for (int i = 0; i < paramCount; i++) {
-            qms.add("?");
-        }
-
-        return String.join(", ", qms);
-    }
 }

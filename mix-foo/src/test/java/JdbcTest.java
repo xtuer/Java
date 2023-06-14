@@ -1,10 +1,10 @@
+import com.google.common.io.Files;
+import org.junit.Test;
+import util.Utils;
+
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
-import org.junit.Test;
 
 public class JdbcTest {
     static final String DB_URL = "jdbc:mysql://192.168.1.163:3306/ndtmdb?useSSL=false";
@@ -117,9 +117,46 @@ public class JdbcTest {
         }
     }
 
+    // 测试创建存储函数 (不能带 DELIMITER)。
+    @Test
+    public void testCreateProcedure() {
+        String url = "jdbc:mysql://127.0.0.1:3306/test?useSSL=false";
+        String user = "root";
+        String pass = "root";
+
+        try (Connection conn = DriverManager.getConnection(url, user, pass)) {
+            String sql = Files.asCharSource(new File("/Users/biao/Documents/temp/sqls/mysql_proc_2.sql"), StandardCharsets.UTF_8).read();
+            System.out.println(sql);
+            Statement stmt = conn.createStatement();
+            stmt.execute(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testMultipleSqls() {
+        String url = "jdbc:mysql://127.0.0.1:3306/test?useSSL=false";
+        String user = "root";
+        String pass = "root";
+
+        try (Connection conn = DriverManager.getConnection(url, user, pass)) {
+            String sql = "insert into sp_test(id, name, age) values(11, 'eleven', 101); select * from sp_test;";
+            Statement stmt = conn.createStatement();
+            stmt.execute(sql);
+
+            ResultSet rs = stmt.getResultSet();
+            while (rs.next()) {
+                Utils.dump(rs);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Test
     public void testFunctionExist() throws Exception {
-        String url = "jdbc:mysql://127.0.0.1:3306/test?useSSL=false";
+        String url = "jdbc:mysql://127.0.0.1:3306/test?useSSL=false&allowMultiQueries=true";
         String user = "root";
         String pass = "root";
 

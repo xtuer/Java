@@ -1,6 +1,7 @@
 package xtuer.funcproc.function;
 
 import xtuer.funcproc.Arg;
+import xtuer.funcproc.FuncProcUtils;
 
 import java.util.stream.Collectors;
 
@@ -81,7 +82,7 @@ public class PostgresFunction extends Function {
         // 普通: { call func_name(?, ?, ?) }
         // 游标: { ? = call func_name(?) }
 
-        String questionMarks = Function.generateCallableSqlParameterQuestionMarks(super.inArgs.size());
+        String questionMarks = FuncProcUtils.generateCallableSqlParameterQuestionMarks(super.inArgs.size());
 
         if (super.cursorReturned) {
             return String.format("{ ? = call %s(%s) }", super.name, String.join(", ", questionMarks));
