@@ -6,7 +6,7 @@ import xtuer.funcproc.Result;
 import xtuer.funcproc.function.Function;
 import xtuer.funcproc.function.FunctionExecutors;
 import xtuer.funcproc.function.FunctionFetcher;
-import xtuer.funcproc.function.PostgresFunction;
+import xtuer.funcproc.function.spec.PostgresFunction;
 import xtuer.util.Utils;
 
 import java.sql.CallableStatement;

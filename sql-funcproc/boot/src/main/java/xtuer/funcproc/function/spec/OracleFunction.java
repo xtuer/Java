@@ -1,8 +1,10 @@
-package xtuer.funcproc.function;
+package xtuer.funcproc.function.spec;
 
 import lombok.Getter;
 import xtuer.funcproc.Arg;
 import xtuer.funcproc.FuncProcUtils;
+import xtuer.funcproc.function.Function;
+import xtuer.funcproc.function.FunctionArg;
 
 import java.sql.Types;
 import java.util.stream.Collectors;

@@ -3,7 +3,9 @@ package xtuer.funcproc;
 import lombok.Data;
 
 /**
- * 存储过程或者函数的参数，它们既有相似之处，又有不同之处。
+ * 存储过程或者存储函数的参数，它们既有相似之处，又有不同之处。
+ * - 例如在存储过程里 OUT 的类型值是 4，而存储函数中 OUT 的类型值是 3。
+ * - 此外存储过程没有返回值，存储函数大多有返回值也有可能没有。
  */
 @Data
 public abstract class Arg {
@@ -21,11 +23,6 @@ public abstract class Arg {
      * 参数名称。
      */
     String name;
-
-    /**
-     * 参数的原始位置，有返回值时从 0 开始。
-     */
-    int originalPosition;
 
     /**
      * 参数类型值: 1 (IN), 4 (OUT), 2 (INOUT)。
@@ -62,6 +59,11 @@ public abstract class Arg {
      * 标度: 是指数值数据类型中小数部分的位数。
      */
     short scale;
+
+    /**
+     * 参数的原始位置，有返回值时从 0 开始。
+     */
+    int originalPosition;
 
     public Arg() {}
 

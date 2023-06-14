@@ -3,6 +3,8 @@ package xtuer.funcproc.procedure;
 import lombok.extern.slf4j.Slf4j;
 import xtuer.funcproc.DatabaseType;
 import xtuer.funcproc.Result;
+import xtuer.funcproc.procedure.spec.MysqlProcedure;
+import xtuer.funcproc.procedure.spec.MysqlProcedureExecutor;
 
 import java.sql.Connection;
 import java.sql.SQLException;

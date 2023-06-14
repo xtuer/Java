@@ -1,7 +1,9 @@
-package xtuer.funcproc.function;
+package xtuer.funcproc.function.spec;
 
 import xtuer.funcproc.Arg;
 import xtuer.funcproc.FuncProcUtils;
+import xtuer.funcproc.function.Function;
+import xtuer.funcproc.function.FunctionArg;
 
 import java.util.stream.Collectors;
 

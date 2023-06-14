@@ -100,17 +100,13 @@ public class Procedure {
         inOutInoutArgs.clear();
 
         for (ProcedureArg arg : originalArgs) {
-            final int argTypeValue = arg.getArgTypeValue();
-
             // 输入参数。
-            if (argTypeValue == ProcedureArg.ARG_TYPE_VALUE_IN || argTypeValue == ProcedureArg.ARG_TYPE_VALUE_INOUT) {
+            if (arg.isInArg()) {
                 inArgs.add(arg);
             }
 
             // 输入输出参数。
-            if (argTypeValue == ProcedureArg.ARG_TYPE_VALUE_IN
-                    || argTypeValue == ProcedureArg.ARG_TYPE_VALUE_INOUT
-                    || argTypeValue == ProcedureArg.ARG_TYPE_VALUE_OUT) {
+            if (arg.isInArg() || arg.isOutArg()) {
                 inOutInoutArgs.add(arg);
             }
         }

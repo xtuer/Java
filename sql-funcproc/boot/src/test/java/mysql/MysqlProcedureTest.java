@@ -3,7 +3,6 @@ package mysql;
 import org.junit.jupiter.api.Test;
 import xtuer.funcproc.DatabaseType;
 import xtuer.funcproc.Result;
-import xtuer.funcproc.function.FunctionExecutors;
 import xtuer.funcproc.procedure.Procedure;
 import xtuer.funcproc.procedure.ProcedureExecutors;
 import xtuer.funcproc.procedure.ProcedureFetcher;
@@ -28,7 +27,7 @@ public class MysqlProcedureTest {
             conn.setCatalog(CATALOG);
             conn.setSchema(SCHEMA);
 
-            Procedure proc = ProcedureExecutors.findProcedure(DB_TYPE, conn, CATALOG, SCHEMA, "get_employee_data");
+            Procedure proc = ProcedureExecutors.findProcedure(DB_TYPE, conn, CATALOG, SCHEMA, "proc_in_out_args");
             print(proc);
 
             Result result = ProcedureExecutors.executeProcedure(DB_TYPE, conn, proc, 5, 10, 15);

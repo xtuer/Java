@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 存储执行器，定义了存储过程执行的框架。
+ * 存储过程执行器，定义了存储过程执行的框架。
  */
 @Slf4j
 public abstract class ProcedureExecutor {
@@ -22,10 +22,10 @@ public abstract class ProcedureExecutor {
     /**
      * 执行存储过程。
      *
-     * 1. 获取存储过程: Procedure proc = ProcedureFetcher.fetch(conn, CATALOG, SCHEMA, "proc_name");
+     * 1. 获取存储过程: Procedure proc = ProcedureFetcher.fetchProcedure(conn, catalog, schema, procedureName);
      * 2. 执行存储过程:
-     *    Function pgFunc = Function.fromFunction(func, PostgresFunction.class); // 把普通的存储过程转为 Postgres 等特殊数据库的存储过程对象。
-     *    Result result = new PostgresFunctionExecutor().execute(conn, pgFunc, 1, 2, 3);
+     *    Procedure pgProc = Procedure.fromProcedure(proc, PostgresProcedure.class); // 把普通的存储过程转为 Postgres 等特殊数据库的存储过程对象。
+     *    Result result = new PostgresProcedureExecutor().execute(conn, pgProc, 1, 2, 3);
      *
      * @param conn 数据库连接。
      * @param proc 存储过程对象。需要注意的是对于 Postgres 等有特殊存储过程实现的类此 func 必须是其对应的对象如 PostgresFunction 的。
