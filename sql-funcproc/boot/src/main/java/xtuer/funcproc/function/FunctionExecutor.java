@@ -61,7 +61,7 @@ public abstract class FunctionExecutor {
         this.preCheck();
 
         // [1] 创建 CallableStatement。
-        log.info("执行函数: SQL [{}]，参数 {}", this.func.getCallableSql(), this.funcArguments);
+        log.info("执行函数: Signature [{}], SQL [{}]，参数 {}", this.func.getSignature(), this.func.getCallableSql(), this.funcArguments);
         if (this.useCallableStatement) {
             return this.executeUseCallableStatement();
         } else {

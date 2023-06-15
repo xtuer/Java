@@ -47,6 +47,11 @@ public class Procedure {
      */
     protected List<ProcedureArg> inOutInoutArgs = new LinkedList<>();
 
+    /**
+     * 使用游标 Cursor 的 OUT 参数。
+     */
+    protected boolean cursorOuted;
+
     public Procedure() {}
 
     /**

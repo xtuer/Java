@@ -56,7 +56,7 @@ public abstract class ProcedureExecutor {
         this.preCheck();
 
         // [1] 创建 CallableStatement。
-        log.info("执行存储过程: SQL [{}]，参数 {}", this.proc.getCallableSql(), this.procArguments);
+        log.info("执行存储过程: Signature [{}], SQL [{}]，参数 {}", this.proc.getSignature(), this.proc.getCallableSql(), this.procArguments);
         return this.executeUseCallableStatement();
     }
 

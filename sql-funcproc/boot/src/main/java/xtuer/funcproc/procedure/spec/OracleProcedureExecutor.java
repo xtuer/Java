@@ -9,10 +9,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * MySQL 的存储过程执行器。
+ * Oracle 存储过程的执行器。
  */
 @Slf4j
-public class MysqlProcedureExecutor extends ProcedureExecutor {
+public class OracleProcedureExecutor extends ProcedureExecutor {
     @Override
     protected void setAndRegisterParameters() throws SQLException {
         // 可能有多个 OUT 参数，且 OUT 参数有可能在 IN 参数的前面。
@@ -31,24 +31,42 @@ public class MysqlProcedureExecutor extends ProcedureExecutor {
 
             // 注册 OUT 参数。
             if (arg.isOutArg()) {
-                log.debug("输出参数: 下标 [{}]", argIdx);
-                super.cstmt.registerOutParameter(argIdx, arg.getDataTypeValue());
+                if (super.proc.isCursorOuted()) {
+                    // 游标的 OUT 参数注册。
+                    log.debug("输出参数: 下标 [{}]，游标类型", argIdx);
+                    super.cstmt.registerOutParameter(argIdx, OracleProcedure.ARG_DATA_TYPE_VALUE_OF_ORACLE_CURSOR);
+                } else {
+                    // 普通的 OUT 参数注册。
+                    log.debug("输出参数: 下标 [{}]", argIdx);
+                    super.cstmt.registerOutParameter(argIdx, arg.getDataTypeValue());
+                }
             }
         }
     }
 
     @Override
     protected ResultSet getResultSet() throws SQLException {
+        // 游标的 OUT 参数需要使用结果集获取。
+        if (super.proc.isCursorOuted()) {
+            for (int i = 0; i < super.proc.getInOutInoutArgs().size(); i++) {
+                ProcedureArg arg = super.proc.getInOutInoutArgs().get(i);
+
+                if (arg.isOutArg() && super.proc.isCursorOuted()) {
+                    return (ResultSet) super.cstmt.getObject(i + 1);
+                }
+            }
+        }
+
         return super.cstmt.getResultSet();
     }
 
     @Override
     protected void getOutParameters(Result result) throws SQLException {
-        // 可能有多个 OUT 参数，且 OUT 参数有可能在 IN 参数的前面。
         for (int i = 0; i < super.proc.getInOutInoutArgs().size(); i++) {
             ProcedureArg arg = super.proc.getInOutInoutArgs().get(i);
 
-            if (arg.isOutArg()) {
+            // 非游标的 OUT 参数获取。
+            if (arg.isOutArg() && !super.proc.isCursorOuted()) {
                 result.getOutResult().put(arg.getName(), super.cstmt.getObject(i + 1));
             }
         }
@@ -56,6 +74,6 @@ public class MysqlProcedureExecutor extends ProcedureExecutor {
 
     @Override
     protected void preCheck() {
-        ProcedureExecutor.checkAssignable(MysqlProcedure.class, super.proc);
+        ProcedureExecutor.checkAssignable(OracleProcedure.class, super.proc);
     }
 }

@@ -5,6 +5,8 @@ import xtuer.funcproc.DatabaseType;
 import xtuer.funcproc.Result;
 import xtuer.funcproc.procedure.spec.MysqlProcedure;
 import xtuer.funcproc.procedure.spec.MysqlProcedureExecutor;
+import xtuer.funcproc.procedure.spec.OracleProcedure;
+import xtuer.funcproc.procedure.spec.OracleProcedureExecutor;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -35,6 +37,9 @@ public final class ProcedureExecutors {
     static {
         DB_PROCEDURE_MAP.put(DatabaseType.Mysql, MysqlProcedure.class);
         DB_EXECUTOR_MAP.put(DatabaseType.Mysql, MysqlProcedureExecutor.class);
+
+        DB_PROCEDURE_MAP.put(DatabaseType.Oracle, OracleProcedure.class);
+        DB_EXECUTOR_MAP.put(DatabaseType.Oracle, OracleProcedureExecutor.class);
     }
 
     /**
