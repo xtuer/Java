@@ -1,5 +1,6 @@
 package oracle;
 
+import com.google.common.io.Files;
 import org.junit.jupiter.api.Test;
 import xtuer.funcproc.DatabaseType;
 import xtuer.funcproc.Result;
@@ -8,6 +9,8 @@ import xtuer.funcproc.procedure.ProcedureExecutors;
 import xtuer.util.ProcedurePrinter;
 import xtuer.util.Utils;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 
 public class OracleProcedureTest {
@@ -24,7 +27,7 @@ public class OracleProcedureTest {
             conn.setCatalog(CATALOG);
             conn.setSchema(SCHEMA);
 
-            Procedure proc = ProcedureExecutors.findProcedure(DB_TYPE, conn, CATALOG, SCHEMA, "PROC_UPDATE");
+            Procedure proc = ProcedureExecutors.findProcedure(DB_TYPE, conn, CATALOG, SCHEMA, "PROC_OUT_CURSOR");
             ProcedurePrinter.print(proc);
 
             Result result = ProcedureExecutors.executeProcedure(DB_TYPE, conn, proc, 1, 10, 15);
@@ -51,6 +54,85 @@ public class OracleProcedureTest {
             ResultSet rs = cstmt.getResultSet();
             while (rs != null && rs.next()) {
                 Utils.dump(rs);
+            }
+        }
+    }
+
+    @Test
+    public void testExecutePlsqlProcedure1() throws Exception {
+        String sql = Files.asCharSource(new File("/Users/biao/Documents/temp/sqls/oracle_proc_exec_out1.sql"), StandardCharsets.UTF_8).read();
+        System.out.println(executePlsqlProcedure(sql));
+    }
+
+    @Test
+    public void testExecutePlsqlProcedure2() throws Exception {
+        String sql = Files.asCharSource(new File("/Users/biao/Documents/temp/sqls/oracle_proc_exec_out2.sql"), StandardCharsets.UTF_8).read();
+        System.out.println(executePlsqlProcedure(sql));
+    }
+
+    /**
+     * 执行 PL/SQL 语法的存储过程。
+     *
+     * @param procedureSql 存储过程语句。
+     */
+    public static String executePlsqlProcedure(String procedureSql) throws SQLException {
+        StringBuilder out = new StringBuilder();
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            conn.setCatalog(CATALOG);
+            conn.setSchema(SCHEMA);
+
+            Statement envStmt = null;
+            Statement spStmt = null;
+            CallableStatement resultCstmt = null;
+
+            try {
+                // [1] 开启 DBMSOUTPUT 输出，默认是关闭的。
+                envStmt = conn.createStatement();
+                envStmt.executeUpdate("begin dbms_output.enable(); end;");
+
+                // [2] 执行存储过程。
+                spStmt = conn.createStatement();
+                spStmt.execute(procedureSql);
+
+                // [3] 获取存储过程执行结果。
+                String resultSql = "begin dbms_output.get_lines(?, ?); end;";
+                resultCstmt = conn.prepareCall(resultSql);
+                resultCstmt.registerOutParameter(1, Types.ARRAY, "DBMSOUTPUT_LINESARRAY");
+                resultCstmt.setInt(2, 1000);
+                resultCstmt.execute();
+
+                Array array = null;
+                try {
+                    // [4] 获取 DBMSOUTPUT 输出的行。
+                    array = resultCstmt.getArray(1);
+                    String[] lines = (String[]) array.getArray();
+
+                    // 把所有行拼在一起。
+                    for (Object line : lines) {
+                        out.append(line == null ? "" : line).append("\n");
+                    }
+                } finally {
+                    if (array != null) {
+                        array.free();
+                    }
+                }
+            } finally {
+                closeStatement(envStmt);
+                closeStatement(spStmt);
+                closeStatement(resultCstmt);
+            }
+        }
+
+        return out.toString();
+    }
+
+    public static void closeStatement(Statement stmt) {
+        if (stmt != null) {
+            try {
+                stmt.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
         }
     }
