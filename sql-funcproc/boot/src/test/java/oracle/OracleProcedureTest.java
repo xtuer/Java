@@ -6,12 +6,14 @@ import xtuer.funcproc.DatabaseType;
 import xtuer.funcproc.Result;
 import xtuer.funcproc.procedure.Procedure;
 import xtuer.funcproc.procedure.ProcedureExecutors;
+import xtuer.funcproc.procedure.ProcedureFetcher;
 import xtuer.util.ProcedurePrinter;
 import xtuer.util.Utils;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
+import java.util.List;
 
 public class OracleProcedureTest {
     static final String DB_URL  = "jdbc:oracle:thin:@//192.168.12.16:31001/orcl";
@@ -55,6 +57,17 @@ public class OracleProcedureTest {
             while (rs != null && rs.next()) {
                 Utils.dump(rs);
             }
+        }
+    }
+
+    @Test
+    public void testFindProcedures() throws SQLException {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            conn.setCatalog(CATALOG);
+            conn.setSchema(SCHEMA);
+
+            List<String> names = ProcedureExecutors.findProcedureNames(DB_TYPE, conn, CATALOG, SCHEMA);
+            System.out.println(names);
         }
     }
 

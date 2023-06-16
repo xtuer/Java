@@ -3,10 +3,7 @@ package xtuer.funcproc.procedure;
 import lombok.extern.slf4j.Slf4j;
 import xtuer.funcproc.DatabaseType;
 import xtuer.funcproc.Result;
-import xtuer.funcproc.procedure.spec.MysqlProcedure;
-import xtuer.funcproc.procedure.spec.MysqlProcedureExecutor;
-import xtuer.funcproc.procedure.spec.OracleProcedure;
-import xtuer.funcproc.procedure.spec.OracleProcedureExecutor;
+import xtuer.funcproc.procedure.spec.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -33,13 +30,21 @@ public final class ProcedureExecutors {
      */
     private static final Map<DatabaseType, Class<? extends ProcedureExecutor>> DB_EXECUTOR_MAP = new HashMap<>();
 
+    private static final Map<DatabaseType, Integer> DB_PROCEDURE_TYPE = new HashMap<>();
+
     // 注册存储过程执行器和类型。
     static {
         DB_PROCEDURE_MAP.put(DatabaseType.MYSQL, MysqlProcedure.class);
         DB_EXECUTOR_MAP.put(DatabaseType.MYSQL, MysqlProcedureExecutor.class);
+        DB_PROCEDURE_TYPE.put(DatabaseType.MYSQL, 1);
 
         DB_PROCEDURE_MAP.put(DatabaseType.ORACLE, OracleProcedure.class);
         DB_EXECUTOR_MAP.put(DatabaseType.ORACLE, OracleProcedureExecutor.class);
+        DB_PROCEDURE_TYPE.put(DatabaseType.ORACLE, 1);
+
+        DB_PROCEDURE_MAP.put(DatabaseType.POSTGRES, PostgresProcedure.class);
+        DB_EXECUTOR_MAP.put(DatabaseType.POSTGRES, PostgresProcedureExecutor.class);
+        DB_PROCEDURE_TYPE.put(DatabaseType.POSTGRES, 2);
     }
 
     /**
@@ -73,10 +78,12 @@ public final class ProcedureExecutors {
     /**
      * 列出 schema 中的所有存储过程名。
      */
-    public static List<String> findProcedureNames(Connection conn,
+    public static List<String> findProcedureNames(DatabaseType dbType,
+                                                  Connection conn,
                                                   String catalog,
                                                   String schema) throws SQLException {
-        return ProcedureFetcher.fetchProcedureNames(conn, catalog, schema);
+        int procedureType = DB_PROCEDURE_TYPE.get(dbType);
+        return ProcedureFetcher.fetchProcedureNames(conn, catalog, schema, procedureType);
     }
 
     /**

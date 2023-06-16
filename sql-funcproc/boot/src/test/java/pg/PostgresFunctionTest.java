@@ -9,10 +9,7 @@ import xtuer.funcproc.function.FunctionFetcher;
 import xtuer.funcproc.function.spec.PostgresFunction;
 import xtuer.util.Utils;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
+import java.sql.*;
 
 import static xtuer.util.FunctionPrinter.print;
 
@@ -84,6 +81,16 @@ public class PostgresFunctionTest {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
             boolean exists = FunctionFetcher.checkFunctionExists(conn, CATALOG, SCHEMA, "func_has_arg_return_setof_record");
             System.out.println(exists);
+        }
+    }
+
+    // 列出所有函数名。
+    @Test
+    public void testFindFunctions() throws SQLException {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            conn.setCatalog(CATALOG);
+            conn.setSchema(SCHEMA);
+            System.out.println(FunctionExecutors.findFunctionNames(conn, CATALOG, SCHEMA));
         }
     }
 }

@@ -67,27 +67,26 @@ public class ProcedureFetcher {
     }
 
     /**
-     * 例如 MySQL 的 metaData.getProcedures 会同时返回存储过程和存储函数，其中存储函数的 PROCEDURE_TYPE 值为 2。
-     */
-    private static final int TYPE_FOR_FUNCTION = 2;
-
-    /**
      * 列出 schema 中的所有存储过程名称。
+     *
+     * @param type 存储过程的类型值。因为 MySQL，Oracle 的 DatabaseMetaData.getProcedures() 会同时列出存储过程和存储函数，需要把存储函数过滤掉。
+     *             存储过程的类型值为:
+     *             - MySQL: 1
+     *             - Oracle: 1
+     *             - Postgres: 2
      */
     public static List<String> fetchProcedureNames(Connection conn,
                                                    String catalog,
-                                                   String schema) throws SQLException {
+                                                   String schema,
+                                                   int type) throws SQLException {
         List<String> procedureNames = new LinkedList<>();
         DatabaseMetaData metaData = conn.getMetaData();
         ResultSet procedures = metaData.getProcedures(catalog, schema, null);
 
         while (procedures != null && procedures.next()) {
-            int procedureType = procedures.getInt("PROCEDURE_TYPE");
-            if (procedureType == TYPE_FOR_FUNCTION) {
-                continue;
+            if (type == procedures.getInt("PROCEDURE_TYPE")) {
+                procedureNames.add(procedures.getString("PROCEDURE_NAME"));
             }
-
-            procedureNames.add(procedures.getString("PROCEDURE_NAME"));
         }
 
         return procedureNames;
