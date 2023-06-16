@@ -35,11 +35,11 @@ public final class ProcedureExecutors {
 
     // 注册存储过程执行器和类型。
     static {
-        DB_PROCEDURE_MAP.put(DatabaseType.Mysql, MysqlProcedure.class);
-        DB_EXECUTOR_MAP.put(DatabaseType.Mysql, MysqlProcedureExecutor.class);
+        DB_PROCEDURE_MAP.put(DatabaseType.MYSQL, MysqlProcedure.class);
+        DB_EXECUTOR_MAP.put(DatabaseType.MYSQL, MysqlProcedureExecutor.class);
 
-        DB_PROCEDURE_MAP.put(DatabaseType.Oracle, OracleProcedure.class);
-        DB_EXECUTOR_MAP.put(DatabaseType.Oracle, OracleProcedureExecutor.class);
+        DB_PROCEDURE_MAP.put(DatabaseType.ORACLE, OracleProcedure.class);
+        DB_EXECUTOR_MAP.put(DatabaseType.ORACLE, OracleProcedureExecutor.class);
     }
 
     /**

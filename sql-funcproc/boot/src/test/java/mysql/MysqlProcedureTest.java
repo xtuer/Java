@@ -19,7 +19,7 @@ public class MysqlProcedureTest {
     static final String PASS    = "root";
     static final String CATALOG = "test";
     static final String SCHEMA  = null; // 可以为 null, "", "test", 或者任意值，也就是这个值不生效。
-    static final DatabaseType DB_TYPE = DatabaseType.Mysql;
+    static final DatabaseType DB_TYPE = DatabaseType.MYSQL;
 
     @Test
     public void execute() throws SQLException {

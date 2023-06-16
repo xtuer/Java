@@ -17,7 +17,7 @@ public class SqlServerFunctionTest {
     static final String PASS    = "Newdt@cn";
     static final String CATALOG = "TEST";
     static final String SCHEMA  = "test"; // 可以为 null, "", "test", 或者任意值，也就是这个值不生效。
-    static final DatabaseType DB_TYPE = DatabaseType.SqlServer;
+    static final DatabaseType DB_TYPE = DatabaseType.SQLSERVER;
 
     @Test
     public void execute() throws Exception {

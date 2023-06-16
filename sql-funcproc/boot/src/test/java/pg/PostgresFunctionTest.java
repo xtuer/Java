@@ -22,7 +22,7 @@ public class PostgresFunctionTest {
     static final String PASS    = "123456";
     static final String CATALOG = "postgres";
     static final String SCHEMA  = "biao";
-    static final DatabaseType DB_TYPE = DatabaseType.Postgres;
+    static final DatabaseType DB_TYPE = DatabaseType.POSTGRES;
 
     @Test
     public void execute() throws Exception {

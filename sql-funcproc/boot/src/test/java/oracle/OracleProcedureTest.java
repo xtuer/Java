@@ -19,7 +19,7 @@ public class OracleProcedureTest {
     static final String PASS    = "system";
     static final String CATALOG = "";
     static final String SCHEMA  = "BIAO";
-    static final DatabaseType DB_TYPE = DatabaseType.Oracle;
+    static final DatabaseType DB_TYPE = DatabaseType.ORACLE;
 
     @Test
     public void execute() throws Exception {

@@ -25,7 +25,7 @@ public class FunctionController {
     static final String PASS    = "123456";
     static final String CATALOG = "postgres";
     static final String SCHEMA  = "biao";
-    static final DatabaseType DB_TYPE = DatabaseType.Postgres;
+    static final DatabaseType DB_TYPE = DatabaseType.POSTGRES;
 
     /**
      * 列出 schema 中的所有函数名。

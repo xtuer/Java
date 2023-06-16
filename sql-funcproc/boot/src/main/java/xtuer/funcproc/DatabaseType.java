@@ -4,9 +4,9 @@ package xtuer.funcproc;
  * 数据库类型。
  */
 public enum DatabaseType {
-    Mysql,
-    Postgres,
-    Oracle,
+    MYSQL,
+    POSTGRES,
+    ORACLE,
     DB2,
-    SqlServer,
+    SQLSERVER,
 }

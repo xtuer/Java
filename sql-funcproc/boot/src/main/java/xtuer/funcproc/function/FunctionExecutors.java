@@ -32,20 +32,20 @@ public final class FunctionExecutors {
 
     // 注册函数执行器和类型。
     static {
-        DB_FUNCTION_MAP.put(DatabaseType.Mysql, MysqlFunction.class);
-        DB_EXECUTOR_MAP.put(DatabaseType.Mysql, MysqlFunctionExecutor.class);
+        DB_FUNCTION_MAP.put(DatabaseType.MYSQL, MysqlFunction.class);
+        DB_EXECUTOR_MAP.put(DatabaseType.MYSQL, MysqlFunctionExecutor.class);
 
-        DB_FUNCTION_MAP.put(DatabaseType.Oracle, OracleFunction.class);
-        DB_EXECUTOR_MAP.put(DatabaseType.Oracle, OracleFunctionExecutor.class);
+        DB_FUNCTION_MAP.put(DatabaseType.ORACLE, OracleFunction.class);
+        DB_EXECUTOR_MAP.put(DatabaseType.ORACLE, OracleFunctionExecutor.class);
 
-        DB_FUNCTION_MAP.put(DatabaseType.Postgres, PostgresFunction.class);
-        DB_EXECUTOR_MAP.put(DatabaseType.Postgres, PostgresFunctionExecutor.class);
+        DB_FUNCTION_MAP.put(DatabaseType.POSTGRES, PostgresFunction.class);
+        DB_EXECUTOR_MAP.put(DatabaseType.POSTGRES, PostgresFunctionExecutor.class);
 
         DB_FUNCTION_MAP.put(DatabaseType.DB2, DB2Function.class);
         DB_EXECUTOR_MAP.put(DatabaseType.DB2, DB2FunctionExecutor.class);
 
-        DB_FUNCTION_MAP.put(DatabaseType.SqlServer, SqlServerFunction.class);
-        DB_EXECUTOR_MAP.put(DatabaseType.SqlServer, SqlServerFunctionExecutor.class);
+        DB_FUNCTION_MAP.put(DatabaseType.SQLSERVER, SqlServerFunction.class);
+        DB_EXECUTOR_MAP.put(DatabaseType.SQLSERVER, SqlServerFunctionExecutor.class);
     }
 
     /**
