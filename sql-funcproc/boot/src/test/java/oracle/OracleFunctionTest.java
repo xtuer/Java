@@ -24,7 +24,7 @@ public class OracleFunctionTest {
     @Test
     public void execute() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "GET_TEST_CURSOR"); // 函数名默认需要大写: CIRCLE_AREA, GET_TEST_CURSOR
+            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "FUNC_RETURN_CURSOR"); // 函数名默认需要大写: CIRCLE_AREA, FUNC_RETURN_CURSOR
             print(func);
 
             Result result = FunctionExecutors.executeFunction(DB_TYPE, conn, func, 3);
@@ -48,7 +48,7 @@ public class OracleFunctionTest {
     @Test
     public void checkFunctionExists() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            boolean exists = FunctionFetcher.checkFunctionExists(conn, CATALOG, SCHEMA, "FUNC_RETURN_VOID");
+            boolean exists = FunctionFetcher.checkFunctionExists(conn, CATALOG, SCHEMA, "PROC_NO_ARG");
             System.out.println(exists);
         }
     }

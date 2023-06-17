@@ -31,15 +31,15 @@ public class PostgresFunction extends Function {
             }
         }
 
-        // 有输出参数时不能使用 RETURN。
+        // 有输出参数时不能使用 RETURN，把其清空。
         for (FunctionArg arg : super.inOutInoutArgs) {
-            if (arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_INOUT || arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_OUT) {
+            if (arg.isOutArg()) {
                 super.returnArgs.clear();
                 break;
             }
         }
 
-        // 有下划线开头的类型参数时不支持: 数组、可变参数。
+        // 有下划线开头的类型参数时不支持: 数组、可变参数，触发器类型也不支持。
         for (FunctionArg arg : super.inOutInoutArgs) {
             String typeName = arg.getDataTypeName();
 

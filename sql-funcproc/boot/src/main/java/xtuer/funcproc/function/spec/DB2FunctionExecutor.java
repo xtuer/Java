@@ -31,7 +31,7 @@ public class DB2FunctionExecutor extends FunctionExecutor {
             index++;
             Object value = super.funcArguments.get(index - 1);
             log.debug("输入参数: 下标 [{}], 参数 [{}]", index, value);
-            super.pstmt.setObject(index, value);
+            super.pstmt.setObject(index, value, arg.getDataTypeValue());
         }
     }
 

@@ -22,7 +22,7 @@ public class SqlServerFunction extends Function {
         super.build();
 
         for (FunctionArg arg : super.getInOutInoutArgs()) {
-            // 类型为 OUT 且返回值的类型名 "table"。
+            // 类型为 OUT 且返回值的类型名为 "table"。
             if (arg.getArgTypeValue() == FunctionArg.ARG_TYPE_VALUE_OUT && "table".equals(arg.getDataTypeName())) {
                 this.useCallableStatement = false;
                 this.tableReturned = true;

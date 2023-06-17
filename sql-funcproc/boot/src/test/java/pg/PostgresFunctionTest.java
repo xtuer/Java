@@ -27,8 +27,8 @@ public class PostgresFunctionTest {
             Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "func_pl_out_arg_cursor");
             print(func);
 
-            // Result result = FunctionExecutors.executeFunction(DB_TYPE, conn, func, 1, 2, 3);
-            // Utils.dump(result);
+            Result result = FunctionExecutors.executeFunction(DB_TYPE, conn, func, 1, 2, 3);
+            Utils.dump(result);
         }
     }
 

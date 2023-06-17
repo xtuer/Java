@@ -46,7 +46,9 @@ public class OracleFunction extends Function {
 
         // 返回复合类型: Types.STRUCT，不支持。
         this.structReturned = Types.STRUCT == returnArg.getDataTypeValue();
-        super.supported = false;
+        if (this.structReturned) {
+            super.supported = false;
+        }
 
         return this;
     }

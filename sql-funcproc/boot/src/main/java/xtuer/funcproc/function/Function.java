@@ -122,14 +122,12 @@ public class Function {
             final int argTypeValue = arg.getArgTypeValue();
 
             // 输入参数。
-            if (argTypeValue == FunctionArg.ARG_TYPE_VALUE_IN || argTypeValue == FunctionArg.ARG_TYPE_VALUE_INOUT) {
+            if (arg.isInArg()) {
                 inArgs.add(arg);
             }
 
             // 输入输出参数。
-            if (argTypeValue == FunctionArg.ARG_TYPE_VALUE_IN
-                    || argTypeValue == FunctionArg.ARG_TYPE_VALUE_INOUT
-                    || argTypeValue == FunctionArg.ARG_TYPE_VALUE_OUT) {
+            if (arg.isInArg() || arg.isOutArg()) {
                 inOutInoutArgs.add(arg);
             }
 
