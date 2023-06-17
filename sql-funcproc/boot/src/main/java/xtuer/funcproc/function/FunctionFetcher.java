@@ -31,6 +31,9 @@ public class FunctionFetcher {
                                          String catalog,
                                          String schema,
                                          String functionName) throws SQLException {
+        conn.setCatalog(catalog);
+        conn.setSchema(schema);
+
         Function function = new Function(catalog, schema, functionName);
         DatabaseMetaData meta = conn.getMetaData();
 
@@ -64,6 +67,9 @@ public class FunctionFetcher {
                                               String catalog,
                                               String schema,
                                               String functionName) throws SQLException {
+        conn.setCatalog(catalog);
+        conn.setSchema(schema);
+
         DatabaseMetaData metaData = conn.getMetaData();
 
         // Provide the necessary arguments to getFunctions method based on your specific database schema and settings
@@ -84,6 +90,9 @@ public class FunctionFetcher {
     public static List<String> fetchFunctionNames(Connection conn,
                                                   String catalog,
                                                   String schema) throws SQLException {
+        conn.setCatalog(catalog);
+        conn.setSchema(schema);
+
         List<String> functionNames = new LinkedList<>();
         DatabaseMetaData metaData = conn.getMetaData();
         ResultSet functions = metaData.getFunctions(catalog, schema, null);

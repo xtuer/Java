@@ -1,6 +1,5 @@
 package xtuer.funcproc.function;
 
-import lombok.extern.slf4j.Slf4j;
 import xtuer.funcproc.DatabaseType;
 import xtuer.funcproc.Result;
 import xtuer.funcproc.function.spec.*;
@@ -18,7 +17,6 @@ import java.util.Map;
  *
  * 提示: 需要判断函数是否存在可调用 FunctionFetcher.checkFunctionExists()
  */
-@Slf4j
 public final class FunctionExecutors {
     /**
      * 每种数据库对应的函数类型注册表。
@@ -65,8 +63,7 @@ public final class FunctionExecutors {
                                         String functionName) throws SQLException {
         Class<? extends Function> klass = DB_FUNCTION_MAP.get(dbType);
         if (klass == null) {
-            log.debug("数据库 [{}] 没有注册函数类型", dbType);
-            return null;
+            throw new RuntimeException(String.format("数据库 [%s] 没有注册函数类型", dbType));
         }
 
         // 把查询得到的函数转为目标数据库使用的函数对象。
@@ -98,12 +95,7 @@ public final class FunctionExecutors {
                                          Connection conn,
                                          Function func,
                                          Object ...funcArguments) throws SQLException {
-        FunctionExecutor executor = FunctionExecutors.findFunctionExecutor(dbType);
-        if (executor == null) {
-            throw new RuntimeException(String.format("数据库 [%s] 没有注册函数执行器", dbType));
-        }
-
-        return executor.execute(conn, func, funcArguments);
+        return FunctionExecutors.findFunctionExecutor(dbType).execute(conn, func, funcArguments);
     }
 
     /**
@@ -115,16 +107,13 @@ public final class FunctionExecutors {
     public static FunctionExecutor findFunctionExecutor(DatabaseType dbType) {
         Class<? extends FunctionExecutor> klass = DB_EXECUTOR_MAP.get(dbType);
         if (klass == null) {
-            log.debug("数据库 [{}] 没有注册函数执行器", dbType);
-            return null;
+            throw new RuntimeException(String.format("数据库 [%s] 没有注册函数执行器", dbType));
         }
 
         try {
             return klass.getConstructor().newInstance();
         } catch (Exception ex) {
-            log.warn(ex.getMessage());
+            throw new RuntimeException(ex);
         }
-
-        return null;
     }
 }

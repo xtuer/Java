@@ -24,6 +24,9 @@ public class ProcedureFetcher {
                                            String catalog,
                                            String schema,
                                            String procedureName) throws SQLException {
+        conn.setCatalog(catalog);
+        conn.setSchema(schema);
+
         Procedure procedure = new Procedure(catalog, schema, procedureName);
         DatabaseMetaData meta = conn.getMetaData();
 
@@ -52,6 +55,9 @@ public class ProcedureFetcher {
                                                String catalog,
                                                String schema,
                                                String procedureName) throws SQLException {
+        conn.setCatalog(catalog);
+        conn.setSchema(schema);
+
         DatabaseMetaData metaData = conn.getMetaData();
 
         // Provide the necessary arguments to getProcedures method based on your specific database schema and settings
@@ -79,6 +85,9 @@ public class ProcedureFetcher {
                                                    String catalog,
                                                    String schema,
                                                    int type) throws SQLException {
+        conn.setCatalog(catalog);
+        conn.setSchema(schema);
+
         List<String> procedureNames = new LinkedList<>();
         DatabaseMetaData metaData = conn.getMetaData();
         ResultSet procedures = metaData.getProcedures(catalog, schema, null);

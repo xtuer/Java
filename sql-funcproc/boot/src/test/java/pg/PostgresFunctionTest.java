@@ -24,7 +24,7 @@ public class PostgresFunctionTest {
     @Test
     public void execute() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "func_pl_return_void");
+            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "func_pl_out_arg_cursor");
             print(func);
 
             // Result result = FunctionExecutors.executeFunction(DB_TYPE, conn, func, 1, 2, 3);
@@ -79,7 +79,7 @@ public class PostgresFunctionTest {
     @Test
     public void checkFunctionExists() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            boolean exists = FunctionFetcher.checkFunctionExists(conn, CATALOG, SCHEMA, "func_has_arg_return_setof_record");
+            boolean exists = FunctionFetcher.checkFunctionExists(conn, CATALOG, SCHEMA, "func_pl_out_arg_cursor");
             System.out.println(exists);
         }
     }
@@ -88,8 +88,6 @@ public class PostgresFunctionTest {
     @Test
     public void testFindFunctions() throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            conn.setCatalog(CATALOG);
-            conn.setSchema(SCHEMA);
             System.out.println(FunctionExecutors.findFunctionNames(conn, CATALOG, SCHEMA));
         }
     }

@@ -63,9 +63,6 @@ public class MysqlFunctionTest {
     @Test
     public void testListProcedures() throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            conn.setCatalog(CATALOG);
-            conn.setSchema(SCHEMA);
-
             List<String> names = FunctionFetcher.fetchFunctionNames(conn, CATALOG, SCHEMA);
             System.out.println(names);
         }

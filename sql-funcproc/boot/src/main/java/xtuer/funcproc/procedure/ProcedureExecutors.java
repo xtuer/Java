@@ -1,6 +1,5 @@
 package xtuer.funcproc.procedure;
 
-import lombok.extern.slf4j.Slf4j;
 import xtuer.funcproc.DatabaseType;
 import xtuer.funcproc.Result;
 import xtuer.funcproc.procedure.spec.*;
@@ -18,7 +17,6 @@ import java.util.Map;
  *
  * 提示: 需要判断存储过程是否存在可调用 ProcedureFetcher.checkProcedureExists()
  */
-@Slf4j
 public final class ProcedureExecutors {
     /**
      * 每种数据库对应的存储过程类型注册表。
@@ -64,8 +62,7 @@ public final class ProcedureExecutors {
                                           String procedureName) throws SQLException {
         Class<? extends Procedure> klass = DB_PROCEDURE_MAP.get(dbType);
         if (klass == null) {
-            log.debug("数据库 [{}] 没有注册存储过程类型", dbType);
-            return null;
+            throw new RuntimeException(String.format("数据库 [%s] 没有注册存储过程类型", dbType));
         }
 
         // 把查询得到的函数转为目标数据库使用的函数对象。
@@ -99,12 +96,7 @@ public final class ProcedureExecutors {
                                           Connection conn,
                                           Procedure proc,
                                           Object ...funcArguments) throws SQLException {
-        ProcedureExecutor executor = ProcedureExecutors.findProcedureExecutor(dbType);
-        if (executor == null) {
-            throw new RuntimeException(String.format("数据库 [%s] 没有注册存储过程执行器", dbType));
-        }
-
-        return executor.execute(conn, proc, funcArguments);
+        return ProcedureExecutors.findProcedureExecutor(dbType).execute(conn, proc, funcArguments);
     }
 
     /**
@@ -116,16 +108,13 @@ public final class ProcedureExecutors {
     public static ProcedureExecutor findProcedureExecutor(DatabaseType dbType) {
         Class<? extends ProcedureExecutor> klass = DB_EXECUTOR_MAP.get(dbType);
         if (klass == null) {
-            log.debug("数据库 [{}] 没有注册存储过程执行器", dbType);
-            return null;
+            throw new RuntimeException(String.format("数据库 [%s] 没有注册存储过程执行器", dbType));
         }
 
         try {
             return klass.getConstructor().newInstance();
         } catch (Exception ex) {
-            log.warn(ex.getMessage());
+            throw new RuntimeException(ex);
         }
-
-        return null;
     }
 }

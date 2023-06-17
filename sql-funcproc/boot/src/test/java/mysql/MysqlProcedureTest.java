@@ -23,9 +23,6 @@ public class MysqlProcedureTest {
     @Test
     public void execute() throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            conn.setCatalog(CATALOG);
-            conn.setSchema(SCHEMA);
-
             Procedure proc = ProcedureExecutors.findProcedure(DB_TYPE, conn, CATALOG, SCHEMA, "proc_in_out_args");
             print(proc);
 
@@ -60,9 +57,6 @@ public class MysqlProcedureTest {
     @Test
     public void testFindProcedures() throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            conn.setCatalog(CATALOG);
-            conn.setSchema(SCHEMA);
-
             List<String> names = ProcedureExecutors.findProcedureNames(DB_TYPE, conn, CATALOG, SCHEMA);
             System.out.println(names);
         }
