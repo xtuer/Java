@@ -32,17 +32,10 @@ public final class ProcedureExecutors {
 
     // 注册存储过程执行器和类型。
     static {
-        DB_PROCEDURE_MAP.put(DatabaseType.MYSQL, MysqlProcedure.class);
-        DB_EXECUTOR_MAP.put(DatabaseType.MYSQL, MysqlProcedureExecutor.class);
-        DB_PROCEDURE_TYPE.put(DatabaseType.MYSQL, 1);
-
-        DB_PROCEDURE_MAP.put(DatabaseType.ORACLE, OracleProcedure.class);
-        DB_EXECUTOR_MAP.put(DatabaseType.ORACLE, OracleProcedureExecutor.class);
-        DB_PROCEDURE_TYPE.put(DatabaseType.ORACLE, 1);
-
-        DB_PROCEDURE_MAP.put(DatabaseType.POSTGRES, PostgresProcedure.class);
-        DB_EXECUTOR_MAP.put(DatabaseType.POSTGRES, PostgresProcedureExecutor.class);
-        DB_PROCEDURE_TYPE.put(DatabaseType.POSTGRES, 2);
+        register(DatabaseType.DB2, DB2Procedure.class, DB2ProcedureExecutor.class, 1);
+        register(DatabaseType.MYSQL, MysqlProcedure.class, MysqlProcedureExecutor.class, 1);
+        register(DatabaseType.ORACLE, OracleProcedure.class, OracleProcedureExecutor.class, 1);
+        register(DatabaseType.POSTGRES, PostgresProcedure.class, PostgresProcedureExecutor.class, 2);
     }
 
     /**
@@ -116,5 +109,14 @@ public final class ProcedureExecutors {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    /**
+     * 注册数据库的存储过程、存储过程执行器以及使用 DatabaseMetaData 获取存储过程时 PROCEDURE_TYPE 的值。
+     */
+    public static void register(DatabaseType dbType, Class<? extends Procedure> procedureClass, Class<? extends ProcedureExecutor> executorClass, int procedureType) {
+        DB_PROCEDURE_MAP.put(dbType, procedureClass);
+        DB_EXECUTOR_MAP.put(dbType, executorClass);
+        DB_PROCEDURE_TYPE.put(dbType, procedureType);
     }
 }

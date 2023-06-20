@@ -30,20 +30,11 @@ public final class FunctionExecutors {
 
     // 注册函数执行器和类型。
     static {
-        DB_FUNCTION_MAP.put(DatabaseType.MYSQL, MysqlFunction.class);
-        DB_EXECUTOR_MAP.put(DatabaseType.MYSQL, MysqlFunctionExecutor.class);
-
-        DB_FUNCTION_MAP.put(DatabaseType.ORACLE, OracleFunction.class);
-        DB_EXECUTOR_MAP.put(DatabaseType.ORACLE, OracleFunctionExecutor.class);
-
-        DB_FUNCTION_MAP.put(DatabaseType.POSTGRES, PostgresFunction.class);
-        DB_EXECUTOR_MAP.put(DatabaseType.POSTGRES, PostgresFunctionExecutor.class);
-
-        DB_FUNCTION_MAP.put(DatabaseType.DB2, DB2Function.class);
-        DB_EXECUTOR_MAP.put(DatabaseType.DB2, DB2FunctionExecutor.class);
-
-        DB_FUNCTION_MAP.put(DatabaseType.SQLSERVER, SqlServerFunction.class);
-        DB_EXECUTOR_MAP.put(DatabaseType.SQLSERVER, SqlServerFunctionExecutor.class);
+        register(DatabaseType.DB2, DB2Function.class, DB2FunctionExecutor.class);
+        register(DatabaseType.MYSQL, MysqlFunction.class, MysqlFunctionExecutor.class);
+        register(DatabaseType.ORACLE, OracleFunction.class, OracleFunctionExecutor.class);
+        register(DatabaseType.POSTGRES, PostgresFunction.class, PostgresFunctionExecutor.class);
+        register(DatabaseType.SQLSERVER, SqlServerFunction.class, SqlServerFunctionExecutor.class);
     }
 
     /**
@@ -115,5 +106,13 @@ public final class FunctionExecutors {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    /**
+     * 注册数据库的存储函数、存储函数执行器。
+     */
+    public static void register(DatabaseType dbType, Class<? extends Function> functionClass, Class<? extends FunctionExecutor> functionExecutorClass) {
+        DB_FUNCTION_MAP.put(dbType, functionClass);
+        DB_EXECUTOR_MAP.put(dbType, functionExecutorClass);
     }
 }
