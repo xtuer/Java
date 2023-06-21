@@ -9,12 +9,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Oracle 存储过程的执行器。
+ * 简单的存储过程执行器: DB2, MySQL, PostgreSQL, SqlServer 的存储过程执行都一样，Oracle 比较特殊。
  */
 @Slf4j
-public class OracleProcedureExecutor extends ProcedureExecutor {
+public abstract class SimpleProcedureExecutor extends ProcedureExecutor {
     @Override
     protected void setAndRegisterParameters() throws SQLException {
+        /*
+         提示:
+         A. 参数类型有 IN，INOUT，OUT。
+         B. 可能有多个 OUT 参数，且 OUT 参数有可能在 IN 参数的前面。
+         C. 同一个参数即可以是 IN 参数，也可以是 OUT 参数，即是 INOUT 参数。
+         */
+
         // 输入参数的值的下标。
         int argValueIdx = 0;
 
@@ -30,32 +37,14 @@ public class OracleProcedureExecutor extends ProcedureExecutor {
 
             // 注册 OUT 参数。
             if (arg.isOutArg()) {
-                if (super.proc.isCursorOuted()) {
-                    // 游标的 OUT 参数注册。
-                    log.debug("输出参数: 下标 [{}]，类型为游标 OracleTypes.CURSOR", argIdx);
-                    super.cstmt.registerOutParameter(argIdx, OracleProcedure.ARG_DATA_TYPE_VALUE_OF_ORACLE_CURSOR);
-                } else {
-                    // 普通的 OUT 参数注册。
-                    log.debug("输出参数: 下标 [{}]", argIdx);
-                    super.cstmt.registerOutParameter(argIdx, arg.getDataTypeValue());
-                }
+                log.debug("输出参数: 下标 [{}]", argIdx);
+                super.cstmt.registerOutParameter(argIdx, arg.getDataTypeValue());
             }
         }
     }
 
     @Override
     protected ResultSet getResultSet() throws SQLException {
-        // 游标的 OUT 参数需要使用结果集获取。
-        if (super.proc.isCursorOuted()) {
-            for (int argIdx = 1; argIdx <= super.proc.getInOutInoutArgs().size(); argIdx++) {
-                ProcedureArg arg = super.proc.getInOutInoutArgs().get(argIdx - 1);
-
-                if (arg.isOutArg() && super.proc.isCursorOuted()) {
-                    return (ResultSet) super.cstmt.getObject(argIdx);
-                }
-            }
-        }
-
         return super.cstmt.getResultSet();
     }
 
@@ -64,15 +53,9 @@ public class OracleProcedureExecutor extends ProcedureExecutor {
         for (int argIdx = 1; argIdx <= super.proc.getInOutInoutArgs().size(); argIdx++) {
             ProcedureArg arg = super.proc.getInOutInoutArgs().get(argIdx - 1);
 
-            // 非游标的 OUT 参数获取。
-            if (arg.isOutArg() && !super.proc.isCursorOuted()) {
+            if (arg.isOutArg()) {
                 result.getOutResult().put(arg.getName(), super.cstmt.getObject(argIdx));
             }
         }
-    }
-
-    @Override
-    protected void preCheck() {
-        ProcedureExecutor.checkAssignable(OracleProcedure.class, super.proc);
     }
 }

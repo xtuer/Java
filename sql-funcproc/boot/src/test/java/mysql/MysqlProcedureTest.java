@@ -23,7 +23,7 @@ public class MysqlProcedureTest {
     @Test
     public void execute() throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Procedure proc = ProcedureExecutors.findProcedure(DB_TYPE, conn, CATALOG, SCHEMA, "proc_mix_demo");
+            Procedure proc = ProcedureExecutors.findProcedure(DB_TYPE, conn, CATALOG, SCHEMA, "get_employee_data");
             print(proc);
 
             Result result = ProcedureExecutors.executeProcedure(DB_TYPE, conn, proc, 5, 10, 2);

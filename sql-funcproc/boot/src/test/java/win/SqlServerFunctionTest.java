@@ -38,10 +38,10 @@ public class SqlServerFunctionTest {
             conn.setSchema(SCHEMA);
             conn.setAutoCommit(false);
 
-            CallableStatement cstmt = conn.prepareCall("{ ? = call test.ufn_SalesByStore(?) }");
-            cstmt.registerOutParameter(1, Types.OTHER); // 注册的类型不能使用 Types.OTHER
+            CallableStatement cstmt = conn.prepareCall("{ ? = call test.AddNumbers(?, ?) }");
+            cstmt.registerOutParameter(1, Types.INTEGER); // 注册的类型不要使用 Types.OTHER，否则返回的是 byte[]，需要自己解析数据。
             cstmt.setObject(2, 1);
-            // cstmt.setObject(3, 3);
+            cstmt.setObject(3, 3);
             cstmt.execute();
 
             // 获取返回结果
