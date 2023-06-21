@@ -88,7 +88,7 @@ public class PostgresFunctionTest {
     @Test
     public void testFindFunctions() throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            System.out.println(FunctionExecutors.findFunctionNames(conn, CATALOG, SCHEMA));
+            System.out.println(FunctionExecutors.findFunctionNames(DB_TYPE, conn, CATALOG, SCHEMA));
         }
     }
 }

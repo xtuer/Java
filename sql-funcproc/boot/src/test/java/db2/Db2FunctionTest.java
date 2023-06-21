@@ -5,10 +5,12 @@ import xtuer.funcproc.DatabaseType;
 import xtuer.funcproc.Result;
 import xtuer.funcproc.function.Function;
 import xtuer.funcproc.function.FunctionExecutors;
+import xtuer.funcproc.function.FunctionFetcher;
 import xtuer.util.FunctionPrinter;
 import xtuer.util.Utils;
 
 import java.sql.*;
+import java.util.List;
 
 public class Db2FunctionTest {
     static final String DB_URL  = "jdbc:db2://192.168.1.115:30011/sample";
@@ -58,6 +60,14 @@ public class Db2FunctionTest {
             ResultSet rs = stmt.getResultSet();
             rs.next();
             Utils.dump(rs);
+        }
+    }
+
+    // 列出所有函数名。
+    @Test
+    public void testFindFunctions() throws SQLException {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            System.out.println(FunctionExecutors.findFunctionNames(DB_TYPE, conn, CATALOG, SCHEMA));
         }
     }
 }

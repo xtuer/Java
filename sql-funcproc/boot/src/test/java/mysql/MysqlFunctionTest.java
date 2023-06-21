@@ -60,11 +60,11 @@ public class MysqlFunctionTest {
         }
     }
 
+    // 列出所有函数名。
     @Test
-    public void testListProcedures() throws SQLException {
+    public void testFindFunctions() throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            List<String> names = FunctionFetcher.fetchFunctionNames(conn, CATALOG, SCHEMA);
-            System.out.println(names);
+            System.out.println(FunctionExecutors.findFunctionNames(DB_TYPE, conn, CATALOG, SCHEMA));
         }
     }
 }

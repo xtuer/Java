@@ -16,7 +16,7 @@ public class SqlServerFunctionTest {
     static final String USER    = "sa";
     static final String PASS    = "Newdt@cn";
     static final String CATALOG = "TEST";
-    static final String SCHEMA  = "test"; // 可以为 null, "", "test", 或者任意值，也就是这个值不生效。
+    static final String SCHEMA  = "test";
     static final DatabaseType DB_TYPE = DatabaseType.SQLSERVER;
 
     @Test
@@ -72,6 +72,14 @@ public class SqlServerFunctionTest {
             }
 
             conn.commit();
+        }
+    }
+
+    // 列出所有函数名。
+    @Test
+    public void testFindFunctions() throws SQLException {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            System.out.println(FunctionExecutors.findFunctionNames(DB_TYPE, conn, CATALOG, SCHEMA));
         }
     }
 }

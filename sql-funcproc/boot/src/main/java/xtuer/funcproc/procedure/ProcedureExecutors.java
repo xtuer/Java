@@ -1,6 +1,7 @@
 package xtuer.funcproc.procedure;
 
 import xtuer.funcproc.DatabaseType;
+import xtuer.funcproc.FuncProcUtils;
 import xtuer.funcproc.Result;
 import xtuer.funcproc.procedure.spec.*;
 
@@ -36,6 +37,7 @@ public final class ProcedureExecutors {
         register(DatabaseType.MYSQL, MysqlProcedure.class, MysqlProcedureExecutor.class, 1);
         register(DatabaseType.ORACLE, OracleProcedure.class, OracleProcedureExecutor.class, 1);
         register(DatabaseType.POSTGRES, PostgresProcedure.class, PostgresProcedureExecutor.class, 2);
+        register(DatabaseType.SQLSERVER, SqlServerProcedure.class, SqlServerProcedureExecutor.class, 2);
     }
 
     /**
@@ -73,7 +75,13 @@ public final class ProcedureExecutors {
                                                   String catalog,
                                                   String schema) throws SQLException {
         int procedureType = DB_PROCEDURE_TYPE.get(dbType);
-        return ProcedureFetcher.fetchProcedureNames(conn, catalog, schema, procedureType);
+        List<String> procNames = ProcedureFetcher.fetchProcedureNames(conn, catalog, schema, procedureType);
+
+        if (DatabaseType.SQLSERVER.equals(dbType)) {
+            procNames = FuncProcUtils.extractProcedureNamesForSqlServer(procNames);
+        }
+
+        return procNames;
     }
 
     /**

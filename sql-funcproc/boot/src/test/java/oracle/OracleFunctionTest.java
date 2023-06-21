@@ -10,6 +10,7 @@ import xtuer.util.Utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import static xtuer.util.FunctionPrinter.print;
 
@@ -50,6 +51,14 @@ public class OracleFunctionTest {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
             boolean exists = FunctionFetcher.checkFunctionExists(conn, CATALOG, SCHEMA, "PROC_NO_ARG");
             System.out.println(exists);
+        }
+    }
+
+    // 列出所有函数名。
+    @Test
+    public void testFindFunctions() throws SQLException {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            System.out.println(FunctionExecutors.findFunctionNames(DB_TYPE, conn, CATALOG, SCHEMA));
         }
     }
 }

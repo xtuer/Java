@@ -42,7 +42,7 @@ public class FunctionController {
     @GetMapping("/api/functions/functionNames")
     public Result<List<String>> findFunctionNames(@RequestParam String catalog, @RequestParam String schema) throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            List<String> functionNames = FunctionExecutors.findFunctionNames(conn, catalog, schema);
+            List<String> functionNames = FunctionExecutors.findFunctionNames(DB_TYPE, conn, catalog, schema);
             return Result.ok(functionNames);
         }
     }

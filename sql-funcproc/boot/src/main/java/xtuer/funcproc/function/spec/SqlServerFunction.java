@@ -50,8 +50,8 @@ public class SqlServerFunction extends Function {
     @Override
     public String getCallableSql() {
         // 函数名需要有 schema
-        // 返回简单类型: { ? = call test.AddNumbers(?) }
-        // 返回 inline table: select * from test.func_return_inline_table(?)
+        // 返回简单类型: { ? = call schema.AddNumbers(?) }
+        // 返回 inline table: select * from schema.func_return_inline_table(?)
         String questionMarks = FuncProcUtils.generateCallableSqlParameterQuestionMarks(super.inArgs.size());
 
         if (this.useCallableStatement) {

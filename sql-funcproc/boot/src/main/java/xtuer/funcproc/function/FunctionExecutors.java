@@ -1,6 +1,7 @@
 package xtuer.funcproc.function;
 
 import xtuer.funcproc.DatabaseType;
+import xtuer.funcproc.FuncProcUtils;
 import xtuer.funcproc.Result;
 import xtuer.funcproc.function.spec.*;
 
@@ -67,10 +68,17 @@ public final class FunctionExecutors {
     /**
      * 列出 schema 中的所有函数名。
      */
-    public static List<String> findFunctionNames(Connection conn,
+    public static List<String> findFunctionNames(DatabaseType dbType,
+                                                 Connection conn,
                                                  String catalog,
                                                  String schema) throws SQLException {
-        return FunctionFetcher.fetchFunctionNames(conn, catalog, schema);
+        List<String> funcNames = FunctionFetcher.fetchFunctionNames(conn, catalog, schema);
+
+        if (DatabaseType.SQLSERVER.equals(dbType)) {
+            funcNames = FuncProcUtils.extractFunctionNamesForSqlServer(funcNames);
+        }
+
+        return funcNames;
     }
 
     /**
