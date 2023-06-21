@@ -23,7 +23,7 @@ public class SqlServerProcedureTest {
     @Test
     public void execute() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Procedure proc = ProcedureExecutors.findProcedure(DB_TYPE, conn, CATALOG, SCHEMA, "PROC_MULTI_ROWS");
+            Procedure proc = ProcedureExecutors.findProcedure(DB_TYPE, conn, CATALOG, SCHEMA, "PROC_IN_OUT_ARGS");
             print(proc);
 
             Result result = ProcedureExecutors.executeProcedure(DB_TYPE, conn, proc, 2, 10, 2);
@@ -37,16 +37,14 @@ public class SqlServerProcedureTest {
             conn.setCatalog(CATALOG);
             conn.setSchema(SCHEMA);
 
-            CallableStatement cstmt = conn.prepareCall("{ call test.PROC_MULTI_ROWS() }");
-            // cstmt.setObject(1, 5);
-            // cstmt.setObject(2, 10);
-            // cstmt.setObject(3, 15);
-            // cstmt.registerOutParameter(1, Types.OTHER);
+            CallableStatement cstmt = conn.prepareCall("{ call test.PROC_IN_OUT_ARGS(?, ?, ?) }");
+            cstmt.setObject(1, 2);
+            cstmt.setObject(2, 3);
+            cstmt.setObject(3, 5);
+            cstmt.registerOutParameter(3, Types.INTEGER);
             cstmt.execute();
 
-            // System.out.println(cstmt.getUpdateCount());
-            // System.out.println(cstmt.getObject(1));
-            //
+            System.out.println(cstmt.getObject(3));
             ResultSet rs = cstmt.getResultSet();
             while (rs != null && rs.next()) {
                 Utils.dump(rs);

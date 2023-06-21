@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * 简单的存储过程执行器: DB2, MySQL, PostgreSQL, SqlServer 的存储过程执行都一样，Oracle 比较特殊。
+ * 简单的存储过程执行器: MySQL, PostgreSQL, SqlServer 的存储过程执行都一样，DB2 和 Oracle 的有不一样的地方。
  */
 @Slf4j
 public abstract class SimpleProcedureExecutor extends ProcedureExecutor {

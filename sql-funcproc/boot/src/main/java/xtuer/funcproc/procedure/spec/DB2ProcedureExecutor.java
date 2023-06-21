@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class DB2ProcedureExecutor extends SimpleProcedureExecutor {
     @Override
     protected ResultSet getResultSet() throws SQLException {
-        // Note: DB2 的存储过程理论上可以支持多个结果集，我们只处理了一个，否则需要改 Result 类的结构。
+        // Note: DB2 的存储过程理论上可以支持多个结果集，我们只处理了一个，要支持的话需要改类 Result 的结构，暂且不支持。
         return super.cstmt.getResultSet();
     }
 
