@@ -143,4 +143,18 @@ public class PgTest {
             }
         }
     }
+
+    @Test
+    public void testGetTableTypes() throws Exception {
+        try(Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            conn.setCatalog(CATALOG);
+            conn.setSchema(SCHEMA);
+            DatabaseMetaData md = conn.getMetaData();
+            ResultSet rs = md.getTables(CATALOG, SCHEMA, null, null);
+            rs = md.getTableTypes();
+            while (rs.next()) {
+                Utils.dump(rs);
+            }
+        }
+    }
 }

@@ -57,7 +57,7 @@ public abstract class FunctionExecutor {
         this.conn.setSchema(this.func.getSchema());
         this.conn.setAutoCommit(false);
 
-        // 执行前的条件检查，例如数据库和函数是否匹配。
+        // 执行前的条件检查，例如数据库和函数是否匹配。z
         this.preCheck();
 
         // [1] 创建 CallableStatement。

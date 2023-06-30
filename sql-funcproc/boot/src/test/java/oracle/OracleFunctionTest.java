@@ -8,9 +8,7 @@ import xtuer.funcproc.function.FunctionExecutors;
 import xtuer.funcproc.function.FunctionFetcher;
 import xtuer.util.Utils;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 import static xtuer.util.FunctionPrinter.print;
 
@@ -40,6 +38,16 @@ public class OracleFunctionTest {
             conn.setSchema(SCHEMA);
             conn.setAutoCommit(false);
 
+            CallableStatement cstmt = conn.prepareCall("{ ? = call FUNC_RETURN_VOID() }");
+            cstmt.registerOutParameter(1, Types.INTEGER); // 值为 -10
+            // cstmt.setObject(2, "3");
+            cstmt.execute();
+
+            // 获取返回结果
+            ResultSet rs = (ResultSet) cstmt.getObject(1);
+            while (rs != null && rs.next()) {
+                System.out.println(rs.getObject(1));
+            }
 
             conn.commit();
         }
