@@ -1,5 +1,6 @@
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.text.StringSubstitutor;
+import org.javatuples.Pair;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -60,22 +61,6 @@ public class CommonTest {
     }
 
     @Test
-    public void foo2() {
-        String[] statements = {
-                "hello world",
-                "hello java",
-                "hello go",
-        };
-
-        Map<String, Long> result = Stream.of(statements)
-                .map(stmt -> stmt.split(" "))
-                // .map(Arrays::asList)
-                .flatMap(Stream::of)
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-        System.out.println(result);
-    }
-
-    @Test
     public void testRegex() {
         System.out.println(checkVersion("v1.0.2"));
         System.out.println(checkVersion("v1.0.a2"));
@@ -127,23 +112,7 @@ public class CommonTest {
 
     @Test
     public void bar2() throws Exception {
-        String template = "Hello ${name}, your age is ${age}";
-
-        // 使用常用 Map。
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", "Alice");
-        map.put("age", 12);
-        String result = StringSubstitutor.replace(template, map);
-
-        System.out.println(result); // 输出: Hello Alice, your age is 12
-
-        // 如果只有一个值，可以使用 Collections.singletonMap() 创建 Map。
-        System.out.println(StringSubstitutor.replace(template, Collections.singletonMap("name", "Alice")));
-
-        // 还可以使用 Guava 的 ImmutableMap.of("k1", "v1", "k2", "v2") 创建 Map。
-        System.out.println(StringSubstitutor.replace(template, ImmutableMap.of(
-                "name", "Alice",
-                "age", 20
-        )));
+        Pair<Integer, String> p = Pair.with(1, "One");
+        System.out.println(p.getValue1());
     }
 }
