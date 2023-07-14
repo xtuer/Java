@@ -58,9 +58,8 @@ public class CommonTest {
 
     @Test
     public void testx() {
-        System.out.println(StringUtils.leftPad(Integer.toBinaryString(123), 32, '0'));
-        System.out.println(StringUtils.leftPad(Integer.toBinaryString(12341234), 32, '0'));
-        System.out.println(Float.floatToIntBits(23.223f));
+        System.out.println(new File("/root", "foo.txt").getAbsolutePath());
+        System.out.println(new File("/root/", "foo.txt").getAbsolutePath());
 
     }
 }

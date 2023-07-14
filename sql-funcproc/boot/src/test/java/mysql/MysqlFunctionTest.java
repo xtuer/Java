@@ -9,7 +9,6 @@ import xtuer.funcproc.function.FunctionFetcher;
 import xtuer.util.Utils;
 
 import java.sql.*;
-import java.util.List;
 
 import static xtuer.util.FunctionPrinter.print;
 
@@ -24,7 +23,7 @@ public class MysqlFunctionTest {
     @Test
     public void execute() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "func_dateToStr");
+            Function func = FunctionExecutors.findFunction(DB_TYPE, conn, CATALOG, SCHEMA, "func_dateToStr1");
             print(func);
 
             Result result = FunctionExecutors.executeFunction(DB_TYPE, conn, func, "2023-06-02");

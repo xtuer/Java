@@ -47,6 +47,7 @@ dependencies {
             "org.apache.curator:curator-recipes:${versions.curator}",
             "org.aspectj:aspectjweaver:${versions.aspectj}",
     )
+    implementation 'org.freemarker:freemarker:2.3.31'
 
     runtimeOnly("mysql:mysql-connector-java:${versions.mysql}")
 

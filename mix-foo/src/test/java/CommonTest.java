@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -112,7 +113,7 @@ public class CommonTest {
 
     @Test
     public void bar2() throws Exception {
-        Pair<Integer, String> p = Pair.with(1, "One");
-        System.out.println(p.getValue1());
+        URL url = ClassLoader.getSystemClassLoader().getResource("/java/sql/Blob.class");
+        System.out.println(url);
     }
 }

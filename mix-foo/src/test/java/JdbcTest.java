@@ -125,7 +125,7 @@ public class JdbcTest {
         String pass = "root";
 
         try (Connection conn = DriverManager.getConnection(url, user, pass)) {
-            String sql = Files.asCharSource(new File("/Users/biao/Documents/temp/sqls/mysql_proc_2.sql"), StandardCharsets.UTF_8).read();
+            String sql = Files.asCharSource(new File("/Users/biao/Desktop/mysql-proc.sql"), StandardCharsets.UTF_8).read();
             System.out.println(sql);
             Statement stmt = conn.createStatement();
             stmt.execute(sql);
