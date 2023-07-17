@@ -48,6 +48,6 @@ public class DatabaseMetaDataConfigs {
      * @return 如果传入的查询语句使用 JDBC (等于 "jdbc") 返回 true，否则返回 false。
      */
     public static boolean useJdbc(String query) {
-        return JDBC.equals(query);
+        return JDBC.equalsIgnoreCase(query);
     }
 }

@@ -66,4 +66,28 @@ public class MysqlFunctionTest {
             System.out.println(FunctionExecutors.findFunctionNames(DB_TYPE, conn, CATALOG, SCHEMA));
         }
     }
+
+    // 列出所有函数名。
+    @Test
+    public void testFindTables() throws SQLException {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            conn.setCatalog(CATALOG);
+            conn.setSchema(SCHEMA);
+            DatabaseMetaData meta = conn.getMetaData();
+
+            // 获取表类型。
+            try (ResultSet rs = meta.getTableTypes()) {
+                while (rs.next()) {
+                    System.out.println(rs.getString("TABLE_TYPE"));
+                }
+            }
+
+            // 使用完关闭 ResultSet。
+            try (ResultSet rs = meta.getTables(CATALOG, SCHEMA, null, null)) {
+                while (rs.next()) {
+                    System.out.println(rs.getString("TABLE_NAME"));
+                }
+            }
+        }
+    }
 }

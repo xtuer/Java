@@ -46,11 +46,11 @@ public class DatabaseMetaDataConfig {
     /**
      * 使用 JDBC 查询表时的过滤条件。
      */
-    private String tableJdbcKeys;
+    private String[] tableJdbcTypes;
 
     private String viewQuery;
 
-    private String viewJdbcKeys;
+    private String[] viewJdbcTypes;
 
     private String procedureQuery;
 

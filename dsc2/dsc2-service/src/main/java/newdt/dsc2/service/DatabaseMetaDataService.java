@@ -23,7 +23,10 @@ public class DatabaseMetaDataService {
     private DatabaseMetaDataConfigs dbConfigs;
 
     @Autowired
-    private DatabaseMetaDataServiceUsingJdbc jdbcService;
+    private DatabaseMetaDataServiceUseJdbc jdbcService;
+
+    @Autowired
+    private DatabaseMetaDataServiceUseSql sqlService;
 
     /**
      * 获取数据库的 catalogs。
@@ -79,12 +82,50 @@ public class DatabaseMetaDataService {
 
         // [3] 如果需要 catalog 则 catalog 不能为空。
         if (cfg.isUseCatalog()) {
-            Preconditions.checkArgument(StringUtils.hasLength(catalog), "Catalog 参数不能为空");
+            Preconditions.checkArgument(StringUtils.hasLength(catalog), "参数 catalog 不能为空");
         }
 
         try (Connection conn = openConnection(type, dbid)) {
             if (DatabaseMetaDataConfigs.useJdbc(cfg.getSchemaQuery())) {
                 return jdbcService.findSchemas(conn, catalog);
+            } else {
+                throw new UnsupportedOperationException("不支持");
+            }
+        }
+    }
+
+    public List<String> findTables(DatabaseType type, int dbid, String catalog, String schema) throws SQLException {
+        DatabaseMetaDataConfig cfg = dbConfigs.findConfig(type);
+
+        if (cfg.isUseCatalog()) {
+            Preconditions.checkArgument(StringUtils.hasLength(catalog), "参数 catalog 不能为空");
+        }
+        if (cfg.isUseSchema()) {
+            Preconditions.checkArgument(StringUtils.hasLength(schema), "参数 schema 不能为空");
+        }
+
+        try (Connection conn = openConnection(type, dbid)) {
+            if (DatabaseMetaDataConfigs.useJdbc(cfg.getSchemaQuery())) {
+                return jdbcService.findTables(conn, catalog, schema, cfg.getTableJdbcTypes());
+            } else {
+                throw new UnsupportedOperationException("不支持");
+            }
+        }
+    }
+
+    public List<String> findViews(DatabaseType type, int dbid, String catalog, String schema) throws SQLException {
+        DatabaseMetaDataConfig cfg = dbConfigs.findConfig(type);
+
+        if (cfg.isUseCatalog()) {
+            Preconditions.checkArgument(StringUtils.hasLength(catalog), "参数 catalog 不能为空");
+        }
+        if (cfg.isUseSchema()) {
+            Preconditions.checkArgument(StringUtils.hasLength(schema), "参数 schema 不能为空");
+        }
+
+        try (Connection conn = openConnection(type, dbid)) {
+            if (DatabaseMetaDataConfigs.useJdbc(cfg.getViewQuery())) {
+                return jdbcService.findViews(conn, catalog, schema, cfg.getViewJdbcTypes());
             } else {
                 throw new UnsupportedOperationException("不支持");
             }

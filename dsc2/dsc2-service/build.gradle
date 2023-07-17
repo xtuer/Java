@@ -19,6 +19,7 @@ ext.versions = [
         uid        : '1.0.2.RELEASE',
         guava      : '32.1.1-jre',
         validation : '2.0.1.Final',
+        tuple      : '1.2',
 ]
 
 repositories {
@@ -34,6 +35,7 @@ dependencies {
             "org.postgresql:postgresql:${versions.pg}",
             "com.oracle.database.jdbc:ojdbc8:${versions.oracle}",
             "javax.validation:validation-api:${versions.validation}",
+            "org.javatuples:javatuples:${versions.tuple}",
 
     )
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

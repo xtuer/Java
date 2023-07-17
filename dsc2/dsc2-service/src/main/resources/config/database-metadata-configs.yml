@@ -7,12 +7,12 @@ databaseMetaDataConfigs:
   catalogQuery: jdbc
   schemaQuery: jdbc
   tableQuery: jdbc
-  tableJdbcKeys: SYSTEM TABLE
+  tableJdbcTypes: [TABLE, SYSTEM TABLE]
   viewQuery: jdbc
-  viewJdbcKeys: SYSTEM VIEW, USER VIEW
+  viewJdbcTypes: [VIEW, SYSTEM VIEW]
+  tableColumnQuery: jdbc
   procedureQuery: jdbc
   functionQuery: jdbc
-  tableColumnQuery: jdbc
   tableCreateSql: select
   procedureCreateSql: select
   functionCreateSql: select
@@ -23,12 +23,12 @@ databaseMetaDataConfigs:
   catalogQuery: jdbc
   schemaQuery: jdbc
   tableQuery: jdbc
-  tableJdbcKeys: SYSTEM TABLE
+  tableJdbcTypes: [SYSTEM TABLE]
   viewQuery: jdbc
-  viewJdbcKeys: SYSTEM VIEW, USER VIEW
+  viewJdbcTypes: [SYSTEM VIEW, USER VIEW]
+  tableColumnQuery: jdbc
   procedureQuery: jdbc
   functionQuery: jdbc
-  tableColumnQuery: jdbc
   tableCreateSql: select
   procedureCreateSql: select
   functionCreateSql: select
@@ -39,12 +39,12 @@ databaseMetaDataConfigs:
   catalogQuery: jdbc
   schemaQuery: jdbc
   tableQuery: jdbc
-  tableJdbcKeys: SYSTEM TABLE
+  tableJdbcTypes: [SYSTEM TABLE]
   viewQuery: jdbc
-  viewJdbcKeys: SYSTEM VIEW, USER VIEW
+  viewJdbcTypes: [SYSTEM VIEW, USER VIEW]
+  tableColumnQuery: jdbc
   procedureQuery: jdbc
   functionQuery: jdbc
-  tableColumnQuery: jdbc
   tableCreateSql: select
   procedureCreateSql: select
   functionCreateSql: select
