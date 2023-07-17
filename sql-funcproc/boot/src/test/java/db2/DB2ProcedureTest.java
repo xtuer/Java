@@ -1,5 +1,7 @@
 package db2;
 
+import com.google.common.io.CharSource;
+import com.google.common.io.Files;
 import org.junit.jupiter.api.Test;
 import xtuer.funcproc.DatabaseType;
 import xtuer.funcproc.Result;
@@ -7,6 +9,9 @@ import xtuer.funcproc.procedure.Procedure;
 import xtuer.funcproc.procedure.ProcedureExecutors;
 import xtuer.util.Utils;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.List;
 
@@ -57,6 +62,16 @@ public class DB2ProcedureTest {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
             List<String> names = ProcedureExecutors.findProcedureNames(DB_TYPE, conn, CATALOG, SCHEMA);
             System.out.println(names);
+        }
+    }
+
+    // 测试创建存储过程。
+    @Test
+    public void testCreateProcedure() throws SQLException, IOException {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            String sql = Files.asCharSource(new File("/Users/biao/Desktop/db2.sql"), StandardCharsets.UTF_8).read();
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
         }
     }
 }

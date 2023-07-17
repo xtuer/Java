@@ -1,0 +1,65 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.13'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group = 'newdt'
+version = '0.0.1-SNAPSHOT'
+
+ext.versions = [
+        lombok     : '1.18.22',
+        commonsIO  : '2.6',
+        commonsLang: '3.8',
+        commonsText: '1.7',
+        mybatis    : '2.1.1',
+        mysql      : '5.1.46',
+        pg         : '42.6.0',
+        oracle     : '23.2.0.0',
+        uid        : '1.0.2.RELEASE',
+        guava      : '32.1.1-jre',
+        validation : '2.0.1.Final',
+]
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation (
+            'org.springframework.boot:spring-boot-starter-web',
+            "org.apache.commons:commons-lang3:${versions.commonsLang}",
+            "com.google.guava:guava:${versions.guava}",
+            "mysql:mysql-connector-java:${versions.mysql}",
+            "org.postgresql:postgresql:${versions.pg}",
+            "com.oracle.database.jdbc:ojdbc8:${versions.oracle}",
+            "javax.validation:validation-api:${versions.validation}",
+
+    )
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // Lombok
+    compileOnly "org.projectlombok:lombok:${versions.lombok}"
+    annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//                                    JVM                                     //
+////////////////////////////////////////////////////////////////////////////////
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+[compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+compileJava {
+    options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation' << '-parameters'
+    options.forkOptions.jvmArgs << '-parameters'
+}
+
+// 如果设置了 JRebel，则使用 JRebel 进行热更新
+if (project.hasProperty('rebelAgent')) {
+    bootRun.jvmArgs += rebelAgent
+}

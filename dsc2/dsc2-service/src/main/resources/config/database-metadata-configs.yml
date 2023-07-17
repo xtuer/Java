@@ -1,0 +1,50 @@
+# 获取数据库元数据的配置，每个数据库对应自己的配置。
+databaseMetaDataConfigs:
+- type: MYSQL
+  label: MySQL
+  useCatalog: true
+  useSchema: false
+  catalogQuery: jdbc
+  schemaQuery: jdbc
+  tableQuery: jdbc
+  tableJdbcKeys: SYSTEM TABLE
+  viewQuery: jdbc
+  viewJdbcKeys: SYSTEM VIEW, USER VIEW
+  procedureQuery: jdbc
+  functionQuery: jdbc
+  tableColumnQuery: jdbc
+  tableCreateSql: select
+  procedureCreateSql: select
+  functionCreateSql: select
+- type: ORACLE
+  label: Oracle
+  useCatalog: false
+  useSchema: true
+  catalogQuery: jdbc
+  schemaQuery: jdbc
+  tableQuery: jdbc
+  tableJdbcKeys: SYSTEM TABLE
+  viewQuery: jdbc
+  viewJdbcKeys: SYSTEM VIEW, USER VIEW
+  procedureQuery: jdbc
+  functionQuery: jdbc
+  tableColumnQuery: jdbc
+  tableCreateSql: select
+  procedureCreateSql: select
+  functionCreateSql: select
+- type: POSTGRES
+  label: PostgreSQL
+  useCatalog: true
+  useSchema: true
+  catalogQuery: jdbc
+  schemaQuery: jdbc
+  tableQuery: jdbc
+  tableJdbcKeys: SYSTEM TABLE
+  viewQuery: jdbc
+  viewJdbcKeys: SYSTEM VIEW, USER VIEW
+  procedureQuery: jdbc
+  functionQuery: jdbc
+  tableColumnQuery: jdbc
+  tableCreateSql: select
+  procedureCreateSql: select
+  functionCreateSql: select
