@@ -1,2 +1,0 @@
-
-spring.config.import: database-metadata-configs.yml

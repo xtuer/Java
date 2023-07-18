@@ -1,5 +1,6 @@
 package db2;
 
+import com.google.common.io.Files;
 import org.junit.jupiter.api.Test;
 import xtuer.funcproc.DatabaseType;
 import xtuer.funcproc.Result;
@@ -9,6 +10,9 @@ import xtuer.funcproc.function.FunctionFetcher;
 import xtuer.util.FunctionPrinter;
 import xtuer.util.Utils;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.List;
 
@@ -68,6 +72,16 @@ public class Db2FunctionTest {
     public void testFindFunctions() throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
             System.out.println(FunctionExecutors.findFunctionNames(DB_TYPE, conn, CATALOG, SCHEMA));
+        }
+    }
+
+    // 测试创建存储过程。
+    @Test
+    public void testCreateFunction() throws SQLException, IOException {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            String sql = Files.asCharSource(new File("/Users/biao/Desktop/DB2.txt"), StandardCharsets.UTF_8).read();
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
         }
     }
 }
