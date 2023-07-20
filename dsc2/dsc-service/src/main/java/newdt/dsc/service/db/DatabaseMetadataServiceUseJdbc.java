@@ -1,6 +1,6 @@
 package newdt.dsc.service.db;
 
-import newdt.dsc.bean.db.TableColumn;
+import org.apache.commons.dbutils.BasicRowProcessor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -9,13 +9,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 使用 JDBC 的接口获取数据库的元数据。
  */
 @Service
 public class DatabaseMetadataServiceUseJdbc {
-    public List<String> findCatalogs(Connection conn) throws SQLException {
+    public List<String> findCatalogNames(Connection conn) throws SQLException {
         List<String> names = new LinkedList<>();
         DatabaseMetaData meta = conn.getMetaData();
 
@@ -29,7 +30,7 @@ public class DatabaseMetadataServiceUseJdbc {
         return names;
     }
 
-    public List<String> findSchemas(Connection conn, String catalog) throws SQLException {
+    public List<String> findSchemaNames(Connection conn, String catalog) throws SQLException {
         List<String> names = new LinkedList<>();
         DatabaseMetaData meta = conn.getMetaData();
 
@@ -43,7 +44,7 @@ public class DatabaseMetadataServiceUseJdbc {
         return names;
     }
 
-    public List<String> findTables(Connection conn, String catalog, String schema, String[] tableTypes) throws SQLException {
+    public List<String> findTableNames(Connection conn, String catalog, String schema, String[] tableTypes) throws SQLException {
         List<String> names = new LinkedList<>();
         DatabaseMetaData meta = conn.getMetaData();
 
@@ -57,17 +58,13 @@ public class DatabaseMetadataServiceUseJdbc {
         return names;
     }
 
-    public List<TableColumn> findTableColumns(Connection conn, String catalog, String schema, String table) throws SQLException {
-        List<TableColumn> columns = new LinkedList<>();
+    public List<Map<String, Object>> findTableColumns(Connection conn, String catalog, String schema, String table) throws SQLException {
+        List<Map<String, Object>> columns = new LinkedList<>();
         DatabaseMetaData meta = conn.getMetaData();
 
         try (ResultSet rs = meta.getColumns(catalog, schema, table, null)) {
             while (rs.next()) {
-                TableColumn column = new TableColumn();
-                column.setName(rs.getString("COLUMN_NAME"));
-                column.setTypeName(rs.getString("TYPE_NAME"));
-
-                columns.add(column);
+                columns.add(new BasicRowProcessor().toMap(rs));
             }
         }
 

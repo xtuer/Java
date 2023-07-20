@@ -12,6 +12,7 @@ ext.versions = [
         commonsIO  : '2.6',
         commonsLang: '3.8',
         commonsText: '1.7',
+        commonsDbUtils: '1.7',
         mybatis    : '2.1.1',
         mysql      : '5.1.46',
         pg         : '42.6.0',
@@ -29,9 +30,10 @@ repositories {
 dependencies {
     implementation (
             'org.springframework.boot:spring-boot-starter-web',
-            "org.apache.commons:commons-lang3:${versions.commonsLang}",
             "com.google.guava:guava:${versions.guava}",
+            "org.apache.commons:commons-lang3:${versions.commonsLang}",
             "org.apache.commons:commons-text:${versions.commonsText}",
+            "commons-dbutils:commons-dbutils:${versions.commonsDbUtils}",
             "org.mybatis.spring.boot:mybatis-spring-boot-starter:${versions.mybatis}",
             "mysql:mysql-connector-java:${versions.mysql}",
             "org.postgresql:postgresql:${versions.pg}",

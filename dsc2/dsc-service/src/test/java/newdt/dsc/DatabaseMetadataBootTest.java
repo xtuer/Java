@@ -11,7 +11,7 @@ public class DatabaseMetadataBootTest {
     private static final DatabaseType DB_TYPE = DatabaseType.MYSQL;
     private static final int DBID = 1;
     private static final String CATALOG = "test";
-    private static final String SCHEMA = "test";
+    private static final String SCHEMA = null;
 
     @Autowired
     private DatabaseMetadataService metaService;
@@ -20,6 +20,13 @@ public class DatabaseMetadataBootTest {
     @Test
     public void testTableDdl() throws Exception {
         String ddl = metaService.findTableDdl(DB_TYPE, DBID, CATALOG, SCHEMA, "sp_test");
+        System.out.println(ddl);
+    }
+
+    // 查询视图创建语句。
+    @Test
+    public void testViewDdl() throws Exception {
+        String ddl = metaService.findViewDdl(DB_TYPE, DBID, CATALOG, SCHEMA, "sp_test_name");
         System.out.println(ddl);
     }
 

@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import newdt.dsc.bean.db.DatabaseMetadataConfig;
 import newdt.dsc.bean.db.DatabaseType;
-import newdt.dsc.bean.db.TableColumn;
 import newdt.dsc.config.DatabaseMetadataConfigs;
 import newdt.dsc.service.TestConnections;
 import newdt.dsc.util.Utils;
@@ -15,6 +14,7 @@ import org.springframework.util.StringUtils;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 获取数据库元数据的服务，例如获取 catalog，schema，表名等。
@@ -41,7 +41,7 @@ public class DatabaseMetadataService {
      * @throws RuntimeException 传入类型的数据库没有 metadata 配置时抛出运行时异常。
      * @throws IllegalArgumentException 参数不满足要求时抛出无效参数异常。
      */
-    public List<String> findCatalogs(DatabaseType type, int dbid) throws SQLException {
+    public List<String> findCatalogNames(DatabaseType type, int dbid) throws SQLException {
         /*
          逻辑:
          1. 获取数据库的配置。
@@ -53,12 +53,12 @@ public class DatabaseMetadataService {
         Preconditions.checkArgument(cfg.isUseCatalog(), "数据库不支持 catalog: " + type);
 
         try (Connection conn = openConnection(type, dbid)) {
-            String sql = cfg.getCatalog().getSql();
+            String sql = cfg.getCatalogNames().getSql();
 
             if (DatabaseMetadataConfigs.useJdbc(sql)) {
-                return jdbcService.findCatalogs(conn);
+                return jdbcService.findCatalogNames(conn);
             } else {
-                return sqlService.findCatalogs(conn, type, sql);
+                return sqlService.findCatalogNames(conn, type, sql);
             }
         }
     }
@@ -71,7 +71,7 @@ public class DatabaseMetadataService {
      * @param catalog Schema 所属 catalog，如果没有则传入 null。
      * @return 返回 schema 数组。
      */
-    public List<String> findSchemas(DatabaseType type, int dbid, String catalog) throws SQLException {
+    public List<String> findSchemaNames(DatabaseType type, int dbid, String catalog) throws SQLException {
         /*
          逻辑:
          1. 获取数据库的配置。
@@ -81,14 +81,12 @@ public class DatabaseMetadataService {
          */
         DatabaseMetadataConfig cfg = dbConfigs.findConfig(type);
 
+        checkCatalogAndSchema(cfg, catalog, null);
         Preconditions.checkArgument(cfg.isUseSchema(), "数据库不支持 schema: " + type);
 
-        // [3] 如果需要 catalog 则 catalog 不能为空。
-        checkCatalogAndSchema(cfg, catalog, null);
-
         try (Connection conn = openConnection(type, dbid)) {
-            if (DatabaseMetadataConfigs.useJdbc(cfg.getSchema().getSql())) {
-                return jdbcService.findSchemas(conn, catalog);
+            if (DatabaseMetadataConfigs.useJdbc(cfg.getSchemaNames().getSql())) {
+                return jdbcService.findSchemaNames(conn, catalog);
             } else {
                 throw new UnsupportedOperationException("不支持");
             }
@@ -104,7 +102,7 @@ public class DatabaseMetadataService {
      * @param schema 所属 schema，如果没有则传入 null。
      * @return 返回 table 数组。
      */
-    public List<String> findTables(DatabaseType type, int dbid, String catalog, String schema) throws SQLException {
+    public List<String> findTableNames(DatabaseType type, int dbid, String catalog, String schema) throws SQLException {
         /*
          逻辑:
          1. 获取数据库的配置。
@@ -116,8 +114,8 @@ public class DatabaseMetadataService {
         checkCatalogAndSchema(cfg, catalog, schema);
 
         try (Connection conn = openConnection(type, dbid)) {
-            if (DatabaseMetadataConfigs.useJdbc(cfg.getTable().getSql())) {
-                return jdbcService.findTables(conn, catalog, schema, cfg.getTable().getTableTypes());
+            if (DatabaseMetadataConfigs.useJdbc(cfg.getTableNames().getSql())) {
+                return jdbcService.findTableNames(conn, catalog, schema, cfg.getTableNames().getTableTypes());
             } else {
                 throw new UnsupportedOperationException("不支持");
             }
@@ -133,7 +131,7 @@ public class DatabaseMetadataService {
      * @param schema 所属 schema，如果没有则传入 null。
      * @return 返回 view 数组。
      */
-    public List<String> findViews(DatabaseType type, int dbid, String catalog, String schema) throws SQLException {
+    public List<String> findViewNames(DatabaseType type, int dbid, String catalog, String schema) throws SQLException {
         /*
          逻辑:
          1. 获取数据库的配置。
@@ -145,8 +143,8 @@ public class DatabaseMetadataService {
         checkCatalogAndSchema(cfg, catalog, schema);
 
         try (Connection conn = openConnection(type, dbid)) {
-            if (DatabaseMetadataConfigs.useJdbc(cfg.getView().getSql())) {
-                return jdbcService.findTables(conn, catalog, schema, cfg.getView().getTableTypes());
+            if (DatabaseMetadataConfigs.useJdbc(cfg.getViewNames().getSql())) {
+                return jdbcService.findTableNames(conn, catalog, schema, cfg.getViewNames().getTableTypes());
             } else {
                 throw new UnsupportedOperationException("不支持");
             }
@@ -163,7 +161,7 @@ public class DatabaseMetadataService {
      * @param table 表名。
      * @return 返回列的数组。
      */
-    public List<TableColumn> findTableColumns(DatabaseType type, int dbid, String catalog, String schema, String table) throws SQLException {
+    public List<Map<String, Object>> findTableColumns(DatabaseType type, int dbid, String catalog, String schema, String table) throws SQLException {
         /*
          逻辑:
          1. 获取数据库的配置。
@@ -175,7 +173,7 @@ public class DatabaseMetadataService {
 
         // [2] 如果需要 catalog 则 catalog 不能为空；如果需要 schema 则 schema 不能为空。
         checkCatalogAndSchema(cfg, catalog, schema);
-        Preconditions.checkArgument(StringUtils.hasLength(table), "参数 table 不能为空");
+        Preconditions.checkArgument(StringUtils.hasText(table), "参数 table 不能为空");
 
         try (Connection conn = openConnection(type, dbid)) {
             if (DatabaseMetadataConfigs.useJdbc(cfg.getTableColumn().getSql())) {
@@ -199,9 +197,36 @@ public class DatabaseMetadataService {
     public String findTableDdl(DatabaseType type, int dbid, String catalog, String schema, String table) throws SQLException {
         DatabaseMetadataConfig cfg = dbConfigs.findConfig(type);
 
+        checkCatalogAndSchema(cfg, catalog, schema);
+        Preconditions.checkArgument(StringUtils.hasText(table), "参数 table 不能为空");
+
         try (Connection conn = openConnection(type, dbid)) {
             String ddlSql = Utils.replace(cfg.getTableDdl().getSql(), "catalog", catalog, "schema", schema,  "table", table);
             int ddlIndex = cfg.getTableDdl().getIndex();
+
+            return sqlService.executeQueryAndMergeSpecifiedColumnToString(conn, ddlSql, ddlIndex);
+        }
+    }
+
+    /**
+     * 查询视图创建语句。
+     *
+     * @param type 数据库类型。
+     * @param dbid 数据库的 DBID。
+     * @param catalog 所属 catalog，如果没有则传入 null。
+     * @param schema 所属 schema，如果没有则传入 null。
+     * @param view 视图名。
+     * @return 返回视图创建语句。
+     */
+    public String findViewDdl(DatabaseType type, int dbid, String catalog, String schema, String view) throws SQLException {
+        DatabaseMetadataConfig cfg = dbConfigs.findConfig(type);
+
+        checkCatalogAndSchema(cfg, catalog, schema);
+        Preconditions.checkArgument(StringUtils.hasText(view), "参数 view 不能为空");
+
+        try (Connection conn = openConnection(type, dbid)) {
+            String ddlSql = Utils.replace(cfg.getViewDdl().getSql(), "catalog", catalog, "schema", schema,  "view", view);
+            int ddlIndex = cfg.getViewDdl().getIndex();
 
             return sqlService.executeQueryAndMergeSpecifiedColumnToString(conn, ddlSql, ddlIndex);
         }
@@ -212,6 +237,9 @@ public class DatabaseMetadataService {
      */
     public String findProcedureDdl(DatabaseType type, int dbid, String catalog, String schema, String procedure) throws SQLException {
         DatabaseMetadataConfig cfg = dbConfigs.findConfig(type);
+
+        checkCatalogAndSchema(cfg, catalog, schema);
+        Preconditions.checkArgument(StringUtils.hasText(procedure), "参数 procedure 不能为空");
 
         try (Connection conn = openConnection(type, dbid)) {
             String ddlSql = Utils.replace(cfg.getProcedureDdl().getSql(), "catalog", catalog, "schema", schema,  "procedure", procedure);
@@ -226,6 +254,9 @@ public class DatabaseMetadataService {
      */
     public String findFunctionDdl(DatabaseType type, int dbid, String catalog, String schema, String function) throws SQLException {
         DatabaseMetadataConfig cfg = dbConfigs.findConfig(type);
+
+        checkCatalogAndSchema(cfg, catalog, schema);
+        Preconditions.checkArgument(StringUtils.hasText(function), "参数 function 不能为空");
 
         try (Connection conn = openConnection(type, dbid)) {
             String ddlSql = Utils.replace(cfg.getFunctionDdl().getSql(), "catalog", catalog, "schema", schema,  "function", function);
@@ -255,10 +286,10 @@ public class DatabaseMetadataService {
      */
     private void checkCatalogAndSchema(DatabaseMetadataConfig cfg, String catalog, String schema) {
         if (cfg.isUseCatalog()) {
-            Preconditions.checkArgument(StringUtils.hasLength(catalog), "参数 catalog 不能为空");
+            Preconditions.checkArgument(StringUtils.hasText(catalog), "参数 catalog 不能为空");
         }
         if (cfg.isUseSchema()) {
-            Preconditions.checkArgument(StringUtils.hasLength(schema), "参数 schema 不能为空");
+            Preconditions.checkArgument(StringUtils.hasText(schema), "参数 schema 不能为空");
         }
     }
 }

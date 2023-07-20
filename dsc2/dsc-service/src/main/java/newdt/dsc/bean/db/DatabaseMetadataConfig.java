@@ -29,37 +29,81 @@ public class DatabaseMetadataConfig {
 
     /**
      * 查询 catalogs 的配置。
+     * 支持 JDBC 和 SQL。
      */
-    private QueryConfig catalog;
+    private QueryConfig catalogNames;
 
     /**
      * 查询 schemas 的配置。
+     * 支持 JDBC 和 SQL。
      */
-    private QueryConfig schema;
+    private QueryConfig schemaNames;
 
     /**
      * 查询 tables 的配置。
+     * 支持 JDBC 和 SQL。
      */
-    private QueryConfig table;
+    private QueryConfig tableNames;
+
+    /**
+     * 查询表的列的配置。
+     * 支持 JDBC 和 SQL。
+     */
+    private QueryConfig tableColumn;
 
     /**
      * 查询 views 的配置。
+     * 支持 JDBC 和 SQL。
      */
-    private QueryConfig view;
+    private QueryConfig viewNames;
 
-    private QueryConfig procedure;
+    /**
+     * 查询存储过程的配置。
+     * 支持 JDBC 和 SQL。
+     */
+    private QueryConfig procedureNames;
 
-    private QueryConfig function;
+    /**
+     * 查询函数的配置。
+     * 支持 JDBC 和 SQL。
+     */
+    private QueryConfig functionNames;
 
-    private QueryConfig tableColumn;
+    /**
+     * 查询触发器的配置。
+     * 只支持 SQL。
+     */
+    private QueryConfig triggerNames;
 
+    /**
+     * 查询建表语句的配置。
+     * 只支持 SQL。
+     */
     private QueryConfig tableDdl;
 
+    /**
+     * 查询视图的创建语句的配置。
+     * 只支持 SQL。
+     */
     private QueryConfig viewDdl;
 
+    /**
+     * 查询存储过程的创建语句的配置。
+     * 只支持 SQL。
+     */
     private QueryConfig procedureDdl;
 
+    /**
+     * 查询函数的创建语句的配置。
+     * 只支持 SQL。
+     */
     private QueryConfig functionDdl;
+
+    /**
+     * 查询触发器的创建语句的配置。
+     * 只支持 SQL。
+     */
+    private QueryConfig triggerDdl;
 
     /**
      * 查询语句的配置。

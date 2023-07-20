@@ -26,7 +26,7 @@ public class DatabaseMetadataServiceUseSql {
      * @return 返回 catalog 数组。
      * @throws SQLException 访问数据库出错时抛出 SQL 异常。
      */
-    public List<String> findCatalogs(Connection conn, DatabaseType type, String catalogSql) throws SQLException {
+    public List<String> findCatalogNames(Connection conn, DatabaseType type, String catalogSql) throws SQLException {
         // 提示: 需要对某些数据库进行特殊处理时，通过 type 进行判断。
         List<String> catalogs = new LinkedList<>();
 
@@ -52,7 +52,7 @@ public class DatabaseMetadataServiceUseSql {
      * @throws SQLException 访问数据库出错时抛出 SQL 异常。
      */
     public String executeQueryAndMergeSpecifiedColumnToString(Connection conn, String sql, int columnIndex, String... maxOneDelimiter) throws SQLException {
-        log.debug("查询: 获取列 [{}], SQL [{}]", columnIndex, sql);
+        log.debug("元数据查询: 获取列 [{}], SQL [{}]", columnIndex, sql);
 
         StringBuilder ddl = new StringBuilder();
         String delimiter = maxOneDelimiter.length > 0 ? maxOneDelimiter[0] : "\n";
