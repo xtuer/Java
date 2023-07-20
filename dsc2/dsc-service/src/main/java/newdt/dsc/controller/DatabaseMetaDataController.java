@@ -141,4 +141,112 @@ public class DatabaseMetadataController {
                                                                 @RequestParam String table) throws SQLException {
         return Response.ok(metaService.findTableColumns(type, dbid, catalog, schema, table));
     }
+
+    /**
+     * 获取表的建表语句。
+     *
+     * 网址: http://localhost:8080/api/dsc/databases/{dbid}/tableDdls
+     * 参数:
+     *     type    (必要): 数据库类型
+     *     catalog [可选]: 根据数据库而定
+     *     schema  [可选]: 根据数据库而定
+     *     table   (必要): 表名
+     * 测试: curl 'http://localhost:8080/api/dsc/databases/1/tableDdls?type=MYSQL&catalog=test&table=sp_test'
+     *
+     * @param type 数据库类型。
+     * @param dbid 数据库 ID。
+     * @param catalog 表所属 catalog。
+     * @param schema 表所属 schema。
+     * @param table 表名。
+     * @return payload 为表的建表语句。
+     */
+    @GetMapping(Urls.API_DATABASE_TABLE_DDLS)
+    public Response<String> findTableDdl(@RequestParam DatabaseType type,
+                                         @PathVariable int dbid,
+                                         @RequestParam(required = false) String catalog,
+                                         @RequestParam(required = false) String schema,
+                                         @RequestParam String table) throws SQLException {
+        return Response.ok(metaService.findTableDdl(type, dbid, catalog, schema, table));
+    }
+
+    /**
+     * 获取视图的创建语句。
+     *
+     * 网址: http://localhost:8080/api/dsc/databases/{dbid}/viewDdls
+     * 参数:
+     *     type    (必要): 数据库类型
+     *     catalog [可选]: 根据数据库而定
+     *     schema  [可选]: 根据数据库而定
+     *     view    (必要): 视图名
+     * 测试: curl 'http://localhost:8080/api/dsc/databases/1/viewDdls?type=MYSQL&catalog=test&view=sp_test_name'
+     *
+     * @param type 数据库类型。
+     * @param dbid 数据库 ID。
+     * @param catalog 视图所属 catalog。
+     * @param schema 视图所属 schema。
+     * @param view 视图名。
+     * @return payload 为视图的创建语句。
+     */
+    @GetMapping(Urls.API_DATABASE_VIEW_DDLS)
+    public Response<String> findViewDdl(@RequestParam DatabaseType type,
+                                        @PathVariable int dbid,
+                                        @RequestParam(required = false) String catalog,
+                                        @RequestParam(required = false) String schema,
+                                        @RequestParam String view) throws SQLException {
+        return Response.ok(metaService.findViewDdl(type, dbid, catalog, schema, view));
+    }
+
+    /**
+     * 获取存储过程的创建语句。
+     *
+     * 网址: http://localhost:8080/api/dsc/databases/{dbid}/procedureDdls
+     * 参数:
+     *     type      (必要): 数据库类型
+     *     catalog   [可选]: 根据数据库而定
+     *     schema    [可选]: 根据数据库而定
+     *     procedure (必要): 存储过程名
+     * 测试: curl 'http://localhost:8080/api/dsc/databases/1/procedureDdls?type=MYSQL&catalog=test&procedure=proc_mix_demo'
+     *
+     * @param type 数据库类型。
+     * @param dbid 数据库 ID。
+     * @param catalog 存储过程所属 catalog。
+     * @param schema 存储过程所属 schema。
+     * @param procedure 存储过程名。
+     * @return payload 为存储过程的创建语句。
+     */
+    @GetMapping(Urls.API_DATABASE_PROCEDURE_DDLS)
+    public Response<String> findProcedureDdl(@RequestParam DatabaseType type,
+                                                   @PathVariable int dbid,
+                                                   @RequestParam(required = false) String catalog,
+                                                   @RequestParam(required = false) String schema,
+                                                   @RequestParam String procedure) throws SQLException {
+        return Response.ok(metaService.findProcedureDdl(type, dbid, catalog, schema, procedure));
+    }
+
+    /**
+     * 获取存储函数的创建语句。
+     *
+     * 网址: http://localhost:8080/api/dsc/databases/{dbid}/functionDdls
+     * 参数:
+     *     type     (必要): 数据库类型
+     *     catalog  [可选]: 根据数据库而定
+     *     schema   [可选]: 根据数据库而定
+     *     function (必要): 存储函数名
+     * 测试: curl 'http://localhost:8080/api/dsc/databases/1/functionDdls?type=MYSQL&catalog=test&function=func_dateToStr'
+     *
+     * @param type 数据库类型。
+     * @param dbid 数据库 ID。
+     * @param catalog 存储函数所属 catalog。
+     * @param schema 存储函数所属 schema。
+     * @param function 存储函数名。
+     * @return payload 为存储函数的创建语句。
+     */
+    @GetMapping(Urls.API_DATABASE_FUNCTION_DDLS)
+    public Response<String> findFunctionDdl(@RequestParam DatabaseType type,
+                                            @PathVariable int dbid,
+                                            @RequestParam(required = false) String catalog,
+                                            @RequestParam(required = false) String schema,
+                                            @RequestParam String function) throws SQLException {
+        return Response.ok(metaService.findFunctionDdl(type, dbid, catalog, schema, function));
+    }
 }

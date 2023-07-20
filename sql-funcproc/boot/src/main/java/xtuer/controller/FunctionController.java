@@ -4,9 +4,9 @@ package xtuer.controller;
 import lombok.Data;
 import org.springframework.web.bind.annotation.*;
 import xtuer.bean.Result;
-import xtuer.funcproc.DatabaseType;
-import xtuer.funcproc.function.Function;
-import xtuer.funcproc.function.FunctionExecutors;
+import xtuer.sp.DatabaseType;
+import xtuer.sp.function.Function;
+import xtuer.sp.function.FunctionExecutors;
 import xtuer.util.Utils;
 
 import java.sql.Connection;
@@ -82,13 +82,13 @@ public class FunctionController {
      * @return payload 为函数执行结果。
      */
     @PostMapping("/api/functions/{functionName}/execute")
-    public Result<xtuer.funcproc.Result> executeFunction(@RequestBody FunctionForm funcForm) throws SQLException {
+    public Result<xtuer.sp.Result> executeFunction(@RequestBody FunctionForm funcForm) throws SQLException {
         Utils.dump(funcForm);
 
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
             // 查找函数然后执行。
             Function func = FunctionExecutors.findFunction(DB_TYPE, conn, funcForm.catalog, funcForm.schema, funcForm.functionName);
-            xtuer.funcproc.Result ret = FunctionExecutors.executeFunction(DB_TYPE, conn, func, funcForm.functionArguments.toArray());
+            xtuer.sp.Result ret = FunctionExecutors.executeFunction(DB_TYPE, conn, func, funcForm.functionArguments.toArray());
             return Result.ok(ret);
         }
     }

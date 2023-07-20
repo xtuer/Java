@@ -1,6 +1,6 @@
-package xtuer.funcproc.procedure;
+package xtuer.sp.procedure;
 
-import xtuer.funcproc.Arg;
+import xtuer.sp.Arg;
 
 /**
  * 存储过程参数。

@@ -1,9 +1,9 @@
-package xtuer.funcproc.procedure;
+package xtuer.sp.procedure;
 
-import xtuer.funcproc.DatabaseType;
-import xtuer.funcproc.FuncProcUtils;
-import xtuer.funcproc.Result;
-import xtuer.funcproc.procedure.spec.*;
+import xtuer.sp.DatabaseType;
+import xtuer.sp.FuncProcUtils;
+import xtuer.sp.Result;
+import xtuer.sp.procedure.spec.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;

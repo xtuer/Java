@@ -1,11 +1,11 @@
 package oracle;
 
 import org.junit.jupiter.api.Test;
-import xtuer.funcproc.DatabaseType;
-import xtuer.funcproc.Result;
-import xtuer.funcproc.function.Function;
-import xtuer.funcproc.function.FunctionExecutors;
-import xtuer.funcproc.function.FunctionFetcher;
+import xtuer.sp.DatabaseType;
+import xtuer.sp.Result;
+import xtuer.sp.function.Function;
+import xtuer.sp.function.FunctionExecutors;
+import xtuer.sp.function.FunctionFetcher;
 import xtuer.util.Utils;
 
 import java.sql.*;

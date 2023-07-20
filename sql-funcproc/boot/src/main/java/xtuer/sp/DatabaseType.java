@@ -1,4 +1,4 @@
-package xtuer.funcproc;
+package xtuer.sp;
 
 /**
  * 数据库类型。

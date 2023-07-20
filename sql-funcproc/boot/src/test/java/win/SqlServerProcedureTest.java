@@ -2,10 +2,10 @@ package win;
 
 import com.google.common.io.Files;
 import org.junit.jupiter.api.Test;
-import xtuer.funcproc.DatabaseType;
-import xtuer.funcproc.Result;
-import xtuer.funcproc.procedure.Procedure;
-import xtuer.funcproc.procedure.ProcedureExecutors;
+import xtuer.sp.DatabaseType;
+import xtuer.sp.Result;
+import xtuer.sp.procedure.Procedure;
+import xtuer.sp.procedure.ProcedureExecutors;
 import xtuer.util.Utils;
 
 import java.io.File;

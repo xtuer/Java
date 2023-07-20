@@ -38,7 +38,7 @@ public class DatabaseMetadataConfigs {
             }
         }
 
-        throw new RuntimeException("数据库没有 meta data 配置: " + type);
+        throw new RuntimeException("数据库没有 metadata 配置: " + type);
     }
 
     /**

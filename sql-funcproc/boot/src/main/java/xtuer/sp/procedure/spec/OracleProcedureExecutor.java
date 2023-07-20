@@ -1,9 +1,9 @@
-package xtuer.funcproc.procedure.spec;
+package xtuer.sp.procedure.spec;
 
 import lombok.extern.slf4j.Slf4j;
-import xtuer.funcproc.Result;
-import xtuer.funcproc.procedure.ProcedureArg;
-import xtuer.funcproc.procedure.ProcedureExecutor;
+import xtuer.sp.Result;
+import xtuer.sp.procedure.ProcedureArg;
+import xtuer.sp.procedure.ProcedureExecutor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -1,6 +1,6 @@
-package xtuer.funcproc.function;
+package xtuer.sp.function;
 
-import xtuer.funcproc.FuncProcUtils;
+import xtuer.sp.FuncProcUtils;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

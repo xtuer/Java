@@ -1,9 +1,9 @@
-package xtuer.funcproc.function.spec;
+package xtuer.sp.function.spec;
 
 import lombok.Getter;
-import xtuer.funcproc.Arg;
-import xtuer.funcproc.FuncProcUtils;
-import xtuer.funcproc.function.Function;
+import xtuer.sp.Arg;
+import xtuer.sp.FuncProcUtils;
+import xtuer.sp.function.Function;
 
 import java.util.stream.Collectors;
 

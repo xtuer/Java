@@ -1,6 +1,6 @@
 package xtuer.util;
 
-import xtuer.funcproc.procedure.Procedure;
+import xtuer.sp.procedure.Procedure;
 
 public class ProcedurePrinter {
     public static void print(Procedure proc) {

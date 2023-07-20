@@ -1,4 +1,4 @@
-package xtuer.funcproc.procedure;
+package xtuer.sp.procedure;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

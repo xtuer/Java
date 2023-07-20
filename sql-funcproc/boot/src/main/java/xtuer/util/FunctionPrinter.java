@@ -1,6 +1,6 @@
 package xtuer.util;
 
-import xtuer.funcproc.function.Function;
+import xtuer.sp.function.Function;
 
 public class FunctionPrinter {
     public static void print(Function func) {

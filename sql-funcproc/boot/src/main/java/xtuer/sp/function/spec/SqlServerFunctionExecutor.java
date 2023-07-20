@@ -1,10 +1,10 @@
-package xtuer.funcproc.function.spec;
+package xtuer.sp.function.spec;
 
 import lombok.extern.slf4j.Slf4j;
-import xtuer.funcproc.Result;
-import xtuer.funcproc.function.Function;
-import xtuer.funcproc.function.FunctionArg;
-import xtuer.funcproc.function.FunctionExecutor;
+import xtuer.sp.Result;
+import xtuer.sp.function.Function;
+import xtuer.sp.function.FunctionArg;
+import xtuer.sp.function.FunctionExecutor;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

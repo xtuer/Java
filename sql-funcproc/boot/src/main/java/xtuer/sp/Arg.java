@@ -1,4 +1,4 @@
-package xtuer.funcproc;
+package xtuer.sp;
 
 import lombok.Data;
 

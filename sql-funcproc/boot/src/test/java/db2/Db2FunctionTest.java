@@ -2,11 +2,10 @@ package db2;
 
 import com.google.common.io.Files;
 import org.junit.jupiter.api.Test;
-import xtuer.funcproc.DatabaseType;
-import xtuer.funcproc.Result;
-import xtuer.funcproc.function.Function;
-import xtuer.funcproc.function.FunctionExecutors;
-import xtuer.funcproc.function.FunctionFetcher;
+import xtuer.sp.DatabaseType;
+import xtuer.sp.Result;
+import xtuer.sp.function.Function;
+import xtuer.sp.function.FunctionExecutors;
 import xtuer.util.FunctionPrinter;
 import xtuer.util.Utils;
 
@@ -14,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
-import java.util.List;
 
 public class Db2FunctionTest {
     static final String DB_URL  = "jdbc:db2://192.168.1.115:30011/sample";

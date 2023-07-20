@@ -1,4 +1,4 @@
-package xtuer.funcproc.function;
+package xtuer.sp.function;
 
 import lombok.Data;
 import org.springframework.beans.BeanUtils;

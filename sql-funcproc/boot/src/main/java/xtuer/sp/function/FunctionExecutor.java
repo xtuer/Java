@@ -1,8 +1,8 @@
-package xtuer.funcproc.function;
+package xtuer.sp.function;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbutils.BasicRowProcessor;
-import xtuer.funcproc.Result;
+import xtuer.sp.Result;
 
 import java.sql.*;
 import java.util.Arrays;
