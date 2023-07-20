@@ -1,4 +1,4 @@
-package newdt.dsc.bean;
+package newdt.dsc.bean.db;
 
 import lombok.Data;
 

@@ -1,14 +1,15 @@
 package newdt.dsc;
 
-import newdt.dsc.bean.DatabaseType;
+import newdt.dsc.bean.db.DatabaseType;
 import newdt.dsc.service.TestConnections;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
-public class DatabaseMetaDataTest {
+public class DatabaseMetadataTest {
     private static final DatabaseType DB_TYPE = DatabaseType.MYSQL;
     private static final int DBID = 1;
     private static final String CATALOG = "test";
@@ -101,6 +102,20 @@ public class DatabaseMetaDataTest {
                 while (rs.next()) {
                     System.out.println(rs.getString("COLUMN_NAME") + ": " + rs.getString("TYPE_NAME"));
                 }
+            }
+        }
+    }
+
+    // 执行 SQL。
+    @Test
+    public void testExecuteSql() throws Exception {
+        try (Connection conn = TestConnections.openConnection(DB_TYPE, DBID)) {
+            String sql = "SHOW CREATE TABLE sp_test";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                System.out.println(rs.getString(2));
             }
         }
     }

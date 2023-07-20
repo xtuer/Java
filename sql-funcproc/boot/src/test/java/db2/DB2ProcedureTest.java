@@ -22,13 +22,13 @@ public class DB2ProcedureTest {
     static final String USER    = "db2inst1";
     static final String PASS    = "db2inst1";
     static final String CATALOG = null;
-    static final String SCHEMA  = "DB2INST1";
+    static final String SCHEMA  = "TEST_FAN"; // TEST_FAN, DB2INST1
     static final DatabaseType DB_TYPE = DatabaseType.DB2;
 
     @Test
     public void execute() throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Procedure proc = ProcedureExecutors.findProcedure(DB_TYPE, conn, CATALOG, SCHEMA, "PROC_IN_OUT_ARGS");
+            Procedure proc = ProcedureExecutors.findProcedure(DB_TYPE, conn, CATALOG, SCHEMA, "UPDATEUSERSANDRETURNSTATS");
             print(proc);
 
             Result result = ProcedureExecutors.executeProcedure(DB_TYPE, conn, proc, 2, 10, 2);
@@ -42,14 +42,16 @@ public class DB2ProcedureTest {
             conn.setCatalog(CATALOG);
             conn.setSchema(SCHEMA);
 
-            CallableStatement cstmt = conn.prepareCall("{ call PROC_MULTI_ROWS(?) }");
-            cstmt.setObject(1, 1);
-            // cstmt.registerOutParameter(2, Types.INTEGER);
+            CallableStatement cstmt = conn.prepareCall("call TEST_FAN.UPDATEUSERSANDRETURNSTATS(?, ?, ?)");
+            cstmt.setObject(1, 1, Types.INTEGER);
+            // cstmt.setInt(1, 1);
+            cstmt.registerOutParameter(2, Types.INTEGER);
+            cstmt.registerOutParameter(3, Types.DECIMAL);
             cstmt.execute();
 
-            // System.out.println(cstmt.getUpdateCount());
-            // System.out.println(cstmt.getObject(2));
-            //
+            System.out.println(cstmt.getObject(2));
+            System.out.println(cstmt.getObject(3));
+
             ResultSet rs = cstmt.getResultSet();
             while (rs != null && rs.next()) {
                 Utils.dump(rs);

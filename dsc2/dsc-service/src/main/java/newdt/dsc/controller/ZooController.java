@@ -1,8 +1,8 @@
 package newdt.dsc.controller;
 
-import newdt.dsc.bean.DatabaseMetaDataConfig;
+import newdt.dsc.bean.db.DatabaseMetadataConfig;
 import newdt.dsc.bean.Response;
-import newdt.dsc.config.DatabaseMetaDataConfigs;
+import newdt.dsc.config.DatabaseMetadataConfigs;
 import newdt.dsc.mapper.ZooMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RestController
 public class ZooController {
     @Autowired
-    private DatabaseMetaDataConfigs configs;
+    private DatabaseMetadataConfigs configs;
 
     @Autowired
     private ZooMapper zooMapper;
@@ -25,8 +25,8 @@ public class ZooController {
      * 测试: curl http://localhost:8080/api/demo/configs
      */
     @GetMapping("/api/demo/configs")
-    public List<DatabaseMetaDataConfig> getConfigs() {
-        return configs.getDatabaseMetaDataConfigs();
+    public List<DatabaseMetadataConfig> getConfigs() {
+        return configs.getDatabaseMetadataConfigs();
     }
 
     /**

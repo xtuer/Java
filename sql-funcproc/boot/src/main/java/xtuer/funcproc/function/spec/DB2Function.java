@@ -76,7 +76,7 @@ public class DB2Function extends Function {
         if (this.tableReturned) {
             return String.format("SELECT * FROM TABLE(%s(%s))", super.name, questionMarks);
         } else {
-            return String.format("VALUES %s(%s)", super.name, questionMarks);
+            return String.format("VALUES %s.%s(%s)", super.schema, super.name, questionMarks);
         }
     }
 }

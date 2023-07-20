@@ -25,6 +25,6 @@ public class DB2Procedure extends Procedure {
         // 有参数: { call proc_name(?, ?) }
         String questionMarks = FuncProcUtils.generateCallableSqlParameterQuestionMarks(super.inOutInoutArgs.size());
 
-        return String.format("call %s(%s)", super.name, questionMarks);
+        return String.format("call %s.%s(%s)", super.schema, super.name, questionMarks);
     }
 }

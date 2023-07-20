@@ -31,8 +31,8 @@ public abstract class SimpleProcedureExecutor extends ProcedureExecutor {
             // 注册 IN 参数。
             if (arg.isInArg()) {
                 Object argValue = super.procArguments.get(argValueIdx++);
-                super.cstmt.setObject(argIdx, argValue, arg.getDataTypeValue());
                 log.debug("输入参数: 下标 [{}], 参数 [{}]", argIdx, argValue);
+                super.cstmt.setObject(argIdx, argValue, arg.getDataTypeValue());
             }
 
             // 注册 OUT 参数。

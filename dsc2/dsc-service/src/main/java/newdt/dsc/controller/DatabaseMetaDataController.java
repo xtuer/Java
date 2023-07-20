@@ -1,10 +1,10 @@
 package newdt.dsc.controller;
 
-import newdt.dsc.bean.DatabaseType;
 import newdt.dsc.bean.Response;
-import newdt.dsc.bean.TableColumn;
 import newdt.dsc.bean.Urls;
-import newdt.dsc.service.DatabaseMetaDataService;
+import newdt.dsc.bean.db.DatabaseType;
+import newdt.dsc.bean.db.TableColumn;
+import newdt.dsc.service.db.DatabaseMetadataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,9 +18,9 @@ import java.util.List;
  * 获取数据库元数据的控制器。可以获取数据有 catalog，schema，table，view，columns，procedure，function 等。
  */
 @RestController
-public class DatabaseMetaDataController {
+public class DatabaseMetadataController {
     @Autowired
-    private DatabaseMetaDataService metaService;
+    private DatabaseMetadataService metaService;
 
     /**
      * 获取数据库的 catalogs。

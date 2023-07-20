@@ -1,7 +1,7 @@
 package newdt.dsc.service;
 
 import com.google.common.collect.ImmutableList;
-import newdt.dsc.bean.DatabaseType;
+import newdt.dsc.bean.db.DatabaseType;
 import org.javatuples.Quartet;
 
 import java.sql.Connection;

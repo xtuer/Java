@@ -6,8 +6,11 @@ import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.StringSubstitutor;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -141,5 +144,30 @@ public class Utils {
         output.append(text, indexAfterMatched, text.length());
 
         return output.toString();
+    }
+
+    /**
+     * 替换字符串模板 pattern 中的占位符 ${var}，${var} 被替换为传入的键值对数组 keyValuePairs 中 key 为 var 对应的值。
+     *
+     * 示例:
+     *     Utils.replace("${name}-${id}", "name", "Alice", "id", 20 ) => Alice-20
+     *     Utils.replace("${name}-${id}", "name", "Alice", "id", 20, 1 ) => Alice-20
+     *
+     * @param pattern 要被替换的字符串模板。
+     * @param keyValuePairs 键值对数组，偶数位置 i 为 key，奇数位置 i+1 为这个 key 对应的 value。
+     * @return 返回替换后得到的字符串。
+     */
+    public static String replace(String pattern, Object... keyValuePairs) {
+        // [1] 使用键值对数组构建 Map。
+        Map<String, Object> paramMap = new HashMap<>();
+
+        for (int i = 0; i < keyValuePairs.length - 1; i += 2) {
+            if (keyValuePairs[i] != null) {
+                paramMap.put(keyValuePairs[i].toString(), keyValuePairs[i+1]);
+            }
+        }
+
+        // [2] 替换字符串中的占位符。
+        return StringSubstitutor.replace(pattern, paramMap);
     }
 }

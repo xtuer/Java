@@ -1,50 +1,33 @@
 # 获取数据库元数据的配置，每个数据库对应自己的配置。
-databaseMetaDataConfigs:
+# SQL 语句中的占位符可为 catalog, schema, table, procedure, function 等。
+databaseMetadataConfigs:
 - type: MYSQL
   label: MySQL
   useCatalog: true
   useSchema: false
-  catalogQuery: jdbc
-  schemaQuery: jdbc
-  tableQuery: jdbc
-  tableJdbcTypes: [TABLE, SYSTEM TABLE]
-  viewQuery: jdbc
-  viewJdbcTypes: [VIEW, SYSTEM VIEW]
-  tableColumnQuery: jdbc
-  procedureQuery: jdbc
-  functionQuery: jdbc
-  tableCreateSql: select
-  procedureCreateSql: select
-  functionCreateSql: select
-- type: ORACLE
-  label: Oracle
-  useCatalog: false
-  useSchema: true
-  catalogQuery: jdbc
-  schemaQuery: jdbc
-  tableQuery: jdbc
-  tableJdbcTypes: [SYSTEM TABLE]
-  viewQuery: jdbc
-  viewJdbcTypes: [SYSTEM VIEW, USER VIEW]
-  tableColumnQuery: jdbc
-  procedureQuery: jdbc
-  functionQuery: jdbc
-  tableCreateSql: select
-  procedureCreateSql: select
-  functionCreateSql: select
-- type: POSTGRES
-  label: PostgreSQL
-  useCatalog: true
-  useSchema: true
-  catalogQuery: jdbc
-  schemaQuery: jdbc
-  tableQuery: jdbc
-  tableJdbcTypes: [SYSTEM TABLE]
-  viewQuery: jdbc
-  viewJdbcTypes: [SYSTEM VIEW, USER VIEW]
-  tableColumnQuery: jdbc
-  procedureQuery: jdbc
-  functionQuery: jdbc
-  tableCreateSql: select
-  procedureCreateSql: select
-  functionCreateSql: select
+  catalog.sql: show databases # jdbc
+  schema.sql: jdbc
+  table: { sql: jdbc, tableTypes: [TABLE, SYSTEM TABLE] }
+  view: { sql: jdbc, tableTypes: [VIEW, SYSTEM VIEW] }
+  tableColumn.sql: jdbc
+  procedure.sql: jdbc
+  function.sql: jdbc
+  tableDdl:
+    sql: SHOW CREATE TABLE `${catalog}`.`${table}`
+    index: 2
+  viewDdl:
+    sql: SHOW CREATE TABLE `${catalog}`.`${view}`
+    index: 2
+  procedureDdl:
+    sql: |
+      SELECT ROUTINE_DEFINITION
+      FROM information_schema.ROUTINES
+      WHERE ROUTINE_TYPE = 'PROCEDURE' AND ROUTINE_SCHEMA = '${catalog}' AND ROUTINE_NAME = '${procedure}'
+    index: 1
+  functionDdl:
+    sql: |
+      SELECT ROUTINE_DEFINITION
+      FROM information_schema.ROUTINES
+      WHERE ROUTINE_TYPE = 'FUNCTION' AND ROUTINE_SCHEMA = '${catalog}' AND ROUTINE_NAME = '${function}'
+    index: 1
+

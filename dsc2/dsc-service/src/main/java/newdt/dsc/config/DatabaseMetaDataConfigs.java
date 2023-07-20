@@ -1,8 +1,8 @@
 package newdt.dsc.config;
 
 import lombok.Data;
-import newdt.dsc.bean.DatabaseMetaDataConfig;
-import newdt.dsc.bean.DatabaseType;
+import newdt.dsc.bean.db.DatabaseMetadataConfig;
+import newdt.dsc.bean.db.DatabaseType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -16,13 +16,13 @@ import java.util.List;
 @Configuration
 @ConfigurationProperties
 @EnableConfigurationProperties
-public class DatabaseMetaDataConfigs {
+public class DatabaseMetadataConfigs {
     private static final String JDBC = "jdbc";
 
     /**
      * 数据库元数据配置，每个数据库对应一个配置对象。
      */
-    private List<DatabaseMetaDataConfig> databaseMetaDataConfigs;
+    private List<DatabaseMetadataConfig> databaseMetadataConfigs;
 
     /**
      * 获取数据库的配置。
@@ -31,8 +31,8 @@ public class DatabaseMetaDataConfigs {
      * @return 返回数据库的配置。
      * @throws RuntimeException 查询不到则抛出 RuntimeException 异常。
      */
-    public DatabaseMetaDataConfig findConfig(DatabaseType type) {
-        for (DatabaseMetaDataConfig cfg : databaseMetaDataConfigs) {
+    public DatabaseMetadataConfig findConfig(DatabaseType type) {
+        for (DatabaseMetadataConfig cfg : databaseMetadataConfigs) {
             if (cfg.getType().equals(type)) {
                 return cfg;
             }

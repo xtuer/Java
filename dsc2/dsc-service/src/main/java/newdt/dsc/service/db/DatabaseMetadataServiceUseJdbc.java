@@ -1,6 +1,6 @@
-package newdt.dsc.service;
+package newdt.dsc.service.db;
 
-import newdt.dsc.bean.TableColumn;
+import newdt.dsc.bean.db.TableColumn;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import java.util.List;
  * 使用 JDBC 的接口获取数据库的元数据。
  */
 @Service
-public class DatabaseMetaDataServiceUseJdbc {
+public class DatabaseMetadataServiceUseJdbc {
     public List<String> findCatalogs(Connection conn) throws SQLException {
         List<String> names = new LinkedList<>();
         DatabaseMetaData meta = conn.getMetaData();
@@ -33,10 +33,10 @@ public class DatabaseMetaDataServiceUseJdbc {
         List<String> names = new LinkedList<>();
         DatabaseMetaData meta = conn.getMetaData();
 
-        // 使用完关闭 ResultSet。
         try (ResultSet rs = meta.getSchemas(catalog, null)) {
             while (rs.next()) {
                 names.add(rs.getString("TABLE_SCHEM"));
+                System.out.println(rs.getString("TABLE_CATALOG"));
             }
         }
 
@@ -47,7 +47,7 @@ public class DatabaseMetaDataServiceUseJdbc {
         List<String> names = new LinkedList<>();
         DatabaseMetaData meta = conn.getMetaData();
 
-        // 使用完关闭 ResultSet。
+        // 提示: getTables() 的第 3 个参数 tableNamePattern 目前为 null，测试如果不满足的话可以使用 % 代替。
         try (ResultSet rs = meta.getTables(catalog, schema, null, tableTypes)) {
             while (rs.next()) {
                 names.add(rs.getString("TABLE_NAME"));

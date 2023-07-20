@@ -90,4 +90,17 @@ public class MysqlFunctionTest {
             }
         }
     }
+
+    // 列出所有函数名。
+    @Test
+    public void testImportedKeys() throws SQLException {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            DatabaseMetaData meta = conn.getMetaData();
+            ResultSet rs = meta.getImportedKeys(CATALOG, SCHEMA, "sp_test");
+
+            while (rs.next()) {
+                Utils.dump(rs);
+            }
+        }
+    }
 }

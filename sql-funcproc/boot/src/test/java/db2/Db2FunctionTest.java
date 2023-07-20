@@ -41,9 +41,17 @@ public class Db2FunctionTest {
             conn.setCatalog(CATALOG);
             conn.setSchema(SCHEMA);
 
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM FUNC_RETURN_TABLE(?)");
-            stmt.setObject(1, 1);
+            String sql = "CALL SYSPROC.ADMIN_CMD(?)";
+            PreparedStatement stmt = conn.prepareCall(sql);
+            String param = "'db2look -d sample -e -t SP_TEST -z DB2INST1'";
+
+            // setting the imput parameter
+            stmt.setString(1, param);
+
+            System.out.println("\nCALL ADMIN_CMD('" + param + "')");
+            // executing export by calling ADMIN_CMD
             stmt.execute();
+
             ResultSet rs = stmt.getResultSet();
             while (rs.next()) {
                 Utils.dump(rs);
