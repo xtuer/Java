@@ -1,21 +1,38 @@
-import org.apache.commons.dbutils.BasicRowProcessor;
-import util.Utils;
-
 import java.sql.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class JDBCCancelTest {
     static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/test?useSSL=false";
     static final String USER   = "root";
     static final String PASS   = "root";
 
-    // static final String DB_URL = "jdbc:oracle:thin:@//192.168.12.16:31001/orcl";
-    // static final String USER   = "system";
-    // static final String PASS   = "system";
+    public static void main(String[] args) {
+        try(Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            Statement stmt = conn.createStatement();
 
-    // static final String DB_URL = "jdbc:mysql://192.168.1.92:8880/mysql?useSSL=false";
-    // static final String USER   = "super";
-    // static final String PASS   = "Newdt2023@cn";
+            // [2] 线程中模拟手动点击取消执行。
+            new Timer(true).schedule(new TimerTask() {
+                public void run() {
+                    try {
+                        System.out.println("CLOSE");
+                        stmt.cancel();
+                        // stmt.close(); // 不生效
+                        // conn.close(); // 不生效
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, 3000);
 
-    public static void main(String[] args) throws Exception {
+            // [1] 模拟耗时 SQL。
+            ResultSet rs = stmt.executeQuery("select sleep(10)");
+
+            while (rs.next()) {
+                System.out.println(rs.getInt(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

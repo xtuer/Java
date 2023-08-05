@@ -1,4 +1,4 @@
-package newdt.dsc.service;
+package newdt.dsc.service.db;
 
 import com.google.common.collect.ImmutableList;
 import newdt.dsc.bean.db.DatabaseType;
@@ -15,7 +15,7 @@ import java.util.Map;
  * 测试库的连接。
  */
 public class TestConnections {
-    private static final Map<DatabaseType, List<Quartet<Integer, String, String, String>>> CONNECT_INFO = new HashMap<>();
+    public static final Map<DatabaseType, List<Quartet<Integer, String, String, String>>> CONNECT_INFO = new HashMap<>();
 
     static {
         CONNECT_INFO.put(DatabaseType.MYSQL,

@@ -1,35 +1,41 @@
-# 获取数据库元数据的配置，每个数据库对应自己的配置。
+# 获取数据库元数据的配置，每个数据库对应自己的配置，并且支持多版本配置。
 # SQL 语句中的占位符可为 catalog, schema, table, view, procedure, function 等。
 databaseMetadataConfigs:
 - type: MYSQL
   label: MySQL
   useCatalog: true
   useSchema: false
-  catalogNames.sql: show databases # jdbc
-  schemaNames.sql: jdbc
-  tableNames.sql: jdbc
-  tableNames.tableTypes: [TABLE, SYSTEM TABLE]
-  viewNames.sql: jdbc
-  viewNames.tableTypes: [VIEW, SYSTEM VIEW]
-  procedureNames.sql: jdbc
-  functionNames.sql: jdbc
-  tableColumn.sql: jdbc
-  tableDdl:
-    sql: SHOW CREATE TABLE `${catalog}`.`${table}`
-    index: 2
-  viewDdl:
-    sql: SHOW CREATE TABLE `${catalog}`.`${view}`
-    index: 2
-  procedureDdl:
-    sql: |
-      SELECT ROUTINE_DEFINITION
-      FROM information_schema.ROUTINES
-      WHERE ROUTINE_TYPE = 'PROCEDURE' AND ROUTINE_SCHEMA = '${catalog}' AND ROUTINE_NAME = '${procedure}'
+  useWebTerminal: false
+  useProcedure: true
+  useFunction: true
+  catalogNames:
+  - sql: jdbc
+  - sql: show databases
     index: 1
-  functionDdl:
-    sql: |
-      SELECT ROUTINE_DEFINITION
-      FROM information_schema.ROUTINES
-      WHERE ROUTINE_TYPE = 'FUNCTION' AND ROUTINE_SCHEMA = '${catalog}' AND ROUTINE_NAME = '${function}'
-    index: 1
-
+    version: 5.7
+  schemaNames:
+  - sql: jdbc
+  tableNames:
+  - sql: jdbc
+    tableTypes: [TABLE, SYSTEM TABLE]
+  viewNames:
+  - sql: jdbc
+    tableTypes: [VIEW, SYSTEM VIEW]
+  procedureNames:
+  - sql: jdbc
+  functionNames:
+  - sql: jdbc
+  tableColumns:
+  - sql: jdbc
+  tableDdls:
+  - sql: SHOW CREATE TABLE `${catalog}`.`${table}`
+    index: 2
+  viewDdls:
+  - sql: SHOW CREATE TABLE `${catalog}`.`${view}`
+    index: 2
+  procedureDdls:
+  - sql: SHOW CREATE PROCEDURE `${catalog}`.`${procedure}`
+    index: 3
+  functionDdls:
+  - sql: SHOW CREATE FUNCTION `${catalog}`.`${function}`
+    index: 3

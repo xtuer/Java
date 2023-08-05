@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!-- namespace 非常重要：必须是 Mapper 类的全路径 -->
-<mapper namespace="newdt.dsc2.mapper.ZooMapper">
+<mapper namespace="newdt.dsc.mapper.ZooMapper">
     <select id="test" resultType="string">
         SELECT name FROM sp_test WHERE id = #{id};
     </select>

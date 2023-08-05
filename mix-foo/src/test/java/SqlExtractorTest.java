@@ -64,7 +64,7 @@ public class SqlExtractorTest {
             SqlExtractorUsingStateMachine.extractSqls(reader, 100, stopped, (sqls, finished) -> {
                 // System.out.println("---------------------------------------");
                 for (String sql : sqls) {
-                    // System.out.println("==> " + sql);
+                    System.out.println("==> " + sql);
                     count.addAndGet(1);
                 }
                 // stopped.set(true);

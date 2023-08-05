@@ -2,7 +2,9 @@ package newdt.dsc.controller;
 
 import newdt.dsc.bean.Response;
 import newdt.dsc.bean.Urls;
+import newdt.dsc.bean.db.DatabaseMetadataConfig;
 import newdt.dsc.bean.db.DatabaseType;
+import newdt.dsc.config.DatabaseMetadataConfigs;
 import newdt.dsc.service.db.DatabaseMetadataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,23 @@ import java.util.Map;
 public class DatabaseMetadataController {
     @Autowired
     private DatabaseMetadataService metaService;
+
+    @Autowired
+    private DatabaseMetadataConfigs metaConfigs;
+
+    /**
+     * 获取数据库元数据配置。
+     *
+     * 网址: http://localhost:8080/api/dsc/databases/configs
+     * 参数: 无
+     * 测试: curl http://localhost:8080/api/dsc/databases/configs
+     *
+     * @return payload 为元数据配置的数组。
+     */
+    @GetMapping(Urls.API_DATABASE_CONFIGS)
+    public Response<List<DatabaseMetadataConfig>> findDatabaseMetadataConfigs() {
+        return Response.ok(metaConfigs.getDatabaseMetadataConfigs());
+    }
 
     /**
      * 获取数据库的 catalog 名字。
@@ -73,7 +92,7 @@ public class DatabaseMetadataController {
      *     catalog [可选]: 根据数据库而定
      *     schema  [可选]: 根据数据库而定
      * 测试:
-     *     curl 'http://localhost:8080/api/dsc/databases/1/tableNames?type=MYSQL&catalog=test'
+     *     curl 'http://localhost:8080/api/dsc/databases/1/tableNames?type=MYSQL&catalog=meta_test_catalog'
      *
      * @param type 数据库类型。
      * @param dbid 数据库 ID。
@@ -98,7 +117,7 @@ public class DatabaseMetadataController {
      *     catalog [可选]: 根据数据库而定
      *     schema  [可选]: 根据数据库而定
      * 测试:
-     *     curl 'http://localhost:8080/api/dsc/databases/1/viewNames?type=MYSQL&catalog=test'
+     *     curl 'http://localhost:8080/api/dsc/databases/1/viewNames?type=MYSQL&catalog=meta_test_catalog'
      *
      * @param type 数据库类型。
      * @param dbid 数据库 ID。
@@ -124,7 +143,7 @@ public class DatabaseMetadataController {
      *    schema  [可选]: 根据数据库而定
      *    table   (必要): 表名
      * 测试:
-     *     curl 'http://localhost:8080/api/dsc/databases/1/tableColumns?type=MYSQL&catalog=test&table=sp_test'
+     *     curl 'http://localhost:8080/api/dsc/databases/1/tableColumns?type=MYSQL&catalog=meta_test_catalog&table=meta_test_table'
      *
      * @param type 数据库类型。
      * @param dbid 数据库 ID。
@@ -143,6 +162,34 @@ public class DatabaseMetadataController {
     }
 
     /**
+     * 获取数据库的表的列名。
+     *
+     * 网址: http://localhost:8080/api/dsc/databases/{dbid}/tableColumnNames
+     * 参数:
+     *    type    (必要): 数据库类型
+     *    catalog [可选]: 根据数据库而定
+     *    schema  [可选]: 根据数据库而定
+     *    table   (必要): 表名
+     * 测试:
+     *     curl 'http://localhost:8080/api/dsc/databases/1/tableColumnNames?type=MYSQL&catalog=meta_test_catalog&table=meta_test_table'
+     *
+     * @param type 数据库类型。
+     * @param dbid 数据库 ID。
+     * @param catalog 表所属 catalog。
+     * @param schema 表所属 schema。
+     * @param table 表名。
+     * @return payload 为表的列名的数组。
+     */
+    @GetMapping(Urls.API_DATABASE_TABLE_COLUMN_NAMES)
+    public Response<List<String>> findTableColumnNames(@RequestParam DatabaseType type,
+                                                       @PathVariable int dbid,
+                                                       @RequestParam(required = false) String catalog,
+                                                       @RequestParam(required = false) String schema,
+                                                       @RequestParam String table) throws SQLException {
+        return Response.ok(metaService.findTableColumnNames(type, dbid, catalog, schema, table));
+    }
+
+    /**
      * 获取表的建表语句。
      *
      * 网址: http://localhost:8080/api/dsc/databases/{dbid}/tableDdls
@@ -151,7 +198,7 @@ public class DatabaseMetadataController {
      *     catalog [可选]: 根据数据库而定
      *     schema  [可选]: 根据数据库而定
      *     table   (必要): 表名
-     * 测试: curl 'http://localhost:8080/api/dsc/databases/1/tableDdls?type=MYSQL&catalog=test&table=sp_test'
+     * 测试: curl 'http://localhost:8080/api/dsc/databases/1/tableDdls?type=MYSQL&catalog=meta_test_catalog&table=meta_test_table'
      *
      * @param type 数据库类型。
      * @param dbid 数据库 ID。
@@ -178,7 +225,7 @@ public class DatabaseMetadataController {
      *     catalog [可选]: 根据数据库而定
      *     schema  [可选]: 根据数据库而定
      *     view    (必要): 视图名
-     * 测试: curl 'http://localhost:8080/api/dsc/databases/1/viewDdls?type=MYSQL&catalog=test&view=sp_test_name'
+     * 测试: curl 'http://localhost:8080/api/dsc/databases/1/viewDdls?type=MYSQL&catalog=meta_test_catalog&view=meta_test_view'
      *
      * @param type 数据库类型。
      * @param dbid 数据库 ID。
@@ -205,7 +252,7 @@ public class DatabaseMetadataController {
      *     catalog   [可选]: 根据数据库而定
      *     schema    [可选]: 根据数据库而定
      *     procedure (必要): 存储过程名
-     * 测试: curl 'http://localhost:8080/api/dsc/databases/1/procedureDdls?type=MYSQL&catalog=test&procedure=proc_mix_demo'
+     * 测试: curl 'http://localhost:8080/api/dsc/databases/1/procedureDdls?type=MYSQL&catalog=meta_test_catalog&procedure=meta_test_procedure'
      *
      * @param type 数据库类型。
      * @param dbid 数据库 ID。
@@ -232,7 +279,7 @@ public class DatabaseMetadataController {
      *     catalog  [可选]: 根据数据库而定
      *     schema   [可选]: 根据数据库而定
      *     function (必要): 存储函数名
-     * 测试: curl 'http://localhost:8080/api/dsc/databases/1/functionDdls?type=MYSQL&catalog=test&function=func_dateToStr'
+     * 测试: curl 'http://localhost:8080/api/dsc/databases/1/functionDdls?type=MYSQL&catalog=meta_test_catalog&function=meta_test_function'
      *
      * @param type 数据库类型。
      * @param dbid 数据库 ID。

@@ -1,7 +1,7 @@
 package newdt.dsc;
 
 import newdt.dsc.bean.db.DatabaseType;
-import newdt.dsc.service.TestConnections;
+import newdt.dsc.service.db.TestConnections;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;

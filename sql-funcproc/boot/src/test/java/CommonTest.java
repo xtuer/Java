@@ -57,6 +57,16 @@ public class CommonTest {
     }
 
     @Test
+    public void testMeta() throws Exception {
+        try(Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            DatabaseMetaData meta = conn.getMetaData();
+            System.out.println(meta.getDatabaseProductVersion());
+            System.out.println(meta.getDatabaseMajorVersion());
+            System.out.println(meta.getDatabaseMinorVersion());
+        }
+    }
+
+    @Test
     public void testx() {
         System.out.println(new File("/root", "foo.txt").getAbsolutePath());
         System.out.println(new File("/root/", "foo.txt").getAbsolutePath());

@@ -1,5 +1,6 @@
 package oracle;
 
+import com.google.common.io.Files;
 import org.junit.jupiter.api.Test;
 import xtuer.sp.DatabaseType;
 import xtuer.sp.Result;
@@ -8,6 +9,8 @@ import xtuer.sp.function.FunctionExecutors;
 import xtuer.sp.function.FunctionFetcher;
 import xtuer.util.Utils;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 
 import static xtuer.util.FunctionPrinter.print;
@@ -17,7 +20,7 @@ public class OracleFunctionTest {
     static final String USER    = "system";
     static final String PASS    = "system";
     static final String CATALOG = "";
-    static final String SCHEMA  = "BIAO";
+    static final String SCHEMA  = "TEST";
     static final DatabaseType DB_TYPE = DatabaseType.ORACLE;
 
     @Test
@@ -67,6 +70,19 @@ public class OracleFunctionTest {
     public void testFindFunctions() throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
             System.out.println(FunctionExecutors.findFunctionNames(DB_TYPE, conn, CATALOG, SCHEMA));
+        }
+    }
+
+    // 执行 SQL 语句。
+    @Test
+    public void testExecuteSql() throws Exception {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            conn.setCatalog(CATALOG);
+            conn.setSchema(SCHEMA);
+            String sql = Files.asCharSource(new File("/Users/biao/Desktop/1.sql"), StandardCharsets.UTF_8).read().trim();
+            Statement stmt = conn.createStatement();
+            int c = stmt.executeUpdate(sql);
+            System.out.println(c);
         }
     }
 }
