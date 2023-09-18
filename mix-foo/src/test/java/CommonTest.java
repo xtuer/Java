@@ -1,19 +1,13 @@
-import com.google.common.collect.ImmutableMap;
-import org.apache.commons.text.StringSubstitutor;
-import org.javatuples.Pair;
 import org.junit.Test;
+import org.mozilla.universalchardet.UniversalDetector;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class CommonTest {
@@ -112,8 +106,34 @@ public class CommonTest {
     }
 
     @Test
-    public void bar2() throws Exception {
-        URL url = ClassLoader.getSystemClassLoader().getResource("/java/sql/Blob.class");
-        System.out.println(url);
+    public void detectFileEncoding() throws Exception {
+        String path = "/Users/biao/Documents/公司文档/项目管理/DSC/客户/渤海人寿/CAL_WAGE_GX_NEW.pck";
+        try (InputStream fis = Files.newInputStream(Paths.get(path))) {
+            // (1)
+            byte[] buf = new byte[4096]; // 4*1024 = 4K
+            UniversalDetector detector = new UniversalDetector();
+
+            // (2)
+            int readCount;
+            int totalCount = 0;
+            while ((readCount = fis.read(buf)) > 0 && !detector.isDone() && totalCount < 40960) {
+                detector.handleData(buf, 0, readCount);
+                totalCount += readCount;
+            }
+            System.out.println(totalCount);
+            // (3)
+            detector.dataEnd();
+
+            // (4)
+            String encoding = detector.getDetectedCharset();
+            if (encoding != null) {
+                System.out.println("Detected encoding = " + encoding);
+            } else {
+                System.out.println("No encoding detected.");
+            }
+
+            // (5)
+            detector.reset();
+        }
     }
 }

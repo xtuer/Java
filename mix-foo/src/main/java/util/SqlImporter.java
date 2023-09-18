@@ -1,7 +1,7 @@
 package util;
 
-import com.uwyn.jhighlight.tools.ExceptionUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
@@ -88,13 +88,13 @@ public class SqlImporter {
                     // A. SQL 语句语法错误。
                     // B. 有 select 语句的时候会报错: Can not issue SELECT via executeUpdate() or executeLargeUpdate()。
                     // C. 网络问题。
-                    log.warn("[错误] 执行第 [{}] 条 SQL 错误, SQL [{}], 异常:\n{}", status.executedSqlCount, currentSql, ExceptionUtils.getExceptionStackTrace(e));
+                    log.warn("[错误] 执行第 [{}] 条 SQL 错误, SQL [{}], 异常:\n{}", status.executedSqlCount, currentSql, ExceptionUtils.getStackTrace(e));
 
                     // 出错时事务回滚。
                     try {
                         conn.rollback();
                     } catch (SQLException ex) {
-                        log.warn(ExceptionUtils.getExceptionStackTrace(ex));
+                        log.warn(ExceptionUtils.getStackTrace(ex));
                     }
 
                     // [4] 当 SQL 执行出错时，结束执行，如果用户输入了回滚 SQL 语句则执行回滚语句。
@@ -108,7 +108,7 @@ public class SqlImporter {
                 return null;
             });
         } catch (SQLException | IOException e) {
-            log.warn(ExceptionUtils.getExceptionStackTrace(e));
+            log.warn(ExceptionUtils.getStackTrace(e));
         }
     }
 
@@ -139,12 +139,12 @@ public class SqlImporter {
             stmt.executeUpdate(sql);
             conn.commit();
         } catch (SQLException ex) {
-            log.warn(ExceptionUtils.getExceptionStackTrace(ex));
+            log.warn(ExceptionUtils.getStackTrace(ex));
 
             try {
                 conn.rollback();
             } catch (SQLException ex2) {
-                log.warn(ExceptionUtils.getExceptionStackTrace(ex2));
+                log.warn(ExceptionUtils.getStackTrace(ex2));
             }
         }
     }

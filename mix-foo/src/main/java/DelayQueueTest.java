@@ -16,25 +16,29 @@ public class DelayQueueTest {
         queue.add(new DelayElement(4000, "Triplet"));
 
         // 在固定的线程里等待可执行事件。
-        new Thread(() -> {
-            try {
-                while (true) {
-                    DelayElement md = queue.take(); // 阻塞等待可执行时间。
-                    System.out.println(md);
+        for (int i = 0; i < 10; i++) {
+            new Thread(() -> {
+                try {
+                    while (true) {
+                        DelayElement md = queue.take(); // 阻塞等待可执行时间。
+                        System.out.println(md);
+                    }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
+            }).start();
+        }
 
         // 随机产生待执行事件。
         new Thread(() -> {
             Random rand = new Random();
             try {
                 while (true) {
-                    TimeUnit.SECONDS.sleep(1);
-                    int delay = rand.nextInt(5000);
-                    queue.add(new DelayElement(delay, "Event-" + delay));
+                    for (int i = 0; i < 5; i++) {
+                        TimeUnit.SECONDS.sleep(1);
+                        int delay = rand.nextInt(5000);
+                        queue.add(new DelayElement(delay, "Event-" + delay));
+                    }
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -49,6 +53,8 @@ public class DelayQueueTest {
          */
         private final long elapsedAt;
 
+        private final long createdAt;
+
         /**
          * 要处理的事件。
          * 实际使用时应该是一个对象，里面定义了事件的类型，可确定事件的 ID 等，以便可用获取事件详情进行业务处理。
@@ -56,6 +62,7 @@ public class DelayQueueTest {
         private final String event;
 
         public DelayElement(long delayInMilliseconds, String event) {
+            this.createdAt = System.currentTimeMillis();
             this.elapsedAt = System.currentTimeMillis() + delayInMilliseconds;
             this.event = event;
         }
@@ -77,7 +84,13 @@ public class DelayQueueTest {
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss.SSS");
         @Override
         public String toString() {
-            return String.format("当前时间: %s, 预计执行时间: %s, 事件: %s", formatter.format(new Date()), formatter.format(new Date(elapsedAt)), event);
+            return String.format("Thread: %s, 创建时间: %s, 当前时间: %s, 预计执行时间: %s, 事件: %s",
+                    Thread.currentThread(),
+                    formatter.format(new Date(createdAt)),
+                    formatter.format(new Date()),
+                    formatter.format(new Date(elapsedAt)),
+                    event
+            );
         }
     }
 }
