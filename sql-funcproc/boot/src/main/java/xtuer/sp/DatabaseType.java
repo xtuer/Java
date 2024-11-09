@@ -9,4 +9,5 @@ public enum DatabaseType {
     ORACLE,
     DB2,
     SQLSERVER,
+    GBASE8A,
 }

@@ -40,6 +40,7 @@ dependencies {
 //    implementation group: 'com.ibm.db2.jcc', name: 'db2jcc', version: 'db2jcc4'
 	implementation files('src/lib/db2jcc4_4.26.14.jar')
 	implementation files('src/lib/mssql-jdbc-9.4.0.jre8.jar')
+	implementation files('src/lib/gbase8a-connector-java-8.3.81.53-build55.5.5-bin.jar')
 
 	runtimeOnly("mysql:mysql-connector-java:${versions.mysql}")
 

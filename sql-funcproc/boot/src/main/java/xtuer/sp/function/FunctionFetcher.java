@@ -1,5 +1,6 @@
 package xtuer.sp.function;
 
+import org.apache.commons.dbutils.BasicRowProcessor;
 import xtuer.sp.FuncProcUtils;
 
 import java.sql.Connection;
@@ -8,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 函数获取类。
@@ -90,15 +92,22 @@ public class FunctionFetcher {
     public static List<String> fetchFunctionNames(Connection conn,
                                                   String catalog,
                                                   String schema) throws SQLException {
-        conn.setCatalog(catalog);
-        conn.setSchema(schema);
+        if (catalog != null) {
+            conn.setCatalog(catalog);
+        }
+        if (schema != null) {
+            conn.setSchema(schema);
+        }
 
         List<String> functionNames = new LinkedList<>();
         DatabaseMetaData metaData = conn.getMetaData();
         ResultSet functions = metaData.getFunctions(catalog, schema, null);
-
+        System.out.println(metaData.getDatabaseMajorVersion() + "." + metaData.getDatabaseMinorVersion());
         while (functions != null && functions.next()) {
             functionNames.add(functions.getString("FUNCTION_NAME"));
+
+            Map<String, Object> rowMap = new BasicRowProcessor().toMap(functions);
+            System.out.println(rowMap);
         }
 
         return functionNames;

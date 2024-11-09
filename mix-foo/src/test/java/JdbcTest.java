@@ -183,4 +183,22 @@ public class JdbcTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testHive() throws Exception {
+        String url = "jdbc:hive2://192.168.12.56:10000/default";
+        String user = "root";
+        String pass = "root";
+        try (Connection conn = DriverManager.getConnection(url, user, pass)) {
+            Statement stmt = conn.createStatement();
+            stmt.setQueryTimeout(5); // 设置语句执行的超时时间
+            ResultSet rs = stmt.executeQuery("select sleep(1)");
+
+            while (rs.next()) {
+                System.out.println(rs.getInt(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

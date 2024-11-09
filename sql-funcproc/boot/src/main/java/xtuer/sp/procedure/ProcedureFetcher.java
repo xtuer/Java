@@ -85,8 +85,12 @@ public class ProcedureFetcher {
                                                    String catalog,
                                                    String schema,
                                                    int type) throws SQLException {
-        conn.setCatalog(catalog);
-        conn.setSchema(schema);
+        if (catalog != null) {
+            conn.setCatalog(catalog);
+        }
+        if (schema != null) {
+            conn.setSchema(schema);
+        }
 
         List<String> procedureNames = new LinkedList<>();
         DatabaseMetaData metaData = conn.getMetaData();

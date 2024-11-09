@@ -35,6 +35,7 @@ public final class ProcedureExecutors {
     static {
         register(DatabaseType.DB2, DB2Procedure.class, DB2ProcedureExecutor.class, 1);
         register(DatabaseType.MYSQL, MysqlProcedure.class, MysqlProcedureExecutor.class, 1);
+        register(DatabaseType.GBASE8A, MysqlProcedure.class, MysqlProcedureExecutor.class, 1);
         register(DatabaseType.ORACLE, OracleProcedure.class, OracleProcedureExecutor.class, 1);
         register(DatabaseType.POSTGRES, PostgresProcedure.class, PostgresProcedureExecutor.class, 2);
         register(DatabaseType.SQLSERVER, SqlServerProcedure.class, SqlServerProcedureExecutor.class, 2);

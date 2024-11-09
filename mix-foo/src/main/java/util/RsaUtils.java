@@ -53,6 +53,9 @@ public class RsaUtils {
         // 生成密钥对后，保存到数据库
         KeyPair kp = RsaUtils.generateKeyPair();
 
+        System.out.println(RsaUtils.getPublicKey(kp).length);
+        System.out.println(RsaUtils.getPrivateKey(kp).length);
+
         // 公钥加密
         byte[] cipherBytes = RsaUtils.encrypt(RsaUtils.getPublicKey(kp), "What are you 弄啥咧".getBytes());
         System.out.println(ByteHex.byteToHex(cipherBytes));
