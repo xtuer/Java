@@ -1,34 +1,45 @@
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.write.metadata.WriteSheet;
+import com.google.common.collect.ImmutableMap;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class LockExcelCells {
     public static void main(String[] args) throws Exception {
-        // Load the existing Excel file
-        FileInputStream fis = new FileInputStream("/Users/biao/Downloads/user-import.xlsx");
-        Workbook workbook = new XSSFWorkbook(fis);
-        Sheet sheet = workbook.getSheetAt(0); // 获取第一个工作表
+        String templatePath = "/Users/biao/Desktop/tpl.xlsx";
+        String targetPath   = "/Users/biao/Desktop/tpl-1.xlsx";
 
-        // 锁定工作表中的所有单元格
-        for (Row row : sheet) {
-            for (Cell cell : row) {
-                CellStyle cellStyle = workbook.createCellStyle();
-                cellStyle.cloneStyleFrom(cell.getCellStyle());
-                cellStyle.setLocked(true); // 锁定单元格
-                cell.setCellStyle(cellStyle);
+        FileUtils.deleteQuietly(new File(targetPath));
+
+        // 模拟数据。
+        List<Map<String, Object>> rows = new LinkedList<>();
+        Map<String, Object> row1 = ImmutableMap.of(
+                "name", "Alice", "age", 10
+        );
+        Map<String, Object> row2 = ImmutableMap.of(
+                "name", "Bob", "age", 10
+        );
+        rows.add(row1);
+        rows.add(row2);
+
+        ExcelWriter excelWriter = null;
+        try {
+            excelWriter = EasyExcel.write(targetPath).withTemplate(templatePath).build();
+            WriteSheet writeSheet = EasyExcel.writerSheet().build();
+
+            // 分批写入数据。
+            excelWriter.fill(rows, writeSheet);
+            excelWriter.fill(rows, writeSheet);
+        } finally {
+            // 千万别忘记关闭流。
+            if (excelWriter != null) {
+                excelWriter.close();
             }
         }
-
-        // 保护工作表并设置密码
-        sheet.protectSheet("password123");
-
-        // 保存文件
-        try (FileOutputStream fos = new FileOutputStream("/Users/biao/Downloads/user-import_protected.xlsx")) {
-            workbook.write(fos);
-        }
-
-        workbook.close();
-        fis.close();
     }
 }
